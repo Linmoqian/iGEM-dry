@@ -3,11 +3,12 @@ import DeviceStatus from '../components/DeviceStatus';
 export default function DevicePage() {
   return (
     <div className="flex flex-col items-center py-10 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-3 drop-shadow-sm">
-          设备配对与监控
+      <div className="text-center mb-12 relative">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-blue-500/20 blur-[80px] -z-10 rounded-full"></div>
+        <h1 className="text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-500 mb-3 drop-shadow-sm">
+          装备配对与监控阵列
         </h1>
-        <p className="text-lg text-slate-500 font-medium">
+        <p className="text-lg text-slate-400 font-medium">
           实时管理实验室内连接的硬件模块与传感器状态
         </p>
       </div>
@@ -38,11 +39,11 @@ export default function DevicePage() {
         />
         
         {/* Placeholder for adding more devices */}
-        <div className="bg-white/40 backdrop-blur border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center text-slate-400 hover:text-blue-500 hover:bg-white/60 hover:border-blue-300 transition-all cursor-pointer min-h-[300px]">
-          <svg className="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+        <div className="bg-[#0f172a]/50 backdrop-blur border border-dashed border-slate-600/50 rounded-2xl p-6 flex flex-col items-center justify-center text-slate-400 hover:text-cyan-400 hover:bg-[#0f172a]/80 hover:border-cyan-500/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.1)] transition-all cursor-pointer min-h-[300px] group">
+          <svg className="w-12 h-12 mb-4 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 4v16m8-8H4" />
           </svg>
-          <span className="font-semibold tracking-wide">添加新设备</span>
+          <span className="font-semibold tracking-wider text-sm">部署新设备</span>
         </div>
       </div>
     </div>

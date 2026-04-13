@@ -23,11 +23,11 @@ export default function Navbar() {
     <nav className="w-full flex justify-center pt-6 px-4 pb-4">
       <div
         className="
-          flex items-center justify-center gap-8
-          bg-white/70 backdrop-blur-2xl
-          rounded-full px-8 py-4
-          shadow-[0_8px_32px_rgba(0,0,0,0.04)]
-          border border-white/50
+          flex items-center justify-center gap-6
+          bg-[#0B1221]/70 backdrop-blur-2xl
+          rounded-full px-6 py-3
+          shadow-[0_8px_32px_rgba(0,0,0,0.5)]
+          border border-slate-700/50
           transition-all duration-300
         "
       >
@@ -40,25 +40,30 @@ export default function Navbar() {
               href={item.href}
               className="
                 relative flex items-center justify-center
-                border-2 border-black rounded-full
+                border border-transparent rounded-full
                 cursor-pointer select-none
-                hover:scale-[1.05] active:scale-[0.96]
+                hover:scale-[1.05] active:scale-[0.96] overflow-hidden group
               "
               style={{
-                width: isActive ? 140 : 72,
+                width: isActive ? 140 : 70,
                 height: isActive ? 52 : 72,
-                backgroundColor: isActive ? '#000' : '#fff',
-                color: isActive ? '#fff' : '#000',
+                backgroundColor: isActive ? 'rgba(14, 165, 233, 0.1)' : 'transparent',
+                borderColor: isActive ? 'rgba(14, 165, 233, 0.3)' : 'transparent',
+                color: isActive ? '#38bdf8' : '#94a3b8',
+                boxShadow: isActive ? '0 0 20px rgba(14, 165, 233, 0.1) inset' : 'none',
                 transition:
                   'all 0.55s cubic-bezier(0.25, 1, 0.5, 1)',
               }}
             >
+              {isActive && (
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 mix-blend-overlay"></div>
+              )}
               {isActive ? (
-                <span className="text-[13px] font-medium tracking-[0.18em] whitespace-nowrap">
+                <span className="text-[13px] font-bold tracking-[0.18em] whitespace-nowrap z-10 drop-shadow-[0_0_8px_rgba(56,189,248,0.5)]">
                   {item.label}
                 </span>
               ) : (
-                <span className="flex flex-col items-center leading-[1.35] text-[13px] font-medium tracking-[0.18em]">
+                <span className="flex flex-col items-center leading-[1.35] text-[13px] font-medium tracking-[0.18em] group-hover:text-slate-300 transition-colors">
                   {splitLabel(item.label).map((line, i) => (
                     <span key={i}>{line}</span>
                   ))}

@@ -33,9 +33,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | `/data` | `app/data/page.tsx` | 数据分析 |
 | `/device` | `app/device/page.tsx` | 设备配对 |
 
-### 导航栏
+### 组件
 
-`app/components/Navbar.tsx` — 客户端组件，使用 `usePathname` 检测当前路由，激活项为椭圆（黑底白字），非激活项为圆形（白底黑字），通过 CSS transition 实现形状变形动画。
+- `Navbar` — 客户端组件（`'use client'`），`usePathname` 检测路由，激活项椭圆黑底白字，非激活项圆形白底黑字，CSS transition 变形动画
+- `DeviceStatus` — 服务端组件，接收 `deviceName/status/location/battery/temperature` props，三态颜色指示（online=绿, idle=琥珀, offline=红）
+
+### 样式约定
+
+- 整体风格：毛玻璃（`backdrop-blur`）+ 圆角卡片（`rounded-2xl`）+ 浅阴影
+- 背景色 `bg-stone-50`，卡片 `bg-white/80`
+- 无暗色模式适配（globals.css 有 dark 变量但组件未使用）
+- Tailwind v4 通过 `@theme inline` 在 `globals.css` 注册 CSS 变量，无 `tailwind.config.js`
 
 ### 设计资源
 

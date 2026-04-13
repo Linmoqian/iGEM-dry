@@ -26,12 +26,16 @@ export default function RootLayout({
   return (
     <html
       lang="zh-CN"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
-      <body className="min-h-full flex flex-col bg-slate-50 text-slate-900 selection:bg-blue-100 selection:text-blue-900 relative">
-        {/* Ambient Background Gradient for modern aesthetic */}
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-100/40 blur-[100px] pointer-events-none -z-10" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-teal-100/30 blur-[100px] pointer-events-none -z-10" />
+      <body className="min-h-full flex flex-col bg-[#050714] text-slate-200 selection:bg-cyan-500/30 selection:text-cyan-100 relative">
+        {/* Tech Grid Background and Particles */}
+        <div className="fixed inset-0 bg-[#050714] -z-30"></div>
+        <div className="fixed inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_40%,#000_10%,transparent_100%)] pointer-events-none -z-20"></div>
+        
+        {/* Ambient Dark Tech Glowing */}
+        <div className="fixed top-[0%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-900/20 blur-[120px] pointer-events-none -z-10" />
+        <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-cyan-900/15 blur-[120px] pointer-events-none -z-10" />
         
         <div className="fixed top-0 inset-x-0 z-50">
           <Navbar />
