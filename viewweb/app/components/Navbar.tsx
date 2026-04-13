@@ -20,14 +20,15 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="w-full flex justify-center pt-6 px-4">
+    <nav className="w-full flex justify-center pt-6 px-4 pb-4">
       <div
         className="
           flex items-center justify-center gap-8
-          bg-white/80 backdrop-blur-xl
-          rounded-2xl px-10 py-5
-          shadow-[0_2px_24px_rgba(0,0,0,0.06)]
-          border border-black/[0.04]
+          bg-white/70 backdrop-blur-2xl
+          rounded-full px-8 py-4
+          shadow-[0_8px_32px_rgba(0,0,0,0.04)]
+          border border-white/50
+          transition-all duration-300
         "
       >
         {NAV_ITEMS.map((item) => {
