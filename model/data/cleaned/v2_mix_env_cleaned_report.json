@@ -1,0 +1,13 @@
+{
+  "dataset": "MIX 环境因子 (2016-2017)",
+  "rows": 50,
+  "columns": 5,
+  "missing_pct": {},
+  "dtypes": {
+    "DateTime": "datetime64[ns]",
+    "ELISA_MC+ANA+SXT": "float64",
+    "SpCond_uScm": "int64",
+    "LkLevelChg24_Ave7day": "float64",
+    "LkLevel_dev_springave": "float64"
+  }
+}

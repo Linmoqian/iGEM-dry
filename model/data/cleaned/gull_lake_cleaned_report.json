@@ -1,0 +1,20 @@
+{
+  "dataset": "海湾湖 (knb-lter-kbs)",
+  "rows": 13,
+  "columns": 10,
+  "missing_pct": {
+    "microcystin_ug_l": 23.08
+  },
+  "dtypes": {
+    "site": "object",
+    "year": "Int64",
+    "mussel_presence": "object",
+    "prevmort": "float64",
+    "degree_days_above_15c": "int64",
+    "biomass_ug_l": "float64",
+    "log_biomass": "float64",
+    "proportion_arcsine_squared": "float64",
+    "peak_biomass_day_of_year": "int64",
+    "microcystin_ug_l": "float64"
+  }
+}

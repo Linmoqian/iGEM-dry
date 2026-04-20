@@ -1,0 +1,41 @@
+{
+  "dataset": "HABs 预测数据 (NLA 2017)",
+  "rows": 124529,
+  "columns": 28,
+  "missing_pct": {
+    "micx_logit.fit": 76.23,
+    "micx_logit.lwr": 98.46,
+    "micx_logit.upr": 18.03,
+    "cyano_abun.lwr": 0.0
+  },
+  "dtypes": {
+    "COMID": "int64",
+    "DSGN_CYCLE": "int64",
+    "UNIQUE_ID": "object",
+    "n_dev_inputs": "float64",
+    "n_farm_inputs": "float64",
+    "p_dev_inputs": "float64",
+    "p_farm_inputs": "float64",
+    "BFIWs": "float64",
+    "MAXDEPTH": "float64",
+    "lakemorpho_fetch": "int64",
+    "Precip8110Ws": "float64",
+    "Tmean8110Ws": "float64",
+    "fst_ws": "float64",
+    "AG_ECO3": "object",
+    "micx_prob.fit": "float64",
+    "micx_prob.lwr": "float64",
+    "micx_prob.upr": "float64",
+    "micx_logit.fit": "float64",
+    "micx_logit.lwr": "float64",
+    "micx_logit.upr": "float64",
+    "cyano_log.fit": "float64",
+    "cyano_log.lwr": "float64",
+    "cyano_log.upr": "float64",
+    "cyano_abun.fit": "float64",
+    "cyano_abun.lwr": "float64",
+    "cyano_abun.upr": "float64",
+    "latitude_epsg5072": "float64",
+    "logitude_epsg5072": "float64"
+  }
+}
