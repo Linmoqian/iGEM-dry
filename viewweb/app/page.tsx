@@ -1,45 +1,100 @@
+import Link from 'next/link';
+import { demoReadings, demoSummary, getRiskLabel } from './lib/demoReadings';
+
 export default function OverviewPage() {
+  const maxReading = demoSummary.maxToxinReading;
+  const recentReadings = demoReadings.slice(0, 4);
+
   return (
     <div className="flex flex-col items-center py-10 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="text-center mb-12 relative">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-blue-500/20 blur-[80px] -z-10 rounded-full"></div>
         <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-cyan-300 via-blue-500 to-indigo-600 mb-6 drop-shadow-sm">
-          系统分析平台
+          水体藻毒素监测平台
         </h1>
-        <p className="text-xl text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed">
-          全面掌控设备的运行状态，并实现高级数据可视化与实时地图监控。
+        <p className="text-xl text-slate-400 font-medium max-w-3xl mx-auto leading-relaxed">
+          连接嵌入式采样设备，汇总电量、信号强度和藻毒素浓度，并在地图中定位风险热区。
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl mt-8">
-        <div className="bg-[#0f172a]/80 backdrop-blur-xl rounded-3xl p-8 border border-slate-700/50 shadow-[0_8px_30px_rgb(0,0,0,0.4)] hover:border-cyan-500/40 hover:shadow-[0_0_30px_rgba(34,211,238,0.15)] transition-all group overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <div className="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center text-cyan-400 mb-6 border border-blue-500/30">
-            <svg className="w-7 h-7 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-          </div>
-          <h3 className="text-xl font-bold text-slate-200 mb-2">活跃设备</h3>
-          <p className="text-4xl font-black text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">24<span className="text-sm font-medium text-slate-400 ml-2">台在线</span></p>
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 w-full max-w-7xl mt-4">
+        <div className="bg-[#0f172a]/80 backdrop-blur-xl rounded-3xl p-8 border border-slate-700/50 shadow-[0_8px_30px_rgb(0,0,0,0.4)]">
+          <p className="text-xs text-slate-500 font-bold tracking-widest uppercase mb-3">在线设备</p>
+          <p className="text-4xl font-black text-white">{demoSummary.onlineDevices}<span className="text-sm font-medium text-slate-400 ml-2">/ {demoSummary.totalDevices} 台</span></p>
+          <p className="text-sm text-slate-500 mt-4">采样节点正在回传水质数据</p>
         </div>
 
-        <div className="bg-[#0f172a]/80 backdrop-blur-xl rounded-3xl p-8 border border-slate-700/50 shadow-[0_8px_30px_rgb(0,0,0,0.4)] hover:border-teal-500/40 hover:shadow-[0_0_30px_rgba(20,184,166,0.15)] transition-all group overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <div className="w-14 h-14 rounded-2xl bg-teal-500/20 flex items-center justify-center text-teal-400 mb-6 border border-teal-500/30">
-            <svg className="w-7 h-7 drop-shadow-[0_0_8px_rgba(20,184,166,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-          </div>
-          <h3 className="text-xl font-bold text-slate-200 mb-2">今日数据分析</h3>
-          <p className="text-4xl font-black text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">12.5k<span className="text-sm font-medium text-slate-400 ml-2">采集点</span></p>
+        <div className="bg-[#0f172a]/80 backdrop-blur-xl rounded-3xl p-8 border border-slate-700/50 shadow-[0_8px_30px_rgb(0,0,0,0.4)]">
+          <p className="text-xs text-slate-500 font-bold tracking-widest uppercase mb-3">平均藻毒素</p>
+          <p className="text-4xl font-black text-cyan-300">{demoSummary.averageToxinUgL.toFixed(2)}<span className="text-sm font-medium text-slate-400 ml-2">µg/L</span></p>
+          <p className="text-sm text-slate-500 mt-4">当前演示采样批次均值</p>
+        </div>
+
+        <div className="bg-[#0f172a]/80 backdrop-blur-xl rounded-3xl p-8 border border-slate-700/50 shadow-[0_8px_30px_rgb(0,0,0,0.4)]">
+          <p className="text-xs text-slate-500 font-bold tracking-widest uppercase mb-3">最高风险</p>
+          <p className="text-4xl font-black text-rose-400">{maxReading.toxinUgL.toFixed(2)}<span className="text-sm font-medium text-slate-400 ml-2">µg/L</span></p>
+          <p className="text-sm text-slate-500 mt-4">{maxReading.name} · {getRiskLabel(maxReading.toxinUgL)}</p>
         </div>
 
         <div className="bg-gradient-to-br from-blue-900 via-[#1e1b4b] to-indigo-950 rounded-3xl p-8 border border-indigo-500/30 shadow-[0_8px_30px_rgb(55,48,163,0.3)] text-white relative overflow-hidden group">
           <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay"></div>
-          <div className="absolute delay-75 duration-1000 opacity-30 -right-8 -top-8 w-40 h-40 bg-indigo-400 rounded-full mix-blend-overlay blur-3xl group-hover:scale-150"></div>
-          <h3 className="text-xl font-bold mb-2">系统健康状态</h3>
-          <p className="text-5xl font-black mt-4 drop-shadow-[0_0_12px_rgba(129,140,248,0.6)]">98%</p>
-          <div className="mt-8 flex items-center text-indigo-200 text-sm font-medium">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 mr-2 animate-pulse shadow-[0_0_8px_rgba(34,211,238,1)]"></span>
-            所有核心系统正常运行
+          <p className="text-xs text-indigo-200 font-bold tracking-widest uppercase mb-3 relative z-10">系统状态</p>
+          <p className="text-4xl font-black relative z-10">{demoSummary.lowBatteryDevices + demoSummary.weakSignalDevices === 0 ? '正常' : '需关注'}</p>
+          <div className="mt-5 text-sm text-indigo-200 relative z-10">
+            低电量 {demoSummary.lowBatteryDevices} 台 · 弱信号 {demoSummary.weakSignalDevices} 台
           </div>
         </div>
+      </div>
+
+      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 mt-8">
+        <section className="bg-[#0B1221]/70 backdrop-blur-2xl border border-slate-700/50 rounded-3xl p-8 shadow-[0_16px_60px_rgba(0,0,0,0.35)]">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
+            <div>
+              <h2 className="text-2xl font-black text-slate-100">最新采样</h2>
+              <p className="text-sm text-slate-500 mt-2">设备端回传的藻毒素浓度、电量和信号质量</p>
+            </div>
+            <Link
+              href="/map"
+              className="self-start md:self-auto px-5 py-3 rounded-lg bg-cyan-500/10 border border-cyan-500/40 text-cyan-300 text-sm font-bold hover:bg-cyan-500/20 transition-colors"
+            >
+              查看热力图
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {recentReadings.map((reading) => (
+              <div key={reading.id} className="rounded-2xl border border-slate-800 bg-[#050B14]/50 p-5">
+                <div className="flex items-center justify-between gap-3 mb-4">
+                  <h3 className="font-black text-slate-100 truncate">{reading.name}</h3>
+                  <span className="text-xs text-slate-500">{reading.updatedAt}</span>
+                </div>
+                <div className="grid grid-cols-3 gap-3 text-sm">
+                  <div>
+                    <p className="text-slate-500 text-xs mb-1">藻毒素</p>
+                    <p className="font-black text-cyan-300">{reading.toxinUgL.toFixed(2)}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500 text-xs mb-1">电量</p>
+                    <p className="font-black text-slate-200">{reading.batteryPercent}%</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500 text-xs mb-1">信号</p>
+                    <p className="font-black text-slate-200">{reading.signalDbm}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <aside className="bg-[#0B1221]/70 backdrop-blur-2xl border border-slate-700/50 rounded-3xl p-8 shadow-[0_16px_60px_rgba(0,0,0,0.35)]">
+          <h2 className="text-2xl font-black text-slate-100 mb-6">风险说明</h2>
+          <div className="space-y-5 text-sm text-slate-300">
+            <p>当前演示数据以 µg/L 表示藻毒素浓度，热力图会按浓度归一化显示污染强度。</p>
+            <p>设备电量低于 20% 或信号低于 -85 dBm 时，会进入维护关注范围。</p>
+            <p>第一版使用模拟数据，后续可替换为蓝牙、Wi-Fi 或后端 API 的真实采样流。</p>
+          </div>
+        </aside>
       </div>
     </div>
   );
