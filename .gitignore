@@ -1,15 +1,45 @@
+# AI 工具配置
+CLAUDE.md
+AGENTS.md
+.claude/
+.planning/
+
 # Python
 __pycache__/
 *.py[cod]
 *.egg-info/
+*.egg
+dist/
+build/
+
+# 虚拟环境
+.env
+.venv/
+venv/
+env/
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Claude Code
-.claude/
+# Jupyter
+.ipynb_checkpoints/
+
+# Node (根目录，viewweb 有自己的)
+node_modules/
+package.json
+package-lock.json
+
+# LaTeX 构建产物
+.latexmkrc
+docs/PDF/
+manifest.json
+
+# 压缩包
+*.zip
