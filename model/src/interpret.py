@@ -113,7 +113,7 @@ def plot_shap_dependence(
 
         plt.tight_layout()
         safe_name = fname.replace("/", "_").replace("\\", "_").replace(" ", "_")
-        out_path = save_dir / f"shap_dependence_{safe_name}.png"
+        out_path = save_dir / f"shap_dependence_{safe_name}.webp"
         fig.savefig(out_path, dpi=150, bbox_inches="tight")
         plt.close(fig)
         log_info(f"依赖图 ({rank + 1}/{top_n}): {fname} -> {out_path}")
@@ -149,7 +149,7 @@ def plot_shap_waterfall(
         )
 
         plt.tight_layout()
-        out_path = save_dir / f"shap_waterfall_{idx}.png"
+        out_path = save_dir / f"shap_waterfall_{idx}.webp"
         fig.savefig(out_path, dpi=150, bbox_inches="tight")
         plt.close(fig)
         log_info(f"瀑布图 (样本 {idx}): {out_path}")
@@ -279,12 +279,12 @@ def interpret_model(
     plot_shap_beeswarm(
         shap_values,
         feature_names=list(X.columns),
-        save_path=save_dir / "shap_beeswarm.png",
+        save_path=save_dir / "shap_beeswarm.webp",
     )
     plot_shap_bar(
         shap_values,
         feature_names=list(X.columns),
-        save_path=save_dir / "shap_bar.png",
+        save_path=save_dir / "shap_bar.webp",
     )
 
     # 3. 依赖图

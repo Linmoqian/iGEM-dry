@@ -200,7 +200,7 @@ def plot_target_distribution(
     axes[1].set_ylabel("频数")
 
     plt.tight_layout()
-    save_path = save_dir / "target_distribution.png"
+    save_path = save_dir / "target_distribution.webp"
     fig.savefig(save_path, dpi=150, bbox_inches="tight")
     plt.close(fig)
     log_success(f"目标分布图已保存: {save_path}")
@@ -217,7 +217,7 @@ def plot_confusion_matrix(
     单元格标注数量和百分比, 蓝色配色。
     """
     if save_path is None:
-        save_path = FIGURE_DIR / "confusion_matrix.png"
+        save_path = FIGURE_DIR / "confusion_matrix.webp"
     save_path = Path(save_path)
     save_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -263,7 +263,7 @@ def plot_roc_pr_curves(
 ) -> None:
     """绘制 ROC 曲线和 PR 曲线 (左右子图)。
 
-    分别保存为 roc_curve.png 和 pr_curve.png (在同一 figure 中)。
+    分别保存为 roc_curve.webp 和 pr_curve.webp (在同一 figure 中)。
     """
     save_dir = Path(save_dir)
     save_dir.mkdir(parents=True, exist_ok=True)
@@ -297,7 +297,7 @@ def plot_roc_pr_curves(
     axes[1].set_ylim([0, 1.05])
 
     plt.tight_layout()
-    save_path = save_dir / "roc_pr_curves.png"
+    save_path = save_dir / "roc_pr_curves.webp"
     fig.savefig(save_path, dpi=150, bbox_inches="tight")
     plt.close(fig)
     log_success(f"ROC/PR 曲线已保存: {save_path}")
@@ -313,7 +313,7 @@ def plot_predicted_vs_actual(
     对角参考线, 按误差大小着色, 标注 RMSE/R2/Pearson r。
     """
     if save_path is None:
-        save_path = FIGURE_DIR / "predicted_vs_actual.png"
+        save_path = FIGURE_DIR / "predicted_vs_actual.webp"
     save_path = Path(save_path)
     save_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -377,7 +377,7 @@ def plot_residuals(
 ) -> None:
     """回归: 残差分布直方图 + KDE。"""
     if save_path is None:
-        save_path = FIGURE_DIR / "residuals.png"
+        save_path = FIGURE_DIR / "residuals.webp"
     save_path = Path(save_path)
     save_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -427,7 +427,7 @@ def plot_model_comparison(
     save_path : 保存路径
     """
     if save_path is None:
-        save_path = FIGURE_DIR / "model_comparison.png"
+        save_path = FIGURE_DIR / "model_comparison.webp"
     save_path = Path(save_path)
     save_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -536,7 +536,7 @@ def evaluate_full_pipeline(
         plot_confusion_matrix(
             y_true_arr,
             y_pred_binary,
-            save_path=model_dir / "confusion_matrix.png",
+            save_path=model_dir / "confusion_matrix.webp",
         )
 
         # ROC / PR 曲线
@@ -553,14 +553,14 @@ def evaluate_full_pipeline(
         plot_predicted_vs_actual(
             y_true_arr,
             y_pred_arr,
-            save_path=model_dir / "predicted_vs_actual.png",
+            save_path=model_dir / "predicted_vs_actual.webp",
         )
 
         # 残差分布
         plot_residuals(
             y_true_arr,
             y_pred_arr,
-            save_path=model_dir / "residuals.png",
+            save_path=model_dir / "residuals.webp",
         )
 
     else:

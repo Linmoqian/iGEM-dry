@@ -44,17 +44,17 @@
 | **MCC** | 0.498 | **0.770** | 0.406 |
 | **Accuracy** | 0.769 | **0.917** | 0.727 |
 
-![HABs Training 混淆矩阵](../figures/Ensemble/confusion_matrix.png)
+![HABs Training 混淆矩阵](../figures/Ensemble/confusion_matrix.webp)
 
-![Lake Erie 混淆矩阵](../figures/lake_erie/Ensemble/confusion_matrix.png)
+![Lake Erie 混淆矩阵](../figures/lake_erie/Ensemble/confusion_matrix.webp)
 
-![SF Estuary 混淆矩阵](../figures/sf_estuary/Ensemble/confusion_matrix.png)
+![SF Estuary 混淆矩阵](../figures/sf_estuary/Ensemble/confusion_matrix.webp)
 
-![HABs Training ROC/PR 曲线](../figures/Ensemble/roc_pr_curves.png)
+![HABs Training ROC/PR 曲线](../figures/Ensemble/roc_pr_curves.webp)
 
-![Lake Erie ROC/PR 曲线](../figures/lake_erie/Ensemble/roc_pr_curves.png)
+![Lake Erie ROC/PR 曲线](../figures/lake_erie/Ensemble/roc_pr_curves.webp)
 
-![SF Estuary ROC/PR 曲线](../figures/sf_estuary/Ensemble/roc_pr_curves.png)
+![SF Estuary ROC/PR 曲线](../figures/sf_estuary/Ensemble/roc_pr_curves.webp)
 
 ### 3.2 回归任务 (测试集)
 
@@ -69,11 +69,11 @@
 | **Within Factor-of-2** | 49.4% | **72.1%** | 87.1% |
 | **训练集/测试集** | 992 / 249 | 2,100 / 526 | 123 / 31 |
 
-![HABs Training 预测 vs 真实值](../figures/Ensemble/predicted_vs_actual.png)
+![HABs Training 预测 vs 真实值](../figures/Ensemble/predicted_vs_actual.webp)
 
-![Lake Erie 预测 vs 真实值](../figures/lake_erie/Ensemble/predicted_vs_actual.png)
+![Lake Erie 预测 vs 真实值](../figures/lake_erie/Ensemble/predicted_vs_actual.webp)
 
-![SF Estuary 预测 vs 真实值](../figures/sf_estuary/Ensemble/predicted_vs_actual.png)
+![SF Estuary 预测 vs 真实值](../figures/sf_estuary/Ensemble/predicted_vs_actual.webp)
 
 ### 3.3 各模型单独表现对比
 
@@ -107,7 +107,7 @@
 | 4 | AMMONIA_N (氨氮) | 0.171 | LAT_DD83 (纬度) | 0.051 |
 | 5 | SlopeWs (流域坡度) | 0.157 | MONTH_sin (月份) | 0.031 |
 
-![HABs Training SHAP 蜂群图](../figures/shap/shap_beeswarm.png)
+![HABs Training SHAP 蜂群图](../figures/shap/shap_beeswarm.webp)
 
 #### Lake Erie
 
@@ -119,7 +119,7 @@
 | 4 | Cryptophytes_chla (隐藻) | 0.260 | Cryptophytes_chla | 0.077 |
 | 5 | Water_Temp (水温) | 0.226 | Water_Temp (水温) | 0.058 |
 
-![Lake Erie SHAP 蜂群图](../figures/lake_erie/shap/shap_beeswarm.png)
+![Lake Erie SHAP 蜂群图](../figures/lake_erie/shap/shap_beeswarm.webp)
 
 #### SF Estuary
 
@@ -131,35 +131,35 @@
 | 4 | bryte.SiO2 (硅酸盐) | 0.285 | bryte.NH4 (铵盐) | 0.026 |
 | 5 | bryte.TP (总磷) | 0.200 | MONTH_sin (月份) | 0.025 |
 
-![SF Estuary SHAP 蜂群图](../figures/sf_estuary/shap/shap_beeswarm.png)
+![SF Estuary SHAP 蜂群图](../figures/sf_estuary/shap/shap_beeswarm.webp)
 
 ### 4.2 SHAP 依赖图
 
 #### HABs Training
 
-![CHLA_RESULT 依赖图](../figures/shap/dependence/shap_dependence_CHLA_RESULT.png)
+![CHLA_RESULT 依赖图](../figures/shap/dependence/shap_dependence_CHLA_RESULT.webp)
 
-![NTL 依赖图](../figures/shap/dependence/shap_dependence_NTL.png)
+![NTL 依赖图](../figures/shap/dependence/shap_dependence_NTL.webp)
 
-![PH 依赖图](../figures/shap/dependence/shap_dependence_PH.png)
+![PH 依赖图](../figures/shap/dependence/shap_dependence_PH.webp)
 
-![TURB 依赖图](../figures/shap/dependence/shap_dependence_TURB.png)
+![TURB 依赖图](../figures/shap/dependence/shap_dependence_TURB.webp)
 
 #### Lake Erie
 
-![Bluegreen algae 依赖图](../figures/lake_erie/shap/dependence/shap_dependence_Bluegreen_algae_chla_ug_l.png)
+![Bluegreen algae 依赖图](../figures/lake_erie/shap/dependence/shap_dependence_Bluegreen_algae_chla_ug_l.webp)
 
-![Chlorophyll 依赖图](../figures/lake_erie/shap/dependence/shap_dependence_Chlorophyll_ug_L.png)
+![Chlorophyll 依赖图](../figures/lake_erie/shap/dependence/shap_dependence_Chlorophyll_ug_L.webp)
 
-![水温 依赖图](../figures/lake_erie/shap/dependence/shap_dependence_Water_Temp_at_1_meter_C.png)
+![水温 依赖图](../figures/lake_erie/shap/dependence/shap_dependence_Water_Temp_at_1_meter_C.webp)
 
 #### SF Estuary
 
-![水温 依赖图](../figures/sf_estuary/shap/dependence/shap_dependence_field.Water.temp.png)
+![水温 依赖图](../figures/sf_estuary/shap/dependence/shap_dependence_field.Water.temp.webp)
 
-![Chla 依赖图](../figures/sf_estuary/shap/dependence/shap_dependence_bryte.amb.Chla.ugL.png)
+![Chla 依赖图](../figures/sf_estuary/shap/dependence/shap_dependence_bryte.amb.Chla.ugL.webp)
 
-![qPCR MIC 依赖图](../figures/sf_estuary/shap/dependence/shap_dependence_ucd.qpcr.total.MIC.png)
+![qPCR MIC 依赖图](../figures/sf_estuary/shap/dependence/shap_dependence_ucd.qpcr.total.MIC.webp)
 
 ## 5 分析与讨论
 
@@ -205,11 +205,11 @@ SF Estuary 分类任务中，LightGBM 全量 AUC=0.973 但测试集 AUC 仅 0.81
 
 ## 6 残差分析
 
-![HABs Training 残差分布](../figures/Ensemble/residuals.png)
+![HABs Training 残差分布](../figures/Ensemble/residuals.webp)
 
-![Lake Erie 残差分布](../figures/lake_erie/Ensemble/residuals.png)
+![Lake Erie 残差分布](../figures/lake_erie/Ensemble/residuals.webp)
 
-![SF Estuary 残差分布](../figures/sf_estuary/Ensemble/residuals.png)
+![SF Estuary 残差分布](../figures/sf_estuary/Ensemble/residuals.webp)
 
 ## 7 结论与建议
 
@@ -234,10 +234,10 @@ SF Estuary 分类任务中，LightGBM 全量 AUC=0.973 但测试集 AUC 仅 0.81
 
 | 图表 | 路径 |
 |------|------|
-| HABs Training SHAP 蜂群图 | `figures/shap/shap_beeswarm.png` |
-| HABs Training SHAP 柱状图 | `figures/shap/shap_bar.png` |
-| Lake Erie SHAP 蜂群图 | `figures/lake_erie/shap/shap_beeswarm.png` |
-| SF Estuary SHAP 蜂群图 | `figures/sf_estuary/shap/shap_beeswarm.png` |
-| HABs Training 混淆矩阵 | `figures/Ensemble/confusion_matrix.png` |
-| Lake Erie 混淆矩阵 | `figures/lake_erie/Ensemble/confusion_matrix.png` |
-| SF Estuary 混淆矩阵 | `figures/sf_estuary/Ensemble/confusion_matrix.png` |
+| HABs Training SHAP 蜂群图 | `figures/shap/shap_beeswarm.webp` |
+| HABs Training SHAP 柱状图 | `figures/shap/shap_bar.webp` |
+| Lake Erie SHAP 蜂群图 | `figures/lake_erie/shap/shap_beeswarm.webp` |
+| SF Estuary SHAP 蜂群图 | `figures/sf_estuary/shap/shap_beeswarm.webp` |
+| HABs Training 混淆矩阵 | `figures/Ensemble/confusion_matrix.webp` |
+| Lake Erie 混淆矩阵 | `figures/lake_erie/Ensemble/confusion_matrix.webp` |
+| SF Estuary 混淆矩阵 | `figures/sf_estuary/Ensemble/confusion_matrix.webp` |
