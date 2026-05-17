@@ -7,7 +7,7 @@
 ```
 iGEM-dry/
 ├── model/          数学建模 — 藻毒素浓度预测
-├── viewweb/        Web 平台 — 态势展示与设备管理
+├── viewweb/        Web 平台 — 数据可视化与设备管理
 ├── hardware/       硬件 — ESP32 检测节点设计
 └── docs/           项目文档与实施计划
 ```
@@ -31,6 +31,7 @@ conda activate igem-cyanohab
 ```bash
 cd viewweb
 npm install
+npm run dev
 ```
 
 ---
