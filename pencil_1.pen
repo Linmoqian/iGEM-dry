@@ -1,0 +1,125 @@
+{
+  "version": "2.11",
+  "children": [
+    {
+      "type": "script",
+      "id": "device-pairing-page-script",
+      "x": -11,
+      "y": 47,
+      "clip": true,
+      "width": 1586,
+      "height": 992,
+      "scriptUri": "pencil_1.js"
+    }
+  ],
+  "variables": {
+    "active-tab-bg": {
+      "type": "color",
+      "value": "#E6F0FA"
+    },
+    "active-tab-text": {
+      "type": "color",
+      "value": "#1A73E8"
+    },
+    "border-color": {
+      "type": "color",
+      "value": "#E2E8F0"
+    },
+    "font-body": {
+      "type": "string",
+      "value": "Inter"
+    },
+    "global-bg": {
+      "type": "color",
+      "value": "#F4F8FC"
+    },
+    "global-bg-gradient": {
+      "type": "color",
+      "value": "#E6F0FA"
+    },
+    "header-bg": {
+      "type": "color",
+      "value": "#F8FAFC"
+    },
+    "panel-bg": {
+      "type": "color",
+      "value": "#FFFFFF"
+    },
+    "primary-blue": {
+      "type": "color",
+      "value": "#1A73E8"
+    },
+    "radius-lg": {
+      "type": "number",
+      "value": 16
+    },
+    "radius-md": {
+      "type": "number",
+      "value": 12
+    },
+    "radius-sm": {
+      "type": "number",
+      "value": 8
+    },
+    "spacing-lg": {
+      "type": "number",
+      "value": 24
+    },
+    "spacing-md": {
+      "type": "number",
+      "value": 16
+    },
+    "spacing-sm": {
+      "type": "number",
+      "value": 8
+    },
+    "spacing-xl": {
+      "type": "number",
+      "value": 32
+    },
+    "spacing-xs": {
+      "type": "number",
+      "value": 4
+    },
+    "status-danger": {
+      "type": "color",
+      "value": "#EF4444"
+    },
+    "status-info": {
+      "type": "color",
+      "value": "#06B6D4"
+    },
+    "status-normal": {
+      "type": "color",
+      "value": "#22C55E"
+    },
+    "status-offline": {
+      "type": "color",
+      "value": "#94A3B8"
+    },
+    "status-standby": {
+      "type": "color",
+      "value": "#F59E0B"
+    },
+    "status-warning": {
+      "type": "color",
+      "value": "#FF7A00"
+    },
+    "text-brand": {
+      "type": "color",
+      "value": "#0D47A1"
+    },
+    "text-muted": {
+      "type": "color",
+      "value": "#64748B"
+    },
+    "text-primary": {
+      "type": "color",
+      "value": "#0F172A"
+    },
+    "text-secondary": {
+      "type": "color",
+      "value": "#475569"
+    }
+  }
+}
