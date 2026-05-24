@@ -1,7 +1,7 @@
 # Role & Core Objective
-You are an elite, pixel-perfect UI/UX Front-End Structural Engineer AI. Your absolute goal is to reverse-engineer the provided data analysis interface design (`数据分析页目标.png`) into a high-fidelity, production-ready `.pen` file using the **Pencil Design Plugin**.
+You are an elite, pixel-perfect UI/UX Front-End Structural Engineer AI. Your absolute goal is to reverse-engineer the provided device pairing interface design (`设备配对页目标.png`) into a high-fidelity, production-ready `.pen` file using the **Pencil Design Plugin**.
 
-You must interpret the image with strict mathematical and geometric precision. Replicate exact padding, alignment, font weights, color hex codes, chart structures, and border radii without introducing any arbitrary changes.
+You must interpret the image with strict mathematical and geometric precision. Replicate exact padding, alignment, font weights, color hex codes, layout grids, and border radii without introducing any arbitrary variations.
 
 ---
 
@@ -12,9 +12,9 @@ You must interpret the image with strict mathematical and geometric precision. R
 * **Global Layout Scheme:**
     * **Sidebar Width:** `240px` (Fixed left layout)
     * **Top Nav Height:** `80px` (Fixed top layout, spans across `width: 1680px`)
-    * **Main Workspace Content Grid:** `width: 1640px; margin: 20px; display: flex; flex-direction: column; gap: 20px;`
-        * **Top Content Row (Trend + Comparison):** `height: 440px; display: flex; flex-direction: row; gap: 20px;`
-        * **Bottom Content Row (AI Prediction + Metrics):** `height: 460px; display: flex; flex-direction: row; gap: 20px;`
+    * **Main Workspace Content Grid:** `width: 1640px; margin: 20px; display: flex; flex-direction: row; gap: 20px;`
+        * **Left Workspace Panel (Device Management Grid):** `flex: 1; display: flex; flex-direction: column; gap: 16px;`
+        * **Right Workspace Panel (Scan & Pairing Inspector):** `width: 420px; fixed right;`
 
 ### 🎨 Precise Color & Asset Tokens
 ```css
@@ -22,113 +22,102 @@ You must interpret the image with strict mathematical and geometric precision. R
   /* Backgrounds */
   --global-bg: linear-gradient(180deg, #F4F8FC 0%, #E6F0FA 100%);
   --panel-bg: #FFFFFF;
-  --header-bg: #F8FAFC;
+  --card-bg: #FFFFFF;
   
   /* Brand & Active States */
-  --primary-blue: #1A73E8;
+  --primary-blue: #0084FF;
   --active-tab-bg: #E6F0FA;
   --active-tab-text: #1A73E8;
+  --active-pill-bg: #E0F2FE;
+  --active-pill-text: #0284C7;
   
-  /* Chart Line & Status Palette */
-  --chart-toxin-blue: #1A73E8;
-  --chart-temp-green: #10B981;
-  --chart-ph-purple: #8B5CF6;
+  /* Device Status States */
+  --status-online: #22C55E;    /* Green */
+  --status-idle: #FF7A00;      /* Orange */
+  --status-offline: #64748B;   /* Gray */
+  --status-danger: #EF4444;    /* Red (For high toxin flags) */
   
-  --status-danger: #EF4444;      /* Red */
-  --status-warning: #FF7A00;     /* Orange */
-  --status-normal: #22C55E;      /* Green */
-  --status-info: #06B6D4;        /* Cyan/Teal */
-  
-  /* Threshold Lines */
-  --threshold-high: #EF4444;
-  --threshold-alert: #FF7A00;
+  /* Borders & Radar */
+  --border-color: #E2E8F0;
+  --card-border-active: #3B82F6;
+  --radar-ring: rgba(0, 132, 255, 0.1);
+  --dropzone-dash: #93C5FD;
 
   /* Typography */
   --text-primary: #0F172A;
   --text-secondary: #475569;
   --text-muted: #64748B;
-  --border-color: #E2E8F0;
 }
 ```
 
 ## 2. Component Node Tree & CSS Blueprint (Pixel-Perfect Specs)
 
-### [Node 1] Top Navigation Bar (Filters & Tools)
+### [Node 1] Top Navigation Bar & Left Sidebar
 
-- **Geometry:** `height: 80px; padding: 0 32px; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); background: #FFF;`
-- **Layout Blocks:**
-  - **Left Brand Area:** Title text "水体藻毒素监测平台" (`font-size: 22px; font-weight: bold; color: #0D47A1;`) with logo placeholder.
-  - **Middle Filter Controls Area (`display: flex; gap: 24px; margin-left: 60px;`):**
-    1. *时间范围 (Date Range):* Label + Input box showing "2025-05-20 ~ 2025-05-27" with a trailing calendar suffix icon.
-    2. *设备筛选 (Device Filter):* Label + Dropdown selector showing "全部设备" with a down arrow icon.
-    3. *传感器筛选 (Sensor Filter):* Label + Dropdown selector showing multi-select tags "藻毒素 + 水温 + pH" with a down arrow icon.
-  - **Right Action Area (`margin-left: auto;`):**
-    - `导出数据` Button: `border: 1px solid var(--border-color); background: #FFF; color: var(--text-primary); border-radius: 8px; padding: 8px 16px; font-size: 14px; font-weight: 500;`
+- **Active State Update:** The active highlighted tab must switch to **`设备配对` (Device Pairing)**.
+  - Style: Background fill (`var(--active-pill-bg)`), text/icon color (`var(--active-pill-text)`), matching standard nav item block border-radius.
 
-### [Node 2] Left Sidebar Navigation
+### [Node 2] Left Workspace Panel (Paired Devices Interface)
 
-- **Active State Update:** The active highlighted tab must switch to **`数据分析` (Data Analysis)**.
-  - Style: Background fill (`var(--active-tab-bg)`), text/icon color (`var(--active-tab-text)`), matching standard nav item block border-radius.
+#### Sub-Node 2A: Top Action Button Row
 
-### [Node 3] Top Content Row (`height: 440px; display: flex; gap: 20px;`)
+- `display: flex; gap: 12px; margin-bottom: 4px;`
+- **Button 1 (`添加设备`):** `background: var(--primary-blue); color: #FFF; font-weight: bold; border-radius: 8px; padding: 10px 20px; display: flex; align-items: center; gap: 6px;` (Incorporate clear `+` vector sign)
+- **Button 2 (`刷新列表`):** `background: #FFF; border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 8px; padding: 10px 20px; display: flex; align-items: center; gap: 6px;`
+- **Button 3 (`批量操作`):** `background: #FFF; border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 8px; padding: 10px 20px; display: flex; align-items: center; gap: 4px;` (Includes a right-aligned down arrow)
 
-#### Sub-Node 3A: 趋势分析 (Trend Analysis Multi-Axis Chart) - Left Card
+#### Sub-Node 2B: 3x2 Core Device Cards Matrix
 
-- **Geometry:** `flex: 1; background: var(--panel-bg); border-radius: 16px; border: 1px solid var(--border-color); padding: 24px; position: relative;`
-- **Header Area:** Title "趋势分析" (`font-size: 16px; font-weight: bold;`) with centered legend inline indicators:
-  - Blue Line: 藻毒素 (µg/L) | Green Line: 水温 (°C) | Purple Line: pH
-- **Triple Y-Axis Configuration:**
-  - **Left Y-Axis (Blue):** Toxin scales from `0` to `5`.
-  - **Right Y-Axis 1 (Green):** Temperature scales from `18` to `30`.
-  - **Right Y-Axis 2 (Purple):** pH scales from `6.0` to `8.5`.
-- **Chart Threshold Lines:**
-  - Horizontal dashed red line at `Toxin = 5` labeled "-- 高风险阈值 (5.0 µg/L)".
-  - Horizontal dashed orange line at `Toxin = 1` labeled "-- 警戒阈值 (1.0 µg/L)".
-- **Data Visualization Details:**
-  - Render 3 intersecting smooth spline curves (Blue, Green, Purple) across dates `05-20` to `05-27`.
-  - Place 3 red alert triangle marker icons (`🔺`) on critical peak values (e.g., around 05-21, 05-23, and 05-25).
+- `display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;`
+- **Card Node Properties:** `background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); padding: 16px; position: relative;`
+  - *Active Selection Rule:* Cards 3, 5, and 6 show a soft blue highlight border (`border: 1px solid var(--card-border-active);`) and a cyan checkmark badge (`✓`) floating exactly at the top-right corner.
+- **Internal Card Layout Structure:**
+  - **Top Split Row:**
+    - *Left block:* Contains custom stylized transparent vector illustrations of the physical monitoring hardware (e.g., buoys, probes).
+    - *Right block (`display: flex; flex-direction: column; gap: 6px;`):*
+      - Title text: Device Name (`font-size: 16px; font-weight: bold; color: var(--text-primary);`)
+      - Status indicator line: Mini dot (`●`) + state text (`在线`, `待机`, or `离线`) following standard status color tokens.
+      - Peripheral hardware icons line: Mini Green/Gray Wi-Fi wave vector + Battery gauge container displaying text payload (e.g., `86%`, `63%`, `--`).
+  - **Bottom Row Metrics Grid (`display: flex; justify-content: space-between; margin-top: 16px; border-top: 1px dashed #F1F5F9; padding-top: 12px;`):**
+    - Splits into 3 data columns: `藻毒素` | `水温` | `pH`
+    - Labels use `color: var(--text-muted); font-size: 12px;`.
+    - Values use `font-size: 16px; font-weight: bold; margin-top: 4px;`.
+- **Specific Card Payloads:**
+  1. **藻华预警浮标-06:** 在线 | 🔋 86% | 藻毒素: `6.35 µg/L` (Red: `var(--status-danger)`) | 水温: `24.8 ℃` | pH: `7.4`
+  2. **入水口探针-02:** 在线 | 🔋 63% | 藻毒素: `1.36 µg/L` (Green: `var(--status-online)`) | 水温: `25.5 ℃` | pH: `7.1`
+  3. **岸线巡检猫-03 (Selected):** 待机 | 🔋 38% | 藻毒素: `0.78 µg/L` (Green) | 水温: `26.1 ℃` | pH: `7.6`
+  4. **湖心浮标-01:** 在线 | 🔋 86% | 藻毒素: `0.42 µg/L` (Green) | 水温: `24.8 ℃` | pH: `7.4`
+  5. **撞水口监测-04 (Selected):** 在线 | 🔋 55% | 藻毒素: `1.05 µg/L` (Green) | 水温: `25.0 ℃` | pH: `7.2`
+  6. **老旧探针-05 (Selected):** 离线 | 🔋 -- | 藻毒素: `-- µg/L` (Muted) | 水温: `-- ℃` | pH: `--`
 
-#### Sub-Node 3B: 传感器对比 (Sensor Comparison) - Right Card
+#### Sub-Node 2C: Bottom Interactive Reorder Zone
 
-- **Geometry:** `width: 400px; background: var(--panel-bg); border-radius: 16px; border: 1px solid var(--border-color); padding: 24px;`
-- **Header Row:** Title "传感器对比" (`font-size: 16px; font-weight: bold;`).
-- **Sub-header Row:** Subtext metrics labels "藻毒素 (µg/L)" and right-aligned "最新值 (单位)".
-- **Data Rows List (`display: flex; flex-direction: column; gap: 16px; margin-top: 16px;`):**
-  1. 🔴 漂华预警-06 | Right-aligned Value: **`6.35`** (`color: var(--status-danger); font-weight: bold; font-size: 18px;`)
-  2. 🟡 入水口探针-02 | Right-aligned Value: **`1.36`** (`color: var(--status-warning); font-weight: bold; font-size: 18px;`)
-  3. 🟢 岸线巡检猫-03 | Right-aligned Value: **`0.78`** (`color: var(--status-normal); font-weight: bold; font-size: 18px;`)
-  4. 🔵 湖心浮标-01 | Right-aligned Value: **`0.42`** (`color: var(--status-info); font-weight: bold; font-size: 18px;`)
-  5. 🟡 排水口监测-04 | Right-aligned Value: **`1.05`** (`color: var(--status-warning); font-weight: bold; font-size: 18px;`)
+- `width: 100%; height: 72px; border: 2px dashed var(--dropzone-dash); background: rgba(0, 132, 255, 0.01); border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px;`
+- Content Text: "🎛️ 拖拽设备卡片可调整顺序" (`color: var(--text-secondary); font-size: 14px; font-weight: 500;`)
 
-### [Node 4] Bottom Content Row (`height: 460px; display: flex; gap: 20px;`)
+### [Node 3] Right Workspace Panel (Add New Device & Radar Scan)
 
-#### Sub-Node 4A: AI 预测 (AI Prediction Chart) - Left Card
-
-- **Geometry:** `flex: 1; background: var(--panel-bg); border-radius: 16px; border: 1px solid var(--border-color); padding: 24px;`
-- **Header Area:** Title "AI 预测（藻毒素浓度）" + Right-aligned dropdown menu selector containing text "预测未来 7 天".
-- **Legend Row:** `● 历史数据` (Solid Blue), `▲ 预测值` (Dashed Blue line with nodes), `■ 置信区间 (95%)` (Light blue shaded rect marker).
-- **Chart Engine Details:**
-  - **X-Axis timeline:** Consecutively displays `05-20` to `06-03`.
-  - **Y-Axis scale:** Left-side single metrics from `0` to `6`.
-  - **Line Structure:** Transition happens around `05-26`. Values before `05-26` use a solid smooth curve (Historical Data). From `05-26` onwards to `06-03`, the line styles switch to a dashed curve with data node points (Predicted Values).
-  - **Confidence Fill Area:** A shaded polygon layer spanning from `05-26` to `06-03` under and above the dashed line trajectory representing the 95% confidence bounds. Fill style: `background: rgba(26, 115, 232, 0.12);`.
-
-#### Sub-Node 4B: 模型指标 (Model Metrics) - Right Card
-
-- **Geometry:** `width: 400px; background: var(--panel-bg); border-radius: 16px; border: 1px solid var(--border-color); padding: 24px; display: flex; flex-direction: column; gap: 24px;`
-- **Card Element 1 (Top Block):**
-  - Label: "模型置信度" (`color: var(--text-muted); font-size: 14px;`)
-  - Large Value: **`87%`** (`font-size: 38px; font-weight: 800; color: var(--chart-toxin-blue); margin-top: 8px;`)
-- **Divider line:** Light horizontal grey separator line.
-- **Card Element 2 (Middle Block):**
-  - Label: "预测区间 (95%)" (`color: var(--text-muted); font-size: 14px;`)
-  - Value Range: **`0.45 - 3.20`** `µg/L` (`font-size: 20px; font-weight: 700; color: var(--text-primary); margin-top: 4px;`)
-- **Card Element 3 (Bottom Block):**
-  - Label: "下一高风险时间" (`color: var(--text-muted); font-size: 14px;`)
-  - Date Value: **`5月29日`** (`font-size: 20px; font-weight: 700; color: var(--text-primary); margin-top: 4px;`)
+- **Geometry:** `background: var(--panel-bg); border-radius: 16px; border: 1px solid var(--border-color); padding: 24px; display: flex; flex-direction: column; justify-content: space-between;`
+- **Layer 3-1: Headers Block**
+  - Title: "添加新设备" (`font-size: 18px; font-weight: bold; color: var(--text-primary);`)
+  - Subtitle: "扫描附近设备" (`font-size: 14px; color: var(--text-secondary); margin-top: 8px;`)
+- **Layer 3-2: Radar Graphic Visualization Center**
+  - Centered container layout. Replicate 4 concentric structural thin vector rings (`stroke: var(--radar-ring); fill: none;`).
+  - Exact Center Target: Deep vibrant blue circular button badge carrying a clean white Bluetooth icon (`⚡`) glowing with a outer concentric dropping shadow radius effect.
+- **Layer 3-3: Discovered Items Section**
+  - Section Title: "已发现设备 (2)" (`font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 16px 0 12px 0;`)
+  - **List Element 1:** `border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;`
+    - Left Label Details: `WaterProbe-7F2A` (`font-size: 14px; font-weight: bold;`) over subtext `RSSI -48 dBm` (`font-size: 12px; color: var(--text-muted);`).
+    - Right Action Button (`蓝牙配对`): `background: var(--primary-blue); color: #FFF; border-radius: 6px; padding: 6px 14px; font-size: 12px; font-weight: bold; border: none;`
+  - **List Element 2:** `border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center;`
+    - Left Label Details: `Buoy-3C91` (`font-size: 14px; font-weight: bold;`) over subtext `RSSI -62 dBm` (`font-size: 12px; color: var(--text-muted);`).
+    - Right Action Button (`WiFi连接`): `background: #FFF; border: 1px solid var(--primary-blue); color: var(--primary-blue); border-radius: 6px; padding: 6px 14px; font-size: 12px; font-weight: bold;`
 
 ## 3. Pencil Design Plugin Compilation Constraints
 
-1. **Isolation of Decorative Elements:** The large vector illustration of the microscope and lab beakers at the bottom-left corner of the content area must be compiled as an absolute-positioned overlay node layer group labeled `[Overlay_Decoration_Microscope]`.
-2. **Chart Spline Accuracy:** Do not render rough charts; calculate smooth control anchors for Bezier curves to capture the perfect waves displayed in both the Trend Analysis and AI Prediction widgets.
-3. **Strict Text Segregation:** Avoid joining data values and text strings into a singular text field block; force separate layer properties for values like `6.35` and units like `µg/L` to support proper font weighting.
+1. **Isolation of Decorative Elements:** * The large vector seaweed illustration at the bottom-left corner of the workspace must be isolated as an absolute-positioned overlay node layer group labeled `[Overlay_Decoration_Seaweed]`.
+   - The lower right-hand chibi anime character holding chemical tubes beside a laboratory flask setup must be assigned to its standalone layer node group labeled `[Overlay_Mascot_LabResearcher]`.
+2. **Explicit Matrix Alignment:** Ensure the device list uses precise grid alignment matching standard flex parameters to preserve perfectly structured column rows across different render targets.
+3. **Strict Icon Splitting:** Ensure all vector elements like battery shapes, wireless signals, and arrow dropdown tags remain as discrete path outlines, avoiding compilation into monolithic flattened text glyph layers.
+
+Generate the final highly accurate `.pen` structured definition output parsing these rules step by step.

@@ -1,0 +1,47 @@
+:root {
+  /* ── 背景 ── */
+  --color-bg: #f8fcff;
+  --color-bg-soft: #f0f7fd;
+  --color-bg-gradient-start: #f8fcff;
+  --color-bg-gradient-mid: #eef6fc;
+  --color-bg-gradient-end: #f4fafd;
+
+  /* ── 面板 / 表面 ── */
+  --color-surface: #ffffff;
+  --color-surface-strong: #ffffff;
+
+  /* ── 边框 ── */
+  --color-border: #dbeaf7;
+  --color-border-strong: #c5ddf2;
+
+  /* ── 主色调 ── */
+  --color-primary: #2d7cff;
+  --color-primary-strong: #1a60e0;
+  --color-primary-light: rgba(45, 124, 255, 0.06);
+
+  /* ── 辅助色 ── */
+  --color-cyan: #34b3d9;
+  --color-mint: #1db954;
+  --color-warning: #ffb400;
+  --color-orange: #ff8a00;
+  --color-danger: #ff3b30;
+
+  /* ── 文字 ── */
+  --color-text: #1a2533;
+  --color-muted: #6b8094;
+
+  /* ── 阴影 ── */
+  --color-card-shadow: rgba(45, 124, 255, 0.04);
+  --color-card-shadow-hover: rgba(45, 124, 255, 0.06);
+
+  /* ── 字体 ── */
+  --font-sans: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, -apple-system, sans-serif;
+
+  /* ── 圆角 ── */
+  --radius-card: 24px;
+  --radius-page: 28px;
+  --radius-btn: 999px;
+  --radius-input: 14px;
+  --radius-badge: 999px;
+  --radius-chart: 20px;
+}

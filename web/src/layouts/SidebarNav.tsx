@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Home, MapPin, BarChart3, Cpu } from 'lucide-react';
+import ImagePlaceholder from '../components/common/ImagePlaceholder';
 
 const NAV_ITEMS = [
   { path: '/', label: '总览', icon: Home },
@@ -12,8 +13,15 @@ export default function SidebarNav() {
   const { pathname } = useLocation();
 
   return (
-    <aside className="relative w-[210px] h-full flex-shrink-0 flex flex-col justify-between overflow-visible box-border">
-      <nav className="flex flex-col gap-[8px] w-full box-border pt-[16px] px-[12px]">
+    <aside
+      className="
+        shrink-0 flex flex-col w-[210px]
+        bg-white/50 backdrop-blur-sm
+        border-r border-border
+      "
+    >
+      {/* Nav items */}
+      <nav className="flex flex-col gap-1.5 px-3 pt-4 flex-1">
         {NAV_ITEMS.map(({ path, label, icon: Icon }) => {
           const active = pathname === path;
           return (
@@ -21,14 +29,14 @@ export default function SidebarNav() {
               key={path}
               to={path}
               className={`
-                flex items-center gap-[10px]
-                h-[48px] px-[16px]
+                flex items-center gap-2.5
+                h-[50px] px-3
                 text-[14px] font-medium
-                transition-all duration-150 cursor-pointer
+                transition-all duration-150
                 ${active
-                  ? 'bg-[rgba(14,165,233,0.08)] border-l-[3px] border-[#0ea5e9] text-[#0ea5e9] font-bold rounded-[0_10px_10px_0] pl-[13px]'
-                  : 'text-[#64748b] hover:bg-[rgba(14,165,233,0.04)] hover:text-[#0f172a] rounded-[0_10px_10px_0] border-l-[3px] border-transparent'}
-              `.trim()}
+                  ? 'border-l-[3px] border-primary bg-primary/8 text-primary rounded-r-[10px] pl-[9px]'
+                  : 'text-muted hover:bg-primary/4 hover:text-text rounded-[10px] border-l-[3px] border-transparent'}
+              `}
             >
               <Icon size={18} />
               {label}
@@ -37,11 +45,55 @@ export default function SidebarNav() {
         })}
       </nav>
 
-      {/* Bottom mascot — absolute anchored at bottom center */}
-      <div className="absolute bottom-[16px] left-1/2 -translate-x-1/2 w-[160px] h-[220px] z-20 overflow-visible pointer-events-none box-border">
-        <div className="w-full h-full bg-[#e6f2ff] border border-dashed border-[#0ea5e9] rounded-[16px] flex flex-col items-center justify-center text-[10px] text-sky-600 font-bold shadow-sm">
-          <span>大吉祥物</span>
-          <span>160×220</span>
+      {/* Bottom decoration zone — overflow-visible for mascot overflow */}
+      <div className="relative shrink-0 flex flex-col items-center pb-6 overflow-visible">
+        {/* Bubble decorations */}
+        {[16, 14, 18, 12].map((size, i) => (
+          <div
+            key={`sidebar-bubble-${i}`}
+            className="absolute rounded-full pointer-events-none"
+            style={{
+              width: size,
+              height: size,
+              backgroundColor: 'rgba(14, 165, 233, 0.2)',
+              bottom: `${60 + i * 28}px`,
+              left: `${20 + (i % 3) * 24}px`,
+              opacity: 0.3,
+            }}
+          />
+        ))}
+
+        {/* Large mascot placeholder */}
+        <div className="relative z-20">
+          <ImagePlaceholder
+            name="吉祥物"
+            width={160}
+            height={220}
+            className="rounded-[16px]"
+          />
+        </div>
+
+        {/* Wave decoration below mascot */}
+        <div className="mt-2" style={{ width: 180, height: 40 }}>
+          <svg
+            viewBox="0 0 180 40"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-full h-full opacity-30"
+          >
+            <path
+              d="M0 20 Q22 8 45 20 T90 20 T135 20 T180 20"
+              stroke="rgba(14,165,233,0.4)"
+              strokeWidth="2"
+              fill="none"
+            />
+            <path
+              d="M0 28 Q22 16 45 28 T90 28 T135 28 T180 28"
+              stroke="rgba(14,165,233,0.25)"
+              strokeWidth="1.5"
+              fill="none"
+            />
+          </svg>
         </div>
       </div>
     </aside>
