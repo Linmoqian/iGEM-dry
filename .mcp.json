@@ -1,7 +1,17 @@
 {
   "mcpServers": {
+    "chrome-devtools": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "chrome-devtools-mcp@latest",
+        "--browserUrl",
+        "http://127.0.0.1:9222"
+      ],
+      "env": {}
+    },
     "pencil": {
-      "transport": "stdio",
+      "type": "stdio",
       "command": "C:\\Users\\50762\\.pencil\\mcp\\visual_studio_code\\out\\mcp-server-windows-x64.exe",
       "args": ["--app", "visual_studio_code"],
       "env": {}
