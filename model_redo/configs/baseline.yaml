@@ -1,0 +1,35 @@
+baseline:
+  target: mc_lr
+  target_transform: log1p
+  metrics:
+    - mae
+    - rmse
+    - r2
+    - spearman
+    - log_mae
+    - log_rmse
+
+models:
+  - name: dummy_regressor
+    enabled: true
+
+  - name: ridge
+    enabled: true
+
+  - name: elasticnet
+    enabled: true
+
+  - name: random_forest
+    enabled: true
+
+  - name: xgboost
+    enabled: true
+
+  - name: lightgbm
+    enabled: true
+
+rules:
+  forbid_locked_test_for_model_selection: true
+  require_experiment_log: true
+  require_seed: true
+  require_config_snapshot: true

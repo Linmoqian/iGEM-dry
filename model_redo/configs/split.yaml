@@ -1,0 +1,26 @@
+split:
+  random_seed: 42
+  strategies:
+    - name: random_split
+      enabled: true
+      train_ratio: 0.7
+      val_ratio: 0.15
+      test_ratio: 0.15
+
+    - name: time_split
+      enabled: true
+      time_column: date
+      train_ratio: 0.7
+      val_ratio: 0.15
+      test_ratio: 0.15
+
+    - name: site_split
+      enabled: true
+      site_column: site_id
+      train_ratio: 0.7
+      val_ratio: 0.15
+      test_ratio: 0.15
+
+locked_test:
+  enabled: true
+  use_only_for_final_evaluation: true
