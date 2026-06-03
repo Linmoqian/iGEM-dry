@@ -2,6 +2,7 @@
 CLAUDE.md
 AGENTS.md
 .claude/
+.codex/
 .planning/
 
 # Python
@@ -40,6 +41,9 @@ package-lock.json
 .latexmkrc
 docs/PDF/
 manifest.json
+
+# 原始数据（不入库）
+model/data/raw/
 
 # 压缩包
 *.zip
