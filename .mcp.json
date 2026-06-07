@@ -5,6 +5,10 @@
       "command": "C:\\Users\\50762\\.pencil\\mcp\\visual_studio_code\\out\\mcp-server-windows-x64.exe",
       "args": ["--app", "visual_studio_code"],
       "env": {}
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
     }
   }
 }
