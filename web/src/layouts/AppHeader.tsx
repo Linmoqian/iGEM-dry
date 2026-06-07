@@ -1,109 +1,191 @@
-import { NavLink, useLocation } from 'react-router-dom';
-import { Bell, House, MapPin, Activity, LayoutGrid, Download, Calendar, ChevronDown } from 'lucide-react';
+import {
+  AlertTriangle,
+  Bell,
+  CalendarDays,
+  ChevronDown,
+  Clock3,
+  Download,
+  FlaskConical,
+  MapPin,
+  Plus,
+  RefreshCw,
+  Search,
+  UserRound,
+  Wifi,
+  Wind,
+  XCircle,
+} from 'lucide-react';
+import { useLocation } from 'react-router-dom';
+import { materials } from '../data/materials';
 
-const navItems = [
-  { to: '/', label: '总览', icon: House },
-  { to: '/map', label: '地图监视', icon: MapPin },
-  { to: '/data', label: '数据分析', icon: Activity },
-  { to: '/device', label: '设备配对', icon: LayoutGrid },
-];
+function HeaderPill({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  return <div className={`glass-button flex shrink-0 items-center gap-2.5 whitespace-nowrap px-4 text-[16px] text-[#14213b] ${className}`}>{children}</div>;
+}
 
-function DataHeaderFilters() {
+function SearchBox({ placeholder }: { placeholder: string }) {
+  return (
+    <div className="glass-button flex w-[195px] shrink-0 items-center gap-3 px-4 text-[15px] text-[#7b8aa3]">
+      <Search size={21} />
+      <span className="flex-1">{placeholder}</span>
+    </div>
+  );
+}
+
+function NoticeButton({ icon, count }: { icon: React.ReactNode; count?: number }) {
+  return (
+    <button className="icon-button" type="button">
+      {icon}
+      {count ? <span className="badge-dot">{count}</span> : null}
+    </button>
+  );
+}
+
+function UserMenu() {
+  return (
+    <HeaderPill className="h-[48px] w-[128px] gap-2 px-3 text-[14px]">
+      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#dff2ff] text-[#0874ed]">
+        <UserRound size={21} />
+      </span>
+      <span>iGEM Team</span>
+      <ChevronDown size={18} />
+    </HeaderPill>
+  );
+}
+
+function PageActions() {
+  const { pathname } = useLocation();
+
+  if (pathname === '/map') {
+    return (
+      <>
+        <HeaderPill className="w-[160px]">
+          <MapPin size={26} className="text-[#168ce4]" />
+          <span>东湖监测区域</span>
+          <ChevronDown size={18} />
+        </HeaderPill>
+        <HeaderPill className="w-[180px]">
+          <Clock3 size={25} className="text-[#0874ed]" />
+          <span>热力图更新</span>
+          <b className="font-semibold">09:42</b>
+        </HeaderPill>
+        <HeaderPill className="w-[160px]">
+          <Wind size={27} className="text-[#0874ed]" />
+          <span>风场</span>
+          <b className="font-semibold">2.1 m/s</b>
+        </HeaderPill>
+        <SearchBox placeholder="搜索设备 / 坐标" />
+        <div className="flex-1" />
+        <NoticeButton icon={<Bell size={26} />} count={3} />
+        <NoticeButton icon={<AlertTriangle size={29} className="text-[#ef1919]" />} count={2} />
+        <UserMenu />
+      </>
+    );
+  }
+
+  if (pathname === '/data') {
+    return (
+      <>
+        <div className="flex w-[300px] shrink-0 flex-col gap-1">
+          <span className="text-[16px] font-semibold">时间范围</span>
+          <HeaderPill className="h-[50px]">
+            <span>2025-05-20 ~ 2025-05-27</span>
+            <CalendarDays size={20} />
+          </HeaderPill>
+        </div>
+        <div className="flex w-[185px] shrink-0 flex-col gap-1">
+          <span className="text-[16px] font-semibold">设备筛选</span>
+          <HeaderPill className="h-[50px] justify-between">
+            <span>全部设备</span>
+            <ChevronDown size={18} />
+          </HeaderPill>
+        </div>
+        <div className="flex w-[230px] shrink-0 flex-col gap-1">
+          <span className="text-[16px] font-semibold">传感器</span>
+          <HeaderPill className="h-[50px] justify-between">
+            <span>藻毒素 + 水温 + pH</span>
+            <ChevronDown size={18} />
+          </HeaderPill>
+        </div>
+        <div className="flex-1" />
+        <button className="glass-button flex h-[50px] shrink-0 items-center gap-2 px-4 text-[15px] font-semibold" type="button">
+          <Download size={21} />
+          导出数据
+        </button>
+        <NoticeButton icon={<Bell size={26} />} count={3} />
+        <UserMenu />
+      </>
+    );
+  }
+
+  if (pathname === '/device') {
+    return (
+      <>
+        <HeaderPill className="w-[118px] text-[#068b4f]">
+          <Wifi size={26} />
+          <b>在线</b>
+          <b>9</b>
+        </HeaderPill>
+        <HeaderPill className="w-[118px] bg-[#fff4ec] text-[#f97316]">
+          <Clock3 size={25} />
+          <b>待机</b>
+          <b>2</b>
+        </HeaderPill>
+        <HeaderPill className="w-[118px] bg-[#f5f7fb] text-[#4b5563]">
+          <XCircle size={25} />
+          <b>离线</b>
+          <b>3</b>
+        </HeaderPill>
+        <SearchBox placeholder="搜索设备编号" />
+        <button className="flex h-[54px] shrink-0 items-center gap-2 rounded-[10px] bg-[#0874ed] px-5 text-[17px] font-semibold text-white" type="button">
+          <Plus size={27} />
+          添加设备
+        </button>
+        <HeaderPill className="w-[138px]">
+          <span>批量操作</span>
+          <ChevronDown size={18} />
+        </HeaderPill>
+        <div className="flex-1" />
+        <NoticeButton icon={<Bell size={26} />} count={1} />
+        <UserMenu />
+      </>
+    );
+  }
+
   return (
     <>
-      {/* Filter Area */}
-      <div className="flex items-center gap-6">
-        <div className="flex flex-col gap-1">
-          <span className="text-xs text-[#64748B]">时间范围</span>
-          <div className="flex items-center gap-2 h-9 px-3 rounded-lg border border-[#E2E8F0] text-sm text-[#0F172A]">
-            <span>2025-05-20 ~ 2025-05-27</span>
-            <Calendar size={16} className="text-[#64748B]" />
-          </div>
-        </div>
-        <div className="flex flex-col gap-1">
-          <span className="text-xs text-[#64748B]">设备筛选</span>
-          <div className="flex items-center justify-between gap-2 h-9 px-3 rounded-lg border border-[#E2E8F0] text-sm text-[#0F172A]" style={{ width: 140 }}>
-            <span>全部设备</span>
-            <ChevronDown size={16} className="text-[#64748B]" />
-          </div>
-        </div>
-        <div className="flex flex-col gap-1">
-          <span className="text-xs text-[#64748B]">传感器筛选</span>
-          <div className="flex items-center justify-between gap-2 h-9 px-3 rounded-lg border border-[#E2E8F0] text-sm text-[#0F172A]" style={{ width: 180 }}>
-            <span>藻毒素 + 水温 + pH</span>
-            <ChevronDown size={16} className="text-[#64748B]" />
-          </div>
-        </div>
-      </div>
-
-      {/* Spacer */}
+      <HeaderPill className="w-[160px]">
+        <MapPin size={26} />
+        <span>东湖监测区域</span>
+      </HeaderPill>
+      <HeaderPill className="w-[190px]">
+        <RefreshCw size={25} />
+        <span>实时同步</span>
+        <b className="font-semibold">09:42</b>
+      </HeaderPill>
+      <HeaderPill className="w-[170px]">
+        <FlaskConical size={26} />
+        <span>今日采样</span>
+        <b className="font-semibold">14 / 14</b>
+      </HeaderPill>
+      <SearchBox placeholder="搜索设备 / 告警" />
       <div className="flex-1" />
-
-      {/* Export Button */}
-      <button className="flex items-center gap-2 h-9 px-4 rounded-lg bg-white border border-[#E2E8F0] text-sm font-medium text-[#0F172A] hover:bg-[#F8FAFC] transition-colors">
-        <Download size={16} />
-        导出数据
-      </button>
+      <NoticeButton icon={<Bell size={26} />} count={3} />
+      <NoticeButton icon={<Bell size={26} />} count={12} />
+      <UserMenu />
     </>
   );
 }
 
 export default function AppHeader() {
-  const location = useLocation();
-  const isDataPage = location.pathname === '/data';
-
   return (
-    <header className="h-20 bg-white border-b border-[#E2E8F0] flex items-center px-8 gap-6 flex-shrink-0">
-      {/* Brand */}
-      <div className="flex items-center gap-3 flex-shrink-0">
-        <div className="w-10 h-10 rounded-full bg-[#1A73E8] flex items-center justify-center">
-          <div className="w-4 h-4 bg-white rounded-full" />
+    <header className="flex h-[110px] shrink-0 items-center gap-5 border-b border-[#b8dcfb] bg-white/82 px-7">
+      <div className="flex min-w-[410px] shrink-0 items-center gap-4">
+        <img className="h-[68px] w-[68px] object-contain" src={materials.logo} alt="SCAU" />
+        <div className="flex items-center gap-2 whitespace-nowrap text-[28px] font-black tracking-[0.05em] text-[#004236]">
+          <span>水体藻毒素监测平台</span>
         </div>
-        <span className="text-[#0D47A1] font-bold text-[22px]">水体藻毒素监测平台</span>
       </div>
-
-      {isDataPage ? (
-        <DataHeaderFilters />
-      ) : (
-        <>
-          {/* Tabs */}
-          <div className="flex items-center gap-2">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.to === '/'}
-                className={({ isActive }) =>
-                  `flex items-center gap-2 h-10 px-5 rounded-[20px] text-sm font-normal transition-colors ${
-                    isActive
-                      ? 'bg-[#E0F2FE] text-[#1A73E8]'
-                      : 'bg-transparent text-[#475569] hover:bg-[#F4F8FC]'
-                  }`
-                }
-              >
-                <item.icon size={16} />
-                <span>{item.label}</span>
-              </NavLink>
-            ))}
-          </div>
-
-          {/* Spacer */}
-          <div className="flex-1" />
-
-          {/* Right Actions */}
-          <div className="flex items-center gap-4">
-            <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#F4F8FC] transition-colors">
-              <Bell size={20} className="text-[#475569]" />
-            </button>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-[#E6F0FA] flex items-center justify-center text-[#1A73E8] text-xs font-bold">
-                A
-              </div>
-              <span className="text-sm text-[#475569]">Admin</span>
-            </div>
-          </div>
-        </>
-      )}
+      <PageActions />
     </header>
   );
 }

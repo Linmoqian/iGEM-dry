@@ -1,14 +1,14 @@
 import { Outlet } from 'react-router-dom';
-import SidebarNav from './SidebarNav';
 import AppHeader from './AppHeader';
+import SidebarNav from './SidebarNav';
 
 export default function AppShell() {
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: 'linear-gradient(180deg, #F4F8FC 0%, #E6F0FA 100%)' }}>
-      <SidebarNav />
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <AppHeader />
-        <main className="flex-1 overflow-y-auto p-5">
+    <div className="app-frame flex flex-col">
+      <AppHeader />
+      <div className="flex min-h-0 flex-1">
+        <SidebarNav />
+        <main className="min-w-0 flex-1 overflow-hidden px-6 py-5">
           <Outlet />
         </main>
       </div>

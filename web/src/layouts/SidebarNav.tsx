@@ -1,50 +1,46 @@
+import { Activity, House, LayoutGrid, MapPinned } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
-import { House, MapPin, Activity, LayoutGrid } from 'lucide-react';
+import { materials } from '../data/materials';
 
 const navItems = [
   { to: '/', label: '总览', icon: House },
-  { to: '/map', label: '地图监视', icon: MapPin },
+  { to: '/map', label: '地图监视', icon: MapPinned },
   { to: '/data', label: '数据分析', icon: Activity },
   { to: '/device', label: '设备配对', icon: LayoutGrid },
 ];
 
 export default function SidebarNav() {
   return (
-    <aside className="w-[240px] flex flex-col bg-white flex-shrink-0 px-4 py-0 gap-2">
-      {/* Logo */}
-      <div className="flex items-center gap-3 h-20 px-2">
-        <div className="w-9 h-9 rounded-full bg-[#1A73E8] flex items-center justify-center">
-          <div className="w-4 h-4 bg-white rounded-full" />
-        </div>
-        <span className="text-[#1A73E8] font-bold text-sm">OCEAN</span>
-      </div>
+    <aside className="bubble-field relative w-[238px] shrink-0 overflow-hidden border-r border-[#b8dcfb] bg-white/72 px-4 pt-10">
+      <nav className="relative z-10 flex flex-col gap-7">
+        {navItems.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            end={item.to === '/'}
+            className={({ isActive }) =>
+              [
+                'flex h-[62px] items-center gap-4 rounded-[12px] px-5 text-[20px] font-semibold transition',
+                isActive
+                  ? 'border-l-[4px] border-[#0874ed] bg-[#eaf5ff] text-[#0874ed] shadow-[0_8px_16px_rgba(28,121,222,0.08)]'
+                  : 'text-[#1c2c4a] hover:bg-[#f0f8ff]',
+              ].join(' ')
+            }
+          >
+            <item.icon size={30} strokeWidth={2.2} />
+            <span>{item.label}</span>
+          </NavLink>
+        ))}
+      </nav>
 
-      {/* Nav Items */}
-      {navItems.map((item) => (
-        <NavLink
-          key={item.to}
-          to={item.to}
-          end={item.to === '/'}
-          className={({ isActive }) =>
-            `flex items-center gap-3 h-12 px-4 rounded-lg text-sm font-normal transition-colors ${
-              isActive
-                ? 'bg-[#E6F0FA] text-[#1A73E8]'
-                : 'bg-transparent text-[#475569] hover:bg-[#F4F8FC]'
-            }`
-          }
-        >
-          <item.icon size={20} />
-          <span>{item.label}</span>
-        </NavLink>
-      ))}
-
-      {/* Spacer */}
-      <div className="flex-1" />
-
-      {/* Mascot Placeholder */}
-      <div className="h-[220px] border border-dashed border-[#E2E8F0] rounded-lg flex items-center justify-center text-[#64748B] text-xs mb-4">
-        [Mascot Character Asset]
-      </div>
+      <img
+        className="pointer-events-none absolute bottom-1 left-5 z-10 w-[190px] object-contain"
+        src={materials.mascotScientist}
+        alt=""
+      />
+      <div className="pointer-events-none absolute -bottom-9 left-0 h-[120px] w-full bg-[radial-gradient(ellipse_at_center,_rgba(113,205,244,0.28),_transparent_70%)]" />
+      <div className="pointer-events-none absolute bottom-2 left-6 h-[150px] w-[36px] rounded-t-full bg-[#91e2d4]/45 blur-[1px]" />
+      <div className="pointer-events-none absolute bottom-0 right-8 h-[118px] w-[30px] rounded-t-full bg-[#8de4df]/50 blur-[1px]" />
     </aside>
   );
 }

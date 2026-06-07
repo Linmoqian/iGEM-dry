@@ -1,247 +1,205 @@
-import { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import { Navigation, Droplets, Thermometer, Beaker, Battery, Signal, Clock, MapPin, ChevronRight } from 'lucide-react';
-import { demoReadings, demoLake, getRiskLevel, getRiskLabel, getRiskColor, getSignalLabel, getStatusText, demoDeviceHistory } from '../data/demoReadings';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import type { DeviceReading, DeviceHistoryPoint } from '../types/domain';
+import { useState } from 'react';
+import { BarChart3, Battery, Beaker, Crosshair, Droplets, MapPin, RadioTower, Signal, Thermometer, UserRound } from 'lucide-react';
+import { demoReadings, getRiskColor, getRiskLabel, getStatusText } from '../data/demoReadings';
+import { materials } from '../data/materials';
+import type { DeviceReading } from '../types/domain';
 
-function MapController({ selectedId }: { selectedId: string | null }) {
-  const map = useMap();
-  useEffect(() => {
-    setTimeout(() => map.invalidateSize(), 200);
-  }, [selectedId, map]);
-  return null;
-}
+const markerPositions: Record<string, { left: number; top: number }> = {
+  'aq-006': { left: 62, top: 56 },
+  'aq-002': { left: 44, top: 47 },
+  'aq-003': { left: 26, top: 46 },
+  'aq-001': { left: 31, top: 61 },
+  'aq-004': { left: 72, top: 51 },
+  'aq-007': { left: 55, top: 74 },
+  'aq-008': { left: 36, top: 35 },
+  'aq-010': { left: 78, top: 35 },
+  'aq-011': { left: 18, top: 61 },
+  'aq-012': { left: 51, top: 34 },
+  'aq-013': { left: 18, top: 76 },
+};
 
-function RiskLegend() {
-  const items = [
-    { color: '#22C55E', label: '正常 < 0.5 µg/L' },
-    { color: '#F59E0B', label: '关注 0.5 - 1.0 µg/L' },
-    { color: '#FF7A00', label: '警戒 1.0 - 5.0 µg/L' },
-    { color: '#EF4444', label: '高风险 > 5.0 µg/L' },
-  ];
+function MapLabel({ children, left, top }: { children: string; left: number; top: number }) {
   return (
-    <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl h-[70px] flex items-center gap-8 px-6 z-[1000] shadow-sm">
-      <span className="text-sm font-bold text-[#0F172A]">风险图例</span>
-      {items.map((item) => (
-        <div key={item.label} className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
-          <span className="text-[13px] text-[#475569]">{item.label}</span>
-        </div>
-      ))}
-    </div>
+    <span className="absolute rounded bg-white/40 px-1 text-[18px] font-semibold text-[#53657a] drop-shadow-sm" style={{ left: `${left}%`, top: `${top}%` }}>
+      {children}
+    </span>
   );
 }
 
-function DeviceMetricChart({ deviceId }: { deviceId: string }) {
-  const history = demoDeviceHistory[deviceId] ?? [];
-  const data = history.map((p: DeviceHistoryPoint) => ({
-    time: p.time.slice(11, 16),
-    toxin: p.toxinUgL,
-    temp: p.waterTempC,
-    ph: p.ph,
-  }));
+function DeviceMarker({ device, selected, onClick }: { device: DeviceReading; selected: boolean; onClick: () => void }) {
+  const position = markerPositions[device.id];
+  if (!position || device.status === 'offline') return null;
+  const color = getRiskColor(device.toxinUgL);
 
   return (
-    <div className="h-48">
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
-          <XAxis dataKey="time" tick={{ fontSize: 9, fill: '#64748B' }} interval={3} />
-          <YAxis yAxisId="left" tick={{ fontSize: 9, fill: '#64748B' }} />
-          <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 9, fill: '#64748B' }} />
-          <Tooltip contentStyle={{ borderRadius: 8, fontSize: 11, border: '1px solid #E2E8F0' }} />
-          <Line yAxisId="left" type="monotone" dataKey="toxin" stroke="#1A73E8" strokeWidth={2} dot={false} />
-          <Line yAxisId="right" type="monotone" dataKey="temp" stroke="#10B981" strokeWidth={2} dot={false} />
-          <Line yAxisId="right" type="monotone" dataKey="ph" stroke="#8B5CF6" strokeWidth={1.5} dot={false} />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
+    <button
+      className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
+      style={{ left: `${position.left}%`, top: `${position.top}%` }}
+      type="button"
+      onClick={onClick}
+      title={device.name}
+    >
+      <span className="relative flex h-[66px] w-[54px] items-start justify-center">
+        <span
+          className="absolute bottom-[7px] h-[12px] w-[32px] rounded-full opacity-70"
+          style={{ background: selected ? color : '#143a55' }}
+        />
+        <span
+          className="flex h-[52px] w-[42px] items-center justify-center rounded-[22px_22px_24px_24px] border-[4px] border-white text-white shadow-[0_8px_18px_rgba(16,55,95,0.28)]"
+          style={{ background: color, outline: selected ? `4px solid ${color}55` : 'none' }}
+        >
+          <Beaker size={24} />
+        </span>
+        <span className="absolute bottom-[11px] h-[16px] w-[16px] rotate-45 border-b-[4px] border-r-[4px] border-white" style={{ background: color }} />
+      </span>
+    </button>
+  );
+}
+
+function MapCanvas({ selected, onSelect }: { selected: DeviceReading; onSelect: (device: DeviceReading) => void }) {
+  return (
+    <section className="aqua-panel relative flex-1 overflow-hidden p-3">
+      <div className="relative h-full overflow-hidden rounded-[12px] border border-[#c7e0f6] bg-[#c4eefd]">
+        <div className="absolute inset-0 bg-[linear-gradient(22deg,rgba(255,255,255,.55)_1px,transparent_1px),linear-gradient(112deg,rgba(255,255,255,.5)_1px,transparent_1px)] bg-[length:86px_86px,110px_110px] opacity-70" />
+        <div className="absolute -left-[6%] top-[5%] h-[88%] w-[34%] rotate-[-10deg] rounded-[45%] bg-[#f7eddc]/80 shadow-[0_0_0_16px_rgba(255,255,255,.16)]" />
+        <div className="absolute right-[-10%] top-[7%] h-[82%] w-[37%] rotate-[12deg] rounded-[45%] bg-[#dfeccb]/85 shadow-[0_0_0_18px_rgba(255,255,255,.16)]" />
+        <div className="absolute bottom-[-15%] left-[10%] h-[34%] w-[70%] rounded-[50%] bg-[#dff1cf]/70" />
+        <div className="absolute inset-[2%] rounded-[48%] bg-[#7bcff2]/55" />
+        <div className="absolute left-[18%] top-[16%] h-[72%] w-[64%] rounded-[48%] bg-[#83daf4]/70 blur-[1px]" />
+        <div className="absolute left-[31%] top-[22%] h-[55%] w-[48%] rounded-[50%] bg-[radial-gradient(circle_at_48%_45%,rgba(239,25,25,.72)_0,rgba(255,107,70,.68)_25%,rgba(255,224,87,.62)_43%,rgba(154,231,206,.46)_61%,rgba(124,213,246,.18)_78%,transparent_100%)] blur-[12px]" />
+        <div className="absolute left-[36%] top-[30%] h-[42%] w-[36%] rounded-[50%] bg-[radial-gradient(circle,rgba(239,25,25,.45),rgba(255,190,64,.32)_42%,transparent_75%)] blur-[22px]" />
+
+        <MapLabel left={8} top={17}>东湖西路</MapLabel>
+        <MapLabel left={34} top={11}>湖光湾区</MapLabel>
+        <MapLabel left={76} top={39}>东湖生态旅游风景区</MapLabel>
+        <MapLabel left={80} top={80}>落雁景区</MapLabel>
+        <MapLabel left={14} top={84}>楚风园</MapLabel>
+
+        <div className="absolute left-5 top-5 z-30 flex flex-col overflow-hidden rounded-[10px] bg-white/90 shadow">
+          {['+', '−'].map((item) => (
+            <button key={item} className="h-12 w-12 border-b border-[#d7e7f4] text-[28px] font-semibold last:border-0" type="button">
+              {item}
+            </button>
+          ))}
+          <button className="flex h-12 w-12 items-center justify-center" type="button">
+            <Crosshair size={24} />
+          </button>
+        </div>
+
+        <div className="absolute left-[42%] top-8 z-30 flex gap-4">
+          <button className="flex h-[55px] items-center gap-3 rounded-[16px] bg-white/90 px-8 text-[20px] font-semibold shadow" type="button">
+            <RadioTower size={24} />
+            设备图层
+          </button>
+          <button className="flex h-[55px] items-center gap-3 rounded-[16px] bg-white/95 px-8 text-[20px] font-semibold text-[#0874ed] shadow" type="button">
+            <Droplets size={24} />
+            热力图层
+          </button>
+        </div>
+
+        {demoReadings.map((device) => (
+          <DeviceMarker key={device.id} device={device} selected={selected.id === device.id} onClick={() => onSelect(device)} />
+        ))}
+
+        <div className="absolute bottom-8 left-7 z-30 flex h-[86px] items-center gap-10 rounded-[4px] bg-white/92 px-8 shadow-[0_8px_24px_rgba(49,103,157,.15)]">
+          <b className="text-[18px]">风险图例 <span className="font-normal text-[#344054]">（藻毒素浓度 μg/L）</span></b>
+          {[
+            ['#059669', '正常  < 0.5'],
+            ['#f5c400', '关注  0.5 - 1.0'],
+            ['#f97316', '警戒  1.0 - 5.0'],
+            ['#ef1919', '高风险  > 5.0'],
+          ].map(([color, label]) => (
+            <span key={label} className="flex items-center gap-3 text-[17px]">
+              <span className="h-5 w-5 rounded-full" style={{ background: color }} />
+              {label}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SelectedDevicePanel({ device }: { device: DeviceReading }) {
+  return (
+    <aside className="aqua-panel relative w-[420px] shrink-0 overflow-hidden px-6 py-6">
+      <img className="pointer-events-none absolute -bottom-7 right-0 w-[190px] opacity-85" src={materials.mascotHero} alt="" />
+      <div className="relative z-10">
+        <p className="mb-4 text-[18px] font-semibold text-[#344054]">选中设备</p>
+        <div className="flex items-center gap-3">
+          <h1 className="text-[25px] font-black">{device.name}</h1>
+          <span className="h-3 w-3 rounded-full" style={{ backgroundColor: getRiskColor(device.toxinUgL) }} />
+          <b className="text-[17px]" style={{ color: getRiskColor(device.toxinUgL) }}>
+            {getRiskLabel(device.toxinUgL)}
+          </b>
+        </div>
+        <div className="mt-4 flex items-center gap-2 text-[17px] font-semibold text-[#078b4f]">
+          <span className="h-3 w-3 rounded-full bg-[#078b4f]" />
+          {getStatusText(device.status)}
+        </div>
+
+        <div className="aqua-panel mt-6 px-6 py-6 shadow-none">
+          <span className="text-[17px] text-[#344054]">藻毒素浓度</span>
+          <div className="mt-4 flex items-end gap-3">
+            <b className="text-[48px] leading-none" style={{ color: getRiskColor(device.toxinUgL) }}>
+              {device.toxinUgL.toFixed(2)}
+            </b>
+            <span className="pb-1 text-[20px]">μg/L</span>
+          </div>
+          <div className="mt-6 flex justify-between text-[16px]">
+            <span>更新时间</span>
+            <span>{device.updatedAt}</span>
+          </div>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-4">
+          {[
+            { icon: Battery, label: '电量', value: `${device.batteryPercent} %`, color: '#078b4f' },
+            { icon: Signal, label: '信号强度', value: `${device.signalDbm} dBm`, color: '#078b4f' },
+            { icon: Thermometer, label: '水温', value: `${device.waterTempC.toFixed(1)} °C`, color: '#0874ed' },
+            { icon: Beaker, label: 'pH', value: device.ph.toFixed(1), color: '#0874ed' },
+          ].map((item) => (
+            <div key={item.label} className="aqua-panel flex h-[105px] flex-col justify-center gap-2 px-5 shadow-none">
+              <span className="flex items-center gap-3 text-[17px]">
+                <item.icon size={22} style={{ color: item.color }} />
+                {item.label}
+              </span>
+              <b className="text-[25px]">{item.value}</b>
+            </div>
+          ))}
+        </div>
+
+        <div className="aqua-panel mt-5 flex flex-col gap-4 px-5 py-4 text-[16px] shadow-none">
+          <div className="flex justify-between">
+            <span className="flex items-center gap-2"><UserRound size={19} />位置</span>
+            <span>{device.locationLabel}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="flex items-center gap-2"><Droplets size={19} />设备类型</span>
+            <span>预警浮标</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="flex items-center gap-2"><MapPin size={19} />备注</span>
+            <span>东湖湖心浮标点</span>
+          </div>
+        </div>
+
+        <button className="mt-7 flex h-[58px] w-[260px] items-center justify-center gap-3 rounded-[10px] bg-[#0874ed] text-[20px] font-bold text-white" type="button">
+          <BarChart3 size={24} />
+          查看历史数据
+        </button>
+      </div>
+    </aside>
   );
 }
 
 export default function MapMonitorPage() {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const selectedDevice = selectedId ? demoReadings.find((r) => r.id === selectedId) ?? null : null;
-
-  const onlineDevices = demoReadings.filter((r) => r.status !== 'offline');
+  const [selected, setSelected] = useState<DeviceReading>(demoReadings[0]);
 
   return (
-    <div className="flex gap-5 h-full">
-      {/* Map Container */}
-      <div className="flex-1 relative rounded-2xl overflow-hidden border border-[#E2E8F0]">
-        <MapContainer
-          center={demoLake.center}
-          zoom={13}
-          minZoom={11}
-          maxZoom={17}
-          style={{ width: '100%', height: '100%' }}
-          zoomControl={false}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          <MapController selectedId={selectedId} />
-          {onlineDevices.map((device) => {
-            const risk = getRiskLevel(device.toxinUgL);
-            const color = getRiskColor(device.toxinUgL);
-            const isSelected = selectedId === device.id;
-            const radius = isSelected ? 10 : risk === 'critical' ? 8 : 6;
-            return (
-              <CircleMarker
-                key={device.id}
-                center={[device.lat, device.lng]}
-                radius={radius}
-                pathOptions={{
-                  fillColor: color,
-                  color: isSelected ? '#0F172A' : '#FFFFFF',
-                  weight: isSelected ? 3 : 1.5,
-                  fillOpacity: 0.85,
-                }}
-                eventHandlers={{ click: () => setSelectedId(device.id) }}
-              >
-                <Popup>
-                  <div className="text-sm">
-                    <strong>{device.name}</strong><br />
-                    毒素: {device.toxinUgL.toFixed(2)} µg/L<br />
-                    风险: {getRiskLabel(device.toxinUgL)}
-                  </div>
-                </Popup>
-              </CircleMarker>
-            );
-          })}
-        </MapContainer>
-
-        {/* Zoom Controls */}
-        <div className="absolute top-4 left-4 z-[1000] flex flex-col bg-white rounded-lg shadow-sm">
-          <button className="w-10 h-10 flex items-center justify-center text-lg font-bold text-[#475569] hover:bg-[#F4F8FC] border-b border-[#E2E8F0]"
-            onClick={() => {
-              const mapEl = document.querySelector('.leaflet-container') as any;
-              if (mapEl?._leaflet_map) mapEl._leaflet_map.zoomIn();
-            }}>+</button>
-          <button className="w-10 h-10 flex items-center justify-center text-lg font-bold text-[#475569] hover:bg-[#F4F8FC]"
-            onClick={() => {
-              const mapEl = document.querySelector('.leaflet-container') as any;
-              if (mapEl?._leaflet_map) mapEl._leaflet_map.zoomOut();
-            }}>-</button>
-        </div>
-
-        <RiskLegend />
-      </div>
-
-      {/* Inspector Panel */}
-      <div className="w-[440px] bg-white rounded-2xl border border-[#E2E8F0] p-6 flex flex-col gap-4 overflow-y-auto">
-        {selectedDevice ? (
-          <>
-            <div className="flex flex-col gap-1">
-              <h2 className="text-lg font-bold text-[#0F172A]">{selectedDevice.name}</h2>
-              <div className="flex items-center gap-2">
-                <span className="text-xs px-2 py-0.5 rounded-full" style={{
-                  backgroundColor: getRiskColor(selectedDevice.toxinUgL) + '1A',
-                  color: getRiskColor(selectedDevice.toxinUgL),
-                }}>
-                  {getRiskLabel(selectedDevice.toxinUgL)}
-                </span>
-                <span className="text-xs text-[#64748B]">{getStatusText(selectedDevice.status)}</span>
-              </div>
-            </div>
-
-            {/* Core Metric */}
-            <div className="flex items-center justify-between bg-[#F8FAFC] rounded-xl p-4">
-              <div className="flex flex-col">
-                <span className="text-xs text-[#64748B]">藻毒素浓度</span>
-                <span className="text-[28px] font-bold" style={{ color: getRiskColor(selectedDevice.toxinUgL) }}>
-                  {selectedDevice.toxinUgL.toFixed(2)}
-                </span>
-                <span className="text-xs text-[#64748B]">µg/L</span>
-              </div>
-              <Droplets size={40} className="text-[#1A73E8] opacity-20" />
-            </div>
-
-            {/* Grid Metrics */}
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { label: '水温', value: `${selectedDevice.waterTempC.toFixed(1)} ℃`, icon: Thermometer, color: '#10B981' },
-                { label: 'pH', value: selectedDevice.ph.toFixed(1), icon: Beaker, color: '#8B5CF6' },
-                { label: '电量', value: `${selectedDevice.batteryPercent}%`, icon: Battery, color: '#22C55E' },
-                { label: '信号', value: `${selectedDevice.signalDbm} dBm`, icon: Signal, color: '#06B6D4' },
-              ].map((m) => (
-                <div key={m.label} className="flex items-center gap-3 bg-[#F8FAFC] rounded-xl p-3">
-                  <m.icon size={20} style={{ color: m.color }} />
-                  <div className="flex flex-col">
-                    <span className="text-[11px] text-[#64748B]">{m.label}</span>
-                    <span className="text-sm font-bold text-[#0F172A]">{m.value}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Chart */}
-            <DeviceMetricChart deviceId={selectedDevice.id} />
-
-            {/* Metadata */}
-            <div className="flex flex-col gap-2 pt-5 border-t border-[#F1F5F9]">
-              <div className="flex justify-between text-sm">
-                <span className="text-[#64748B]">位置</span>
-                <span className="text-[#0F172A]">{selectedDevice.locationLabel}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-[#64748B]">最后更新</span>
-                <span className="text-[#0F172A]">{selectedDevice.updatedAt}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-[#64748B]">连接方式</span>
-                <span className="text-[#0F172A]">{selectedDevice.connectionType === 'wifi' ? 'WiFi' : selectedDevice.connectionType === 'bluetooth' ? '蓝牙' : '无'}</span>
-              </div>
-            </div>
-
-            <button className="w-full h-12 bg-[#1A73E8] text-white rounded-xl font-medium hover:bg-[#1557B0] transition-colors mt-auto">
-              查看详细数据
-            </button>
-          </>
-        ) : (
-          <>
-            <h2 className="text-lg font-bold text-[#0F172A]">{demoLake.name}</h2>
-            <p className="text-sm text-[#64748B] leading-relaxed">{demoLake.description}</p>
-
-            <div className="flex items-center justify-between bg-[#F8FAFC] rounded-xl p-4">
-              <div className="flex flex-col">
-                <span className="text-xs text-[#64748B]">在线设备</span>
-                <span className="text-[28px] font-bold text-[#22C55E]">
-                  {demoReadings.filter(r => r.status === 'online').length}
-                </span>
-                <span className="text-xs text-[#64748B]">/ {demoReadings.length} 台</span>
-              </div>
-              <Navigation size={40} className="text-[#1A73E8] opacity-20" />
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <h4 className="text-sm font-bold text-[#0F172A]">监测节点</h4>
-              {demoReadings.filter(r => r.status !== 'offline').slice(0, 8).map((device) => (
-                <button
-                  key={device.id}
-                  onClick={() => setSelectedId(device.id)}
-                  className="flex items-center justify-between p-3 rounded-xl bg-[#F8FAFC] hover:bg-[#E6F0FA] transition-colors text-left"
-                >
-                  <div className="flex items-center gap-3">
-                    <MapPin size={16} style={{ color: getRiskColor(device.toxinUgL) }} />
-                    <span className="text-sm text-[#0F172A]">{device.name}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium" style={{ color: getRiskColor(device.toxinUgL) }}>
-                      {device.toxinUgL.toFixed(2)}
-                    </span>
-                    <ChevronRight size={14} className="text-[#64748B]" />
-                  </div>
-                </button>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
+    <div className="flex h-full gap-5">
+      <MapCanvas selected={selected} onSelect={setSelected} />
+      <SelectedDevicePanel device={selected} />
     </div>
   );
 }
