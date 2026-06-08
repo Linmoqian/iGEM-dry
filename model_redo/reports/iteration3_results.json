@@ -1,0 +1,278 @@
+[
+  {
+    "experiment": "EXP-012",
+    "label": "Train HABs → Test Erie",
+    "metrics": [
+      {
+        "task": "Ridge",
+        "rmse_log": 0.4086,
+        "mae_log": 0.337,
+        "r2": 0.0583,
+        "spearman": 0.5361,
+        "wf2_pct": 24.3,
+        "n_samples": 531
+      },
+      {
+        "task": "RF",
+        "rmse_log": 0.4153,
+        "mae_log": 0.3612,
+        "r2": 0.0269,
+        "spearman": 0.2567,
+        "wf2_pct": 26.0,
+        "n_samples": 531
+      },
+      {
+        "task": "XGB",
+        "rmse_log": 0.4449,
+        "mae_log": 0.3941,
+        "r2": -0.1165,
+        "spearman": 0.1166,
+        "wf2_pct": 24.7,
+        "n_samples": 531
+      },
+      {
+        "task": "LGBM",
+        "rmse_log": 0.4225,
+        "mae_log": 0.3626,
+        "r2": -0.0068,
+        "spearman": 0.1758,
+        "wf2_pct": 25.4,
+        "n_samples": 531
+      }
+    ]
+  },
+  {
+    "experiment": "EXP-013",
+    "label": "Train Erie → Test HABs",
+    "metrics": [
+      {
+        "task": "Ridge",
+        "rmse_log": 3130.1722,
+        "mae_log": 929.1094,
+        "r2": -19206121.1443,
+        "spearman": 0.1882,
+        "wf2_pct": 0.4,
+        "n_samples": 248
+      },
+      {
+        "task": "RF",
+        "rmse_log": 2.1589,
+        "mae_log": 2.0625,
+        "r2": -8.1363,
+        "spearman": 0.2927,
+        "wf2_pct": 4.4,
+        "n_samples": 248
+      },
+      {
+        "task": "XGB",
+        "rmse_log": 1.6688,
+        "mae_log": 1.5602,
+        "r2": -4.4589,
+        "spearman": 0.228,
+        "wf2_pct": 6.5,
+        "n_samples": 248
+      },
+      {
+        "task": "LGBM",
+        "rmse_log": 1.9131,
+        "mae_log": 1.7912,
+        "r2": -6.174,
+        "spearman": 0.1973,
+        "wf2_pct": 6.5,
+        "n_samples": 248
+      }
+    ]
+  },
+  {
+    "experiment": "EXP-014",
+    "label": "Combined Erie+HABs (all test)",
+    "metrics": [
+      {
+        "task": "Ridge",
+        "rmse_log": 0.5423,
+        "mae_log": 0.4007,
+        "r2": 0.0181,
+        "spearman": 0.4773,
+        "wf2_pct": 25.9,
+        "n_samples": 779
+      },
+      {
+        "task": "RF",
+        "rmse_log": 0.4856,
+        "mae_log": 0.3094,
+        "r2": 0.2125,
+        "spearman": 0.6557,
+        "wf2_pct": 44.2,
+        "n_samples": 779
+      },
+      {
+        "task": "XGB",
+        "rmse_log": 0.5272,
+        "mae_log": 0.334,
+        "r2": 0.0718,
+        "spearman": 0.5922,
+        "wf2_pct": 45.3,
+        "n_samples": 779
+      },
+      {
+        "task": "LGBM",
+        "rmse_log": 0.5307,
+        "mae_log": 0.3351,
+        "r2": 0.0594,
+        "spearman": 0.61,
+        "wf2_pct": 43.1,
+        "n_samples": 779
+      }
+    ]
+  },
+  {
+    "experiment": "EXP-014b",
+    "label": "Combined train → Erie test",
+    "metrics": [
+      {
+        "task": "Ridge",
+        "rmse_log": 0.4203,
+        "mae_log": 0.3587,
+        "r2": 0.0034,
+        "spearman": 0.5871,
+        "wf2_pct": 24.7,
+        "n_samples": 531
+      },
+      {
+        "task": "RF",
+        "rmse_log": 0.3548,
+        "mae_log": 0.2396,
+        "r2": 0.2899,
+        "spearman": 0.6811,
+        "wf2_pct": 48.8,
+        "n_samples": 531
+      },
+      {
+        "task": "XGB",
+        "rmse_log": 0.4112,
+        "mae_log": 0.2713,
+        "r2": 0.0461,
+        "spearman": 0.6223,
+        "wf2_pct": 48.6,
+        "n_samples": 531
+      },
+      {
+        "task": "LGBM",
+        "rmse_log": 0.4341,
+        "mae_log": 0.2746,
+        "r2": -0.0628,
+        "spearman": 0.6442,
+        "wf2_pct": 48.4,
+        "n_samples": 531
+      }
+    ]
+  },
+  {
+    "experiment": "EXP-014c",
+    "label": "Combined train → HABs test",
+    "metrics": [
+      {
+        "task": "Ridge",
+        "rmse_log": 0.7385,
+        "mae_log": 0.4906,
+        "r2": -0.069,
+        "spearman": 0.3285,
+        "wf2_pct": 28.6,
+        "n_samples": 248
+      },
+      {
+        "task": "RF",
+        "rmse_log": 0.6865,
+        "mae_log": 0.4588,
+        "r2": 0.0762,
+        "spearman": 0.3947,
+        "wf2_pct": 34.3,
+        "n_samples": 248
+      },
+      {
+        "task": "XGB",
+        "rmse_log": 0.7149,
+        "mae_log": 0.4683,
+        "r2": -0.0017,
+        "spearman": 0.3818,
+        "wf2_pct": 38.3,
+        "n_samples": 248
+      },
+      {
+        "task": "LGBM",
+        "rmse_log": 0.6938,
+        "mae_log": 0.4646,
+        "r2": 0.0565,
+        "spearman": 0.3552,
+        "wf2_pct": 31.9,
+        "n_samples": 248
+      }
+    ]
+  },
+  {
+    "experiment": "EXP-015",
+    "label": "Erie 2013-2019 → 2020-2024",
+    "metrics": [
+      {
+        "task": "Ridge",
+        "rmse_log": 0.3133,
+        "mae_log": 0.2493,
+        "r2": 0.37,
+        "spearman": 0.709,
+        "wf2_pct": 34.1,
+        "n_samples": 870
+      },
+      {
+        "task": "RF",
+        "rmse_log": 0.2956,
+        "mae_log": 0.1834,
+        "r2": 0.4392,
+        "spearman": 0.76,
+        "wf2_pct": 62.3,
+        "n_samples": 870
+      },
+      {
+        "task": "XGB",
+        "rmse_log": 0.3061,
+        "mae_log": 0.1941,
+        "r2": 0.3987,
+        "spearman": 0.7191,
+        "wf2_pct": 56.0,
+        "n_samples": 870
+      }
+    ]
+  },
+  {
+    "experiment": "EXP-015b",
+    "label": "Erie 2020-2024 → 2013-2019",
+    "metrics": [
+      {
+        "task": "Ridge",
+        "rmse_log": 0.5384,
+        "mae_log": 0.3322,
+        "r2": 0.3721,
+        "spearman": 0.755,
+        "wf2_pct": 36.4,
+        "n_samples": 1789
+      },
+      {
+        "task": "RF",
+        "rmse_log": 0.5499,
+        "mae_log": 0.3163,
+        "r2": 0.3451,
+        "spearman": 0.7585,
+        "wf2_pct": 48.8,
+        "n_samples": 1789
+      },
+      {
+        "task": "XGB",
+        "rmse_log": 0.537,
+        "mae_log": 0.3099,
+        "r2": 0.3753,
+        "spearman": 0.7633,
+        "wf2_pct": 48.5,
+        "n_samples": 1789
+      }
+    ]
+  }
+]
