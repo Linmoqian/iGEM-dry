@@ -1,0 +1,17 @@
+export const materials = {
+  logo: new URL('../../materials/logo/logo_1.png', import.meta.url).href,
+  logoWide: new URL('../../materials/logo/logo_2.png', import.meta.url).href,
+  mascotHero: new URL('../../materials/mascot/mascot_1.jpeg', import.meta.url).href,
+  mascotScientist: new URL('../../materials/other/other_5.png', import.meta.url).href,
+  mascotLaptop: new URL('../../materials/other/other_8.png', import.meta.url).href,
+  mascotAlert: new URL('../../materials/other/other_2.png', import.meta.url).href,
+  waterAccent: new URL('../../materials/other/other_7.png', import.meta.url).href,
+  bubbles: new URL('../../materials/other/other_1.png', import.meta.url).href,
+  bioDecor: new URL('../../materials/other/other_6.png', import.meta.url).href,
+  deviceBuoy: new URL('../../materials/icon/icon_1.png', import.meta.url).href,
+  deviceProbe: new URL('../../materials/icon/icon_2.png', import.meta.url).href,
+  deviceAnchor: new URL('../../materials/icon/icon_3.png', import.meta.url).href,
+  deviceBeacon: new URL('../../materials/icon/icon_4.png', import.meta.url).href,
+  deviceTube: new URL('../../materials/icon/icon_5.png', import.meta.url).href,
+  deviceOld: new URL('../../materials/icon/icon_6.png', import.meta.url).href,
+};
