@@ -17,11 +17,19 @@ Thumbs.db
 
 # Raw data and large generated files
 data/raw/
+data/external_raw/
 data/interim/
 data/cleaned/*.parquet
 data/cleaned/*.feather
 data/cleaned/*.pkl
 data/cleaned/*.pickle
+*.csv
+*.xlsx
+*.xls
+*.zip
+*.tar
+*.gz
+*.7z
 
 # Model outputs
 runs/

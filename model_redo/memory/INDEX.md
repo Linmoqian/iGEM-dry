@@ -2,61 +2,62 @@
 
 ## 当前阶段
 
-阶段 0：旧模型审计 — **已完成，待 GPT 审查**。
+阶段 0-8 全部完成（含 3 轮迭代）。GPT Review 002 已完成。详见 `reports/autonomous_run_summary.md`。
 
 ## 项目目标
 
-重建 MC-LR（微囊藻毒素-LR）浓度预测模型。
+重建微囊藻毒素浓度预测模型。
 
-主任务：MC-LR 浓度回归预测。
-辅助任务：基于阈值的风险分类。
+**任务定义（Decision 003）：**
+- 任务 A（主）：总 microcystins 浓度回归
+- 任务 B：MC-LR 小样本验证
+- 任务 C：中国场景迁移
 
-## 当前关键结论
+**GPT 建议修改主叙事：**
+"完成总 MC baseline 建模，MC-LR 可行性审计；当前尚不支持跨域部署。"
 
-- `model_redo/` 是新版建模工程。
-- 旧项目 `model/` 只能作为只读经验库和审计对象。
-- 不直接继承旧模型结论。
-- 旧模型审计已完成，核心发现见 [[old-model-lessons]]。
-- **旧模型不包含 MC-LR 亚型数据**，目标变量均为"总微囊藻毒素"。
-- **旧模型回归任务丢弃 66% 未检出样本**。
-- **存在信息泄漏风险**（蓝藻叶绿素、qPCR 特征）。
-- **无时间/站点外推验证**，**无 baseline**。
-- 当前尚未开始数据源审计、清洗或训练。
+## 最新结果（迭代 3）
 
-## 当前禁止事项
+| 任务 | 数据集 | 最佳模型 | R² | 可信度 |
+|------|--------|---------|---:|--------|
+| A | Erie (含BG chla) | RF | 0.43 | 中（泄漏风险） |
+| A | Erie (不含BG chla) | Ridge | 0.17-0.38 | 中-高 |
+| A | HABs NLA | XGBoost | 0.23 | 中（需GroupKFold） |
+| B | EMLS MC-LR | Ridge | 0.20 | 低（17行测试） |
+| - | 跨数据集 | - | 失败 | 可能有bug |
 
-- 不得修改旧项目 `model/`。
-- 不得删除、覆盖或移动 `data/raw/` 中的任何原始数据。
-- 不得在完成数据源审计前训练模型。
-- 不得使用 locked_test 做模型选择。
-- 不得把 GPT 的意见当作最终事实。
+## 关键文件
 
-## 当前待办
+- `CLAUDE.md` — 项目规则
+- `memory/old_model_lessons.md` — 旧模型审计
+- `memory/decisions.md` — 4 个决策（001-003 + 任务修改）
+- `memory/gpt_review_log.md` — 2 次 GPT 审查
+- `memory/context_summary.md` — 上下文摘要
+- `memory/experiment_log.jsonl` — 实验日志（EXP-001 到 EXP-015）
+- `reports/autonomous_run_summary.md` — 无人值守总结
+- `reports/model_selection_preliminary_report.md` — 模型选择报告
+- `reports/enhanced_baseline_results.json` — 增强 baseline 结果
+- `reports/iteration2_results.json` — 迭代 2 结果
+- `reports/iteration3_results.json` — 迭代 3 结果
+- `reports/gpt_responses/stage8_model_iteration_response.md` — GPT 审查回复
 
-1. ✅ 完成 `CLAUDE.md`。
-2. ✅ 完成 `memory/` 初始文件。
-3. ✅ 完成阶段 0 `/goal`。
-4. ✅ 启动旧模型审计。
-5. ✅ 生成 `memory/old_model_lessons.md`。
-6. ✅ 生成 `reports/old_model_audit_report.md`。
-7. ⬜ 向 GPT 提交阶段 0 review packet。
-8. ⬜ 等待 GPT 审查反馈。
-9. ⬜ 根据反馈修订或进入阶段 1。
+## 运行脚本
 
-## 下一次 GPT 审查点
+- `run_audit.py` — 数据审计
+- `run_clean.py` — 清洗流水线
+- `run_split.py` — 数据划分
+- `run_train.py` — 原 baseline（Dummy/Ridge/RF）
+- `run_train_enhanced.py` — 增强 baseline（+XGB/LGBM/扩展特征）
+- `run_iter2.py` — 迭代 2（泄漏分析+特征选择）
+- `run_iter3.py` — 迭代 3（跨数据集+时间稳定性）
 
-旧模型审计完成后，请 GPT 审查：
+## 待办（用户回来后）
 
-- `memory/old_model_lessons.md`
-- `reports/old_model_audit_report.md`
-- `reports/gpt_review_packet_stage0.md`
-
-## 重要文件
-
-- `CLAUDE.md`
-- `memory/old_model_lessons.md` — 旧模型审计详细结论
-- `memory/decisions.md`
-- `memory/gpt_review_log.md`
-- `memory/experiment_log.jsonl`
-- `reports/old_model_audit_report.md` — 旧模型正式审计报告（24 个发现项）
-- `reports/gpt_review_packet_stage0.md` — GPT 审查包
+1. ⬜ 确认是否接受 GPT 建议的叙事修改
+2. ⬜ 确认蓝藻叶绿素测量时间
+3. ⬜ 重跑 HABs GroupKFold by DSGN_CYCLE
+4. ⬜ 分离 Erie A1/A2 版本
+5. ⬜ EMLS 零值 sensitivity 分析
+6. ⬜ 跨数据集 pipeline bug 审计
+7. ⬜ 整合 EPA NLA 2017 数据
+8. ⬜ 安装 pyarrow
