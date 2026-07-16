@@ -1,0 +1,195 @@
+[
+  {
+    "dataset": "erie",
+    "metrics": [
+      {
+        "task": "DummyRegressor",
+        "rmse_log": 0.4562159493553238,
+        "mae_log": 0.3966652134445938,
+        "r2": -0.1740429680253408,
+        "spearman": NaN,
+        "rmse_orig": 1.0643028930244245,
+        "mae_orig": 0.6961868492692372,
+        "wf2_pct": 23.728813559322035,
+        "n_samples": 531
+      },
+      {
+        "task": "Ridge",
+        "rmse_log": 0.40755932105266596,
+        "mae_log": 0.3189893376974342,
+        "r2": 0.06303207625869212,
+        "spearman": 0.6872346820413114,
+        "rmse_orig": 1.091064033672169,
+        "mae_orig": 0.624794958037559,
+        "wf2_pct": 31.63841807909605,
+        "n_samples": 531
+      },
+      {
+        "task": "RandomForest",
+        "rmse_log": 0.4296981364515888,
+        "mae_log": 0.26830572850113926,
+        "r2": -0.04152573099137924,
+        "spearman": 0.6803022935324966,
+        "rmse_orig": 1.6181798215473449,
+        "mae_orig": 0.6744729953817115,
+        "wf2_pct": 48.0225988700565,
+        "n_samples": 531
+      }
+    ],
+    "feature_importance": {
+      "chla_ugL": 0.6558680115715134,
+      "longitude": 0.08149015894443257,
+      "month_sin": 0.06003532689757206,
+      "tn_mgL": 0.05448144041370108,
+      "month_cos": 0.03882692083168643,
+      "water_temp_c": 0.035491263057412355,
+      "latitude": 0.02553151461501128,
+      "secchi_m": 0.0196290478050693,
+      "tp_mgL": 0.014325444477223701,
+      "max_depth_m": 0.014320871386377814
+    },
+    "n_features": 10,
+    "features": [
+      "water_temp_c",
+      "chla_ugL",
+      "tn_mgL",
+      "tp_mgL",
+      "secchi_m",
+      "max_depth_m",
+      "month_sin",
+      "month_cos",
+      "latitude",
+      "longitude"
+    ]
+  },
+  {
+    "dataset": "habs_nla",
+    "metrics": [
+      {
+        "task": "DummyRegressor",
+        "rmse_log": 0.7165700914144675,
+        "mae_log": 0.49711210784074683,
+        "r2": -0.006515749930777748,
+        "spearman": NaN,
+        "rmse_orig": 5.790341679504125,
+        "mae_orig": 1.8276689791811187,
+        "wf2_pct": 26.209677419354836,
+        "n_samples": 248
+      },
+      {
+        "task": "Ridge",
+        "rmse_log": 0.720922427498236,
+        "mae_log": 0.47050530555173026,
+        "r2": -0.018779724388774177,
+        "spearman": 0.4370559196202851,
+        "rmse_orig": 6.702495122956963,
+        "mae_orig": 2.1132764297505426,
+        "wf2_pct": 31.451612903225808,
+        "n_samples": 248
+      },
+      {
+        "task": "RandomForest",
+        "rmse_log": 0.6313923671615093,
+        "mae_log": 0.42149147501701234,
+        "r2": 0.2185487769765896,
+        "spearman": 0.5037446157796168,
+        "rmse_orig": 5.58396433687656,
+        "mae_orig": 1.7137421355071072,
+        "wf2_pct": 33.46774193548387,
+        "n_samples": 248
+      }
+    ],
+    "feature_importance": {
+      "tn_mgL": 0.36923456281575473,
+      "turbidity_ntu": 0.17242514568190934,
+      "ph": 0.10538927227754227,
+      "latitude": 0.06288758998271884,
+      "tp_mgL": 0.05191887855174265,
+      "chla_ugL": 0.048927270151580486,
+      "max_depth_m": 0.04052546271535983,
+      "longitude": 0.040415181370094935,
+      "water_temp_c": 0.0374521940874734,
+      "do_mgL": 0.03265914271547069,
+      "month_cos": 0.019479245429775104,
+      "month_sin": 0.018686054220577782
+    },
+    "n_features": 12,
+    "features": [
+      "water_temp_c",
+      "chla_ugL",
+      "tn_mgL",
+      "tp_mgL",
+      "ph",
+      "do_mgL",
+      "turbidity_ntu",
+      "max_depth_m",
+      "month_sin",
+      "month_cos",
+      "latitude",
+      "longitude"
+    ]
+  },
+  {
+    "dataset": "emls",
+    "metrics": [
+      {
+        "task": "DummyRegressor",
+        "rmse_log": 0.09122481201766576,
+        "mae_log": 0.08215454336859287,
+        "r2": -0.11346194275114319,
+        "spearman": NaN,
+        "rmse_orig": 0.10191075212081395,
+        "mae_orig": 0.0888455904402828,
+        "wf2_pct": 5.88235294117647,
+        "n_samples": 17
+      },
+      {
+        "task": "Ridge",
+        "rmse_log": 0.0775660148414905,
+        "mae_log": 0.059090812188904274,
+        "r2": 0.19500648531552556,
+        "spearman": 0.44453855815085475,
+        "rmse_orig": 0.0882361411883522,
+        "mae_orig": 0.06460444596634589,
+        "wf2_pct": 11.76470588235294,
+        "n_samples": 17
+      },
+      {
+        "task": "RandomForest",
+        "rmse_log": 0.11360197893656185,
+        "mae_log": 0.0877065313035397,
+        "r2": -0.7267172083881985,
+        "spearman": 0.18248033405575212,
+        "rmse_orig": 0.12747926975962787,
+        "mae_orig": 0.0972131633349235,
+        "wf2_pct": 17.647058823529413,
+        "n_samples": 17
+      }
+    ],
+    "feature_importance": {
+      "max_depth_m": 0.24961062737588097,
+      "longitude": 0.19418521231143945,
+      "chla_ugL": 0.14310347877774854,
+      "latitude": 0.14043403749642203,
+      "tn_mgL": 0.08605098649444066,
+      "secchi_m": 0.08374045469881834,
+      "water_temp_c": 0.06642787771776902,
+      "tp_mgL": 0.017228782283574808,
+      "month_sin": 0.016811240994181915,
+      "month_cos": 0.0024073018497241814
+    },
+    "n_features": 10,
+    "features": [
+      "water_temp_c",
+      "chla_ugL",
+      "tn_mgL",
+      "tp_mgL",
+      "secchi_m",
+      "max_depth_m",
+      "month_sin",
+      "month_cos",
+      "latitude",
+      "longitude"
+    ]
+  }
+]

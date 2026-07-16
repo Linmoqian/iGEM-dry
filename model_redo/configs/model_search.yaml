@@ -1,0 +1,19 @@
+model_search:
+  max_rounds: 5
+  require_hypothesis: true
+  require_metrics_comparison: true
+  require_decision_record: true
+
+optimization_targets:
+  - target_variable_transform
+  - feature_engineering
+  - sample_weighting
+  - group_modeling
+  - model_ensemble
+
+rules:
+  forbid_locked_test_for_tuning: true
+  require_experiment_log: true
+  require_seed: true
+  require_config_snapshot: true
+  max_random_search_trials: 50
