@@ -2,6 +2,7 @@
 CLAUDE.md
 AGENTS.md
 .claude/
+.codex/
 .planning/
 
 # Python
@@ -41,5 +42,38 @@ package-lock.json
 docs/PDF/
 manifest.json
 
+# 原始数据（不入库）
+model/data/raw/
+
+# model_redo 数据与产物（不入库）
+model_redo/data/raw/
+model_redo/data/external_raw/
+model_redo/data/interim/
+model_redo/data/cleaned/
+model_redo/runs/
+model_redo/figures/
+model_redo/models/
+model_redo/**/*.pkl
+model_redo/**/*.joblib
+model_redo/**/*.model
+model_redo/**/*.parquet
+model_redo/**/*.feather
+model_redo/**/*.csv
+model_redo/**/*.xlsx
+model_redo/**/*.xls
+*.log
+
+# 模型权重（全局）
+*.bin
+*.ckpt
+*.pt
+*.pth
+
 # 压缩包
 *.zip
+*.tar
+*.gz
+*.7z
+
+# Browser automation artifacts
+.playwright-mcp/
