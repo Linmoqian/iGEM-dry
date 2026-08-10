@@ -89,6 +89,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--experiment-name", required=True)
     parser.add_argument("--repeats", type=int, default=1)
+    parser.add_argument("--repeat-start", type=int, default=0)
     parser.add_argument("--folds", help="comma-separated fold IDs; default is every fold")
     parser.add_argument("--seed-stride", type=int, default=1009)
     return parser
@@ -103,9 +104,11 @@ def main() -> int:
         raise ValueError("fold IDs must be within configured n_folds")
     if args.repeats < 1:
         raise ValueError("repeats must be positive")
+    if args.repeat_start < 0:
+        raise ValueError("repeat_start must be non-negative")
 
     rows = []
-    for repeat in range(args.repeats):
+    for repeat in range(args.repeat_start, args.repeat_start + args.repeats):
         for fold in folds:
             config = json.loads(json.dumps(base))
             config["seed"] = int(base["seed"]) + repeat * int(args.seed_stride)
@@ -124,6 +127,7 @@ def main() -> int:
         "config_file": str(args.config.resolve()),
         "config": base,
         "repeats": args.repeats,
+        "repeat_start": args.repeat_start,
         "folds": folds,
         "aggregate": _aggregate(frame),
     }
