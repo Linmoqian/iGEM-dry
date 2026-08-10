@@ -140,7 +140,19 @@ def load_dataset(config: dict) -> DatasetView:
 
     minimum_feature_count = int(config.get("minimum_feature_count", 1))
     feature_ok = X.notna().sum(axis=1).to_numpy() >= minimum_feature_count
-    valid = labels.valid & feature_ok
+    source = frame.get("dataset_id", pd.Series("unknown_source", index=frame.index)).fillna(
+        "unknown_source"
+    ).astype(str)
+    source_ok = np.ones(len(frame), dtype=bool)
+    include_sources = {str(value) for value in config.get("include_sources", [])}
+    exclude_sources = {str(value) for value in config.get("exclude_sources", [])}
+    if include_sources & exclude_sources:
+        raise ValueError("include_sources and exclude_sources must not overlap")
+    if include_sources:
+        source_ok &= source.isin(include_sources).to_numpy()
+    if exclude_sources:
+        source_ok &= ~source.isin(exclude_sources).to_numpy()
+    valid = labels.valid & feature_ok & source_ok
     if not valid.any():
         raise ValueError("no records remain after label and feature validation")
 
