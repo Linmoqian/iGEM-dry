@@ -23,7 +23,7 @@ def _labels(values: np.ndarray) -> LabelIntervals:
     )
 
 
-def test_xgb_quantile_tail_expert_is_finite_and_ordered() -> None:
+def test_xgb_quantile_tail_expert_is_finite_ordered_and_reloadable(tmp_path) -> None:
     rng = np.random.default_rng(42)
     X = pd.DataFrame(rng.normal(size=(120, 4)), columns=list("abcd"))
     y = np.maximum(np.exp(0.5 * X["a"].to_numpy() + rng.normal(0, 0.1, 120)) - 1, 0)
@@ -45,4 +45,8 @@ def test_xgb_quantile_tail_expert_is_finite_and_ordered() -> None:
     assert np.all(prediction.q10 <= prediction.q50)
     assert np.all(prediction.q50 <= prediction.q90)
     assert model.tail_threshold_log_ is not None
-
+    artifact = tmp_path / "xgb_quantile_tail.pkl"
+    model.save(artifact)
+    reloaded = XGBoostQuantileRegressor.load(artifact)
+    reloaded_prediction = reloaded.predict_distribution(X.iloc[90:])
+    assert np.allclose(reloaded_prediction.q50, prediction.q50)
