@@ -3,6 +3,14 @@
     "tree_method": "hist",
     "device": "cuda"
   },
+  "xgb_quantile": {
+    "tree_method": "hist",
+    "device": "cuda"
+  },
+  "xgb_quantile_tail": {
+    "tree_method": "hist",
+    "device": "cuda"
+  },
   "tabm_censored": {
     "device": "cuda",
     "batch_size": 2048,

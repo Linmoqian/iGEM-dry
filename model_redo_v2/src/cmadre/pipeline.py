@@ -243,6 +243,11 @@ def run_training(config: dict, run_name: str | None = None) -> Path:
             model_names=model_names,
             censored_weight=float(config.get("censored_stacking_weight", 0.25)),
             fit_transform=str(config.get("stacking_transform", "log1p")),
+            objective=str(config.get("stacking_objective", "median_nnls")),
+            quantile_loss_weight=float(config.get("stacking_quantile_loss_weight", 0.25)),
+            width_penalty=float(config.get("stacking_width_penalty", 0.05)),
+            max_log_width=float(config.get("stacking_max_log_width", 4.0)),
+            l2_penalty=float(config.get("stacking_l2_penalty", 0.01)),
         ).fit(
             oof_predictions,
             train_labels,

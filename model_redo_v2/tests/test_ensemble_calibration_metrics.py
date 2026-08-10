@@ -53,3 +53,17 @@ def test_metrics_report_exact_and_source_macro() -> None:
     assert metrics["point"]["exact_rows"] == 4
     assert metrics["source_macro_log1p_mae"] is not None
     assert metrics["risk_thresholds"]["0.5"]["known_rows"] == 4
+
+
+def test_distributional_stacker_rejects_pathological_width() -> None:
+    y = np.linspace(0.1, 10, 100)
+    labels = _exact_labels(y)
+    stable = DistributionPrediction(q10=y * 0.5, q50=y, q90=y * 2.0)
+    pathological = DistributionPrediction(q10=y * 0.9, q50=y, q90=np.full_like(y, 1e18))
+    stacker = NonNegativeStacker(
+        ["stable", "pathological"],
+        objective="distributional",
+        width_penalty=0.1,
+        max_log_width=4.0,
+    ).fit({"stable": stable, "pathological": pathological}, labels)
+    assert stacker.weights_[0] > 0.99

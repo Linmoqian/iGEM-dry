@@ -11,6 +11,14 @@
     "tree_method": "hist",
     "device": "cuda"
   },
+  "xgb_quantile": {
+    "tree_method": "hist",
+    "device": "cuda"
+  },
+  "xgb_quantile_tail": {
+    "tree_method": "hist",
+    "device": "cuda"
+  },
   "catboost_quantile": {
     "task_type": "GPU",
     "devices": "0",
