@@ -45,3 +45,38 @@ export interface PredictionPoint {
   lowerBound: number;
   isPrediction: boolean;
 }
+
+export interface DiscoveredDevice {
+  id: string;
+  name: string;
+  connectionType: Exclude<ConnectionType, 'none'>;
+  signalDbm: number;
+  paired: boolean;
+}
+
+export interface DeviceInput {
+  name: string;
+  connectionType: Exclude<ConnectionType, 'none'>;
+  locationLabel: string;
+  lat?: number;
+  lng?: number;
+}
+
+export interface TrendPoint {
+  time: string;
+  toxinUgL: number;
+  waterTempC: number;
+  ph: number;
+}
+
+export interface ApiEnvelope<T> {
+  data: T;
+  timestamp: string;
+  requestId?: string;
+}
+
+export interface RealtimeEvent {
+  event: 'sensor_update' | 'risk_alert' | 'device_status' | 'task_status';
+  timestamp: string;
+  payload: unknown;
+}
