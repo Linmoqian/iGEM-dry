@@ -283,9 +283,10 @@ def run_training(config: dict, run_name: str | None = None) -> Path:
 
         validation_ensemble = stacker.predict(validation_predictions)
         test_ensemble = stacker.predict(test_predictions)
-        calibrator = CQRCalibrator(alpha=float(config["conformal_alpha"])).fit(
-            validation_ensemble, validation.labels
-        )
+        calibrator = CQRCalibrator(
+            alpha=float(config["conformal_alpha"]),
+            transform_name=str(config.get("conformal_transform", "identity")),
+        ).fit(validation_ensemble, validation.labels)
         calibrator.save(run_dir / "calibrator.json")
         validation_calibrated = calibrator.transform(validation_ensemble)
         test_calibrated = calibrator.transform(test_ensemble)

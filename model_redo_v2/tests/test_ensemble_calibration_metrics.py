@@ -44,6 +44,24 @@ def test_stacker_prefers_better_model_and_cqr_expands_interval(tmp_path) -> None
     assert CQRCalibrator.load(tmp_path / "calibrator.json").adjustment_ == calibrator.adjustment_
 
 
+def test_log_cqr_is_multiplicative_and_round_trips(tmp_path) -> None:
+    y = np.geomspace(0.1, 1000.0, 100)
+    labels = _exact_labels(y * 2.0)
+    narrow = DistributionPrediction(q10=y, q50=y, q90=y)
+    calibrator = CQRCalibrator(alpha=0.2, transform_name="log1p").fit(narrow, labels)
+    calibrated = calibrator.transform(narrow)
+    assert calibrated.q10.min() >= 0
+    assert np.all(calibrated.q90 >= narrow.q90)
+    # Log calibration expands high concentrations more in raw units, matching
+    # multiplicative error rather than imposing one global ug/L adjustment.
+    raw_expansion = calibrated.q90 - narrow.q90
+    assert raw_expansion[-1] > 100 * raw_expansion[0]
+    calibrator.save(tmp_path / "log_calibrator.json")
+    loaded = CQRCalibrator.load(tmp_path / "log_calibrator.json")
+    assert loaded.transform_name == "log1p"
+    assert np.allclose(loaded.transform(narrow).q90, calibrated.q90)
+
+
 def test_metrics_report_exact_and_source_macro() -> None:
     y = np.array([0.1, 0.2, 1.0, 2.0])
     labels = _exact_labels(y)

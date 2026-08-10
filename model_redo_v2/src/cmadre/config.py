@@ -56,6 +56,8 @@ def validate_config(config: dict[str, Any]) -> None:
         raise ValueError("test_fold and validation_fold must be distinct values in [0, n_folds)")
     if not 0 < float(config["conformal_alpha"]) < 1:
         raise ValueError("conformal_alpha must be in (0, 1)")
+    if config.get("conformal_transform", "identity") not in {"identity", "log1p"}:
+        raise ValueError("conformal_transform must be 'identity' or 'log1p'")
     if not 0.5 < float(config.get("ood_threshold_quantile", 0.99)) < 1:
         raise ValueError("ood_threshold_quantile must be in (0.5, 1)")
     if int(config["stacking_folds"]) < 2:
