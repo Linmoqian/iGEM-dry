@@ -55,6 +55,17 @@ def test_metrics_report_exact_and_source_macro() -> None:
     assert metrics["risk_thresholds"]["0.5"]["known_rows"] == 4
 
 
+def test_metrics_report_tail_underprediction() -> None:
+    y = np.arange(1.0, 101.0)
+    labels = _exact_labels(y)
+    prediction = DistributionPrediction(q10=y * 0.1, q50=y * 0.5, q90=y)
+    metrics = evaluate_predictions(prediction, labels)
+    tail = metrics["tail_diagnostics"]["q90"]
+    assert tail["rows"] >= 10
+    assert tail["underprediction_rate"] == 1.0
+    assert tail["median_prediction_ug_l"] < tail["median_true_ug_l"]
+
+
 def test_distributional_stacker_rejects_pathological_width() -> None:
     y = np.linspace(0.1, 10, 100)
     labels = _exact_labels(y)

@@ -69,6 +69,32 @@ def _point_metrics(prediction: np.ndarray, labels: LabelIntervals) -> dict[str, 
     return result
 
 
+def _tail_diagnostics(prediction: np.ndarray, labels: LabelIntervals) -> dict[str, Any]:
+    """Descriptive exact-label tail errors; thresholds are never training inputs."""
+    exact = labels.exact & np.isfinite(labels.lower) & np.isfinite(prediction)
+    if exact.sum() < 20:
+        return {}
+    y = labels.lower[exact]
+    p = prediction[exact]
+    result = {}
+    for quantile in (0.9, 0.95, 0.99):
+        threshold = float(np.quantile(y, quantile, method="higher"))
+        selected = y >= threshold
+        if selected.sum() == 0:
+            continue
+        log_error = np.abs(np.log1p(p[selected]) - np.log1p(y[selected]))
+        result[f"q{int(quantile * 100)}"] = {
+            "threshold_ug_l": threshold,
+            "rows": int(selected.sum()),
+            "mae_ug_l": float(np.abs(p[selected] - y[selected]).mean()),
+            "log1p_mae": float(log_error.mean()),
+            "median_true_ug_l": float(np.median(y[selected])),
+            "median_prediction_ug_l": float(np.median(p[selected])),
+            "underprediction_rate": float((p[selected] < y[selected]).mean()),
+        }
+    return result
+
+
 def evaluate_predictions(
     prediction: DistributionPrediction,
     labels: LabelIntervals,
@@ -94,6 +120,7 @@ def evaluate_predictions(
         "exact_rows": int(exact.sum()),
         "censored_rows": int((~exact).sum()),
         "point": _point_metrics(point, labels),
+        "tail_diagnostics": _tail_diagnostics(point, labels),
         "interval_distance_mae_ug_l": float(interval_distance.mean()),
         "observation_interval_compatibility": float(compatible.mean()),
         "exact_q10_q90_coverage": _finite_or_none(exact_coverage),
