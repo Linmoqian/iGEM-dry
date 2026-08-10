@@ -18,12 +18,20 @@ class NonNegativeStacker:
     model_names: list[str]
     censored_weight: float = 0.25
     fit_transform: str = "log1p"
+    blend_transform: str = "identity"
     objective: str = "median_nnls"
     quantile_loss_weight: float = 0.25
     width_penalty: float = 0.05
     max_log_width: float = 4.0
     l2_penalty: float = 0.01
     weights_: np.ndarray | None = None
+
+    def _blend(self, values: np.ndarray, weights: np.ndarray) -> np.ndarray:
+        if self.blend_transform == "identity":
+            return values @ weights
+        if self.blend_transform == "log1p":
+            return np.expm1(np.log1p(np.maximum(values, 0.0)) @ weights)
+        raise ValueError("blend_transform must be 'identity' or 'log1p'")
 
     def _row_weight(
         self, labels: LabelIntervals, sample_weight: np.ndarray | None
@@ -90,11 +98,12 @@ class NonNegativeStacker:
         uniform = np.full(model_count, 1.0 / model_count)
 
         def loss(weights: np.ndarray) -> float:
-            # Blend in the original concentration space, exactly as inference does,
-            # then evaluate on the stable log1p scale.
-            q10 = np.log1p(np.maximum(selected_cubes["q10"] @ weights, 0.0))
-            q50 = np.log1p(np.maximum(selected_cubes["q50"] @ weights, 0.0))
-            q90 = np.log1p(np.maximum(selected_cubes["q90"] @ weights, 0.0))
+            # Optimize exactly the same blend used at inference. A log1p blend is
+            # a weighted geometric mean on (1 + concentration), which limits one
+            # expert's extreme extrapolation on multi-order-of-magnitude targets.
+            q10 = np.log1p(np.maximum(self._blend(selected_cubes["q10"], weights), 0.0))
+            q50 = np.log1p(np.maximum(self._blend(selected_cubes["q50"], weights), 0.0))
+            q90 = np.log1p(np.maximum(self._blend(selected_cubes["q90"], weights), 0.0))
 
             point_distance = np.maximum.reduce([lower - q50, q50 - upper, np.zeros_like(q50)])
             point_loss = np.average(np.square(point_distance), weights=row_weight)
@@ -173,9 +182,15 @@ class NonNegativeStacker:
             raise RuntimeError("stacker is not fitted")
         if set(predictions) != set(self.model_names):
             raise ValueError("prediction set differs from fitted stacker")
-        q10 = sum(weight * predictions[name].q10 for weight, name in zip(self.weights_, self.model_names))
-        q50 = sum(weight * predictions[name].q50 for weight, name in zip(self.weights_, self.model_names))
-        q90 = sum(weight * predictions[name].q90 for weight, name in zip(self.weights_, self.model_names))
+        q10 = self._blend(
+            np.column_stack([predictions[name].q10 for name in self.model_names]), self.weights_
+        )
+        q50 = self._blend(
+            np.column_stack([predictions[name].q50 for name in self.model_names]), self.weights_
+        )
+        q90 = self._blend(
+            np.column_stack([predictions[name].q90 for name in self.model_names]), self.weights_
+        )
         available_probability = [
             (weight, predictions[name].p_detected)
             for weight, name in zip(self.weights_, self.model_names)
@@ -206,6 +221,7 @@ class NonNegativeStacker:
                     "weights": dict(zip(self.model_names, self.weights_.tolist())),
                     "censored_weight": self.censored_weight,
                     "fit_transform": self.fit_transform,
+                    "blend_transform": self.blend_transform,
                     "objective": self.objective,
                     "quantile_loss_weight": self.quantile_loss_weight,
                     "width_penalty": self.width_penalty,
@@ -230,6 +246,7 @@ class NonNegativeStacker:
             model_names=list(payload["model_names"]),
             censored_weight=float(payload["censored_weight"]),
             fit_transform=str(payload.get("fit_transform", "identity")),
+            blend_transform=str(payload.get("blend_transform", "identity")),
             objective=str(payload.get("objective", "median_nnls")),
             quantile_loss_weight=float(payload.get("quantile_loss_weight", 0.25)),
             width_penalty=float(payload.get("width_penalty", 0.05)),

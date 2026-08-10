@@ -64,6 +64,8 @@ def validate_config(config: dict[str, Any]) -> None:
         raise ValueError("stacking_folds must be at least 2")
     if config.get("stacking_transform", "log1p") not in {"log1p", "identity"}:
         raise ValueError("stacking_transform must be 'log1p' or 'identity'")
+    if config.get("stacking_blend_transform", "identity") not in {"log1p", "identity"}:
+        raise ValueError("stacking_blend_transform must be 'log1p' or 'identity'")
     if config.get("stacking_objective", "median_nnls") not in {"median_nnls", "distributional"}:
         raise ValueError("stacking_objective must be 'median_nnls' or 'distributional'")
     if not config.get("models"):

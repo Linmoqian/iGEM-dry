@@ -96,3 +96,23 @@ def test_distributional_stacker_rejects_pathological_width() -> None:
         max_log_width=4.0,
     ).fit({"stable": stable, "pathological": pathological}, labels)
     assert stacker.weights_[0] > 0.99
+
+
+def test_log_blend_matches_training_space_and_round_trips(tmp_path) -> None:
+    low = DistributionPrediction(
+        q10=np.array([1.0]), q50=np.array([1.0]), q90=np.array([1.0])
+    )
+    high = DistributionPrediction(
+        q10=np.array([99.0]), q50=np.array([99.0]), q90=np.array([99.0])
+    )
+    stacker = NonNegativeStacker(
+        ["low", "high"], blend_transform="log1p", weights_=np.array([0.5, 0.5])
+    )
+    prediction = stacker.predict({"low": low, "high": high})
+    expected = np.expm1((np.log1p(1.0) + np.log1p(99.0)) / 2.0)
+    assert np.allclose(prediction.q50, expected)
+    assert prediction.q50[0] < 50.0
+    stacker.save(tmp_path / "log_stacker.json")
+    loaded = NonNegativeStacker.load(tmp_path / "log_stacker.json")
+    assert loaded.blend_transform == "log1p"
+    assert np.allclose(loaded.predict({"low": low, "high": high}).q50, prediction.q50)

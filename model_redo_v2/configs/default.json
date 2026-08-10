@@ -13,6 +13,7 @@
   "stacking_folds": 3,
   "censored_stacking_weight": 0.25,
   "stacking_transform": "log1p",
+  "stacking_blend_transform": "identity",
   "stacking_objective": "median_nnls",
   "stacking_quantile_loss_weight": 0.25,
   "stacking_width_penalty": 0.05,
