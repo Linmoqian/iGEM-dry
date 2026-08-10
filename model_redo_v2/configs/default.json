@@ -60,6 +60,8 @@
     "max_epochs": 300,
     "patience": 30,
     "gradient_clip": 1.0,
+    "min_scale": 0.03,
+    "max_scale": 3.0,
     "amp": true,
     "device": "auto"
   },

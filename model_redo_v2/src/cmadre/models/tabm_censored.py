@@ -30,9 +30,23 @@ except ImportError:  # keep the rest of the package importable without the optio
 if nn is not None:
 
     class _TabMMiniNet(nn.Module):
-        def __init__(self, input_dim: int, hidden_dims: list[int], ensemble_size: int, dropout: float):
+        def __init__(
+            self,
+            input_dim: int,
+            hidden_dims: list[int],
+            ensemble_size: int,
+            dropout: float,
+            min_scale: float = 1e-3,
+            max_scale: float | None = None,
+        ):
             super().__init__()
+            if min_scale <= 0:
+                raise ValueError("min_scale must be positive")
+            if max_scale is not None and max_scale <= min_scale:
+                raise ValueError("max_scale must be greater than min_scale")
             self.ensemble_size = ensemble_size
+            self.min_scale = float(min_scale)
+            self.max_scale = None if max_scale is None else float(max_scale)
             self.input_scale = nn.Parameter(torch.ones(ensemble_size, input_dim))
             self.input_bias = nn.Parameter(torch.zeros(ensemble_size, input_dim))
             layers: list[nn.Module] = []
@@ -53,7 +67,12 @@ if nn is not None:
             hidden = self.backbone(adapted)
             location = self.location_head(hidden).squeeze(-1) + self.member_location_bias[None, :]
             raw_scale = self.scale_head(hidden).squeeze(-1) + self.member_scale_bias[None, :]
-            scale = torch.nn.functional.softplus(raw_scale) + 1e-3
+            if self.max_scale is None:
+                # Backward-compatible path for v2 artifacts whose configuration did
+                # not contain max_scale. New v3 runs use a bounded latent scale.
+                scale = torch.nn.functional.softplus(raw_scale) + self.min_scale
+            else:
+                scale = self.min_scale + (self.max_scale - self.min_scale) * torch.sigmoid(raw_scale)
             return location, scale
 
 
@@ -197,6 +216,10 @@ class TabMCensoredRegressor(CensoredRegressor):
             hidden_dims=[int(value) for value in self.params.get("hidden_dims", [256, 256, 128])],
             ensemble_size=int(self.params.get("ensemble_size", 16)),
             dropout=float(self.params.get("dropout", 0.15)),
+            min_scale=float(self.params.get("min_scale", 1e-3)),
+            max_scale=(
+                None if self.params.get("max_scale") is None else float(self.params["max_scale"])
+            ),
         ).to(self.device_)
         optimizer = torch.optim.AdamW(
             self.network.parameters(),
@@ -326,6 +349,12 @@ class TabMCensoredRegressor(CensoredRegressor):
             hidden_dims=[int(value) for value in result.params.get("hidden_dims", [256, 256, 128])],
             ensemble_size=int(result.params.get("ensemble_size", 16)),
             dropout=float(result.params.get("dropout", 0.15)),
+            min_scale=float(result.params.get("min_scale", 1e-3)),
+            max_scale=(
+                None
+                if result.params.get("max_scale") is None
+                else float(result.params["max_scale"])
+            ),
         )
         result.network.load_state_dict(payload["state_dict"])
         result.network.to(result.device_)
