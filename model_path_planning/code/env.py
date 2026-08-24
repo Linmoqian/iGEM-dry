@@ -29,6 +29,7 @@ class Instance:
     hover_time: float = 0.13       # 每次投放悬停时间 (min)
     eff_lag: np.ndarray = None     # (n,) 治理生效时滞 = T_drift + t_safe(D_j,C0_j) (min, 0 for depot); 为 None 时目标退化为 t_arrival
     use_eff: bool = False          # 目标是否使用 t_eff = t_arrival + eff_lag (v3.0 治理生效目标)
+    infeasible_penalty: float = 0.0  # 能量审计不通过时的固定罚 (V2.7+: 默认 0 保持 V2.6 可比, 实验协议设 1e4)
 
     def task_ids(self):
         return np.arange(self.n_dep, len(self.xy))
@@ -126,6 +127,9 @@ def objective(inst, routes):
     obj = float(np.sum(w * tc) + inst.late_penalty * float(np.sum(w * late))
                 + inst.makespan_penalty * float(np.max(end_time)) if len(end_time) else 0.0)
     obj += inst.unserved_penalty * float(np.sum(w * unserved_mask))
+    if not feasible and inst.infeasible_penalty > 0.0:
+        # 不可行解(能量审计不通过)固定重罚——防止"掩码盲"计划作弊
+        obj += inst.infeasible_penalty
     return obj, feasible
 
 

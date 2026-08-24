@@ -23,6 +23,7 @@ def eval_main(policy, mode, n_inst, n_task, seed0, ot_time, samples, augment, ls
     per = []
     for i in range(n_inst):
         inst = make_inst(seed0 + i, n_task, int((i * 37) % 2900), mode)
+        inst.infeasible_penalty = 1e4   # 实验协议: 能量不可行解固定重罚 (防掩码盲作弊)
         rec = {"name": inst.name}
         rg = greedy_solve(inst)
         rwg, ms, sv, *rest = risk_weighted_time(inst, rg)
@@ -87,16 +88,20 @@ def strong_wind(policy, policy_label, n_inst=10, seed0=30000, samples=24):
         inst_w = build_instance_from_scenario(sc)
         inst_w.T = wind_time_matrix(inst_w.xy, drone_speed=15.0, wind=(6.0, 8.0))[None].repeat(
             len(inst_w.drone_cap), 0) / (np.array([15.0, 15.0, 13.0]) / 15.0)[:, None, None]
+        inst_w.infeasible_penalty = 1e4
         inst_e = build_instance_from_scenario(sc)
         inst_e.T = wind_time_matrix(inst_e.xy, drone_speed=15.0, wind=(0.0, 0.0))[None].repeat(
             len(inst_e.drone_cap), 0) / (np.array([15.0, 15.0, 13.0]) / 15.0)[:, None, None]
-        _, o_w = solve_rl(policy, inst_w, n_try=samples)
-        _, o_e = solve_rl(policy, inst_e, n_try=samples)
-        rows.append(dict(wind_aware=o_w, euclid_plan=o_e))
+        inst_e.infeasible_penalty = 1e4
+        r_w, _ = solve_rl(policy, inst_w, n_try=samples)
+        o_w, _ = objective(inst_w, r_w)
+        r_e, _ = solve_rl(policy, inst_e, n_try=samples)
+        o_we, _ = objective(inst_w, r_e)     # 欧氏计划的"真实成本"= 在强风矩阵上评分
+        rows.append(dict(wind_aware=o_w, euclid_plan=o_we))
     wm = float(np.mean([r["wind_aware"] for r in rows]))
     em = float(np.mean([r["euclid_plan"] for r in rows]))
     print(f"\n[强风 10 m/s 压力测试: {policy_label}]  (按真实强风成本评分)")
-    print(f"  风感知规划 {wm:.2f} vs 欧氏规划 {em:.2f}  | 差距 {100*(em-wm)/em:.1f}%")
+    print(f"  风感知规划 {wm:.2f} vs 欧氏规划 {em:.2f}  | 差距 {100*(em-wm)/em:.1f}% (含不可行重罚协议)")
     return dict(n=n_inst, wind_aware=wm, euclid_plan=em, gap_pct=100 * (em - wm) / em)
 
 
