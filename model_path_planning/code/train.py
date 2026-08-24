@@ -239,7 +239,7 @@ def make_batch(seed, n_task, B, wind_hours, mode="eastlake", t_service=1.0, dron
             wmag = rng.uniform(8.0, 12.0)
             from scenario import wind_time_matrix
             Tw = wind_time_matrix(inst.xy, drone_speed=15.0, wind=(wmag * np.cos(ang), wmag * np.sin(ang)))
-            inst.T = Tw[None].repeat(m, 0) / (np.array([15.0, 15.0, 13.0]) / 15.0)[:, None, None]
+            inst.T = Tw[None].repeat(len(inst.drone_cap), 0) / (np.array([15.0, 15.0, 13.0]) / 15.0)[:, None, None]
         batch.append(inst)
     return batch
 
