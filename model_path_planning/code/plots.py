@@ -12,7 +12,9 @@ import matplotlib.patches as mpatches
 from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
 
 CWD = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(CWD, "out", "figs")
+# V2.7 归档: 输出统一指向 experiments/V2.7_pathplanning (2026-08-25 整理)
+ARCH = os.path.join(CWD, "..", "..", "model_Two-dimensional_water_flow", "report", "experiments", "V2.7_pathplanning")
+OUT = os.path.join(ARCH, "figures")
 os.makedirs(OUT, exist_ok=True)
 
 plt.rcParams["font.sans-serif"] = ["Microsoft YaHei", "SimHei", "Arial Unicode MS"]
@@ -166,7 +168,7 @@ def fig4_wind(seed=9001):
 
 
 def fig5_curve():
-    p = os.path.join(CWD, "out", "train_curve.json")
+    p = os.path.join(ARCH, "trainings", "A", "train_curve.json")
     if not os.path.exists(p):
         print("skip fig5 (no curve yet)"); return
     d = json.load(open(p, encoding="utf-8"))
@@ -180,7 +182,7 @@ def fig5_curve():
 
 
 def fig6_eval():
-    p = os.path.join(CWD, "out", "eval_results.json")
+    p = os.path.join(ARCH, "results", "eval_results.json")
     if not os.path.exists(p):
         print("skip fig6 (no eval yet)"); return
     d = json.load(open(p, encoding="utf-8"))

@@ -26,17 +26,19 @@
 cd model_path_planning/code
 python scenario.py                    # 东湖场景自检
 python flow_tasks.py                  # v3.0 水流任务生成器自检 (需上游 SWF/降解数据)
-python train.py --steps 1200 --d 128 --out outA          # V2.7 基线 (独立时钟) ~25 min
-python train.py --steps 1200 --d 128 --use-edge --tanh-prior --out outB   # 边特征+解码先验 (默认 t_service=1.0/κ=1.15)
-python train.py --steps 1000 --d 128 --use-edge --tanh-prior --n-task 50 --batch 8 --out outD   # n=50 规模模型 (M5)
-python train.py --steps 1200 --d 128 --use-edge --tanh-prior --mode flow --n-task 10 --out outC  # v3.0 水流任务
-python evaluate.py --ckpt outA/ckpt.pt          # 主对比 (可加 --augment *8 增广)
-python evaluate.py --ckpt outC/ckpt.pt --mode flow   # v3.0 任务对比
-python exp_v27.py --ckpts A=outA/ckpt.pt,B=outB/ckpt.pt,C=outC/ckpt.pt > out/exp_v27_report.txt
-python ablation.py --ckpt outB/ckpt.pt    # 风/λ/采样数 (λ 敏感性 2026-08-24 实现)
-python replan_demo.py --ckpt outB/ckpt.pt # 动态重规划
-python ood_bench.py --ckpt outB/ckpt.pt   # 分布外压力测试 (含 OR-Tools 状态披露)
-python plots.py                           # 报告插图
+# 训练产物统一输出至归档目录 (2026-08-25 起 code/ 不再保留输出, 保持整洁)
+TRAIN_OUT="../../model_Two-dimensional_water_flow/report/experiments/V2.7_pathplanning/trainings"
+python train.py --steps 1200 --d 128 --out "$TRAIN_OUT/A2"    # V2.7 基线 (独立时钟)
+python train.py --steps 1200 --d 128 --use-edge --tanh-prior --out "$TRAIN_OUT/B2"   # 边特征+解码先验
+python train.py --steps 1000 --d 128 --use-edge --tanh-prior --n-task 50 --batch 8 --out "$TRAIN_OUT/D2"  # n=50 规模 (M5)
+python train.py --steps 1200 --d 128 --use-edge --tanh-prior --mode flow --n-task 10 --out "$TRAIN_OUT/C2"  # v3.0 水流任务
+CKPT_B="$TRAIN_OUT/B/ckpt.pt"                # V2.7 交付基线 (B) 已存于归档
+python evaluate.py --ckpt "$CKPT_B"          # 主对比 (可加 --augment *8 增广)
+python exp_v27.py --ckpts B=$CKPT_B          # 汇总评测 (新运行会重建 code/out, 属运行期副产物, 跑完可再归档)
+python ablation.py --ckpt "$CKPT_B"          # 风/λ/采样数
+python replan_demo.py --ckpt "$CKPT_B"       # 动态重规划
+python ood_bench.py --ckpt "$CKPT_B"         # 分布外压力测试 (含 OR-Tools 状态披露)
+python plots.py                              # 报告插图 (读归档 results/ 写归档 figures/)
 ```
 
-实验产物对照：V2.6 实验结果在 `code/out/`（train_curve/eval_results/…）；V2.7 重训结果在 `code/outA|outB|outC/`，汇总在 `code/out/exp_v27.json`。
+实验产物对照（2026-08-25 整理后）：V2.6/V2.7 全部输出归档于 `model_Two-dimensional_water_flow/report/experiments/V2.7_pathplanning/`——`results/`（评测 JSON/文本）、`figures/`（报告插图）、`trainings/`（A/B/C/C2 训练产物 + ckpt_v26_baseline.pt 旧权重）、`logs/`（训练日志）；V3 轮归 `…/experiments/V3_pathplanning/`。`code/` 不再保留任何输出目录。

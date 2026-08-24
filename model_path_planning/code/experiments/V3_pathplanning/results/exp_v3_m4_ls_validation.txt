@@ -1,0 +1,5 @@
+  File "<stdin>", line 1
+    import_file=1; sleep 1; echo launched
+                         ^
+SyntaxError: invalid syntax
+EXIT=1

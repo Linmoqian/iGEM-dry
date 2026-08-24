@@ -1,0 +1,36 @@
+=== 物理环境: {'hover': 1.0, 'drone_w': [4, 4, 6], 'kappa': 1.0, 'e_res': 0.0} ===
+loaded cfg: eastlake d= 128 use_edge= True tanh_prior= True
+
+[B] 东湖16 (t_service=1.0):
+  greedy       obj=   47.05 可行=16/16
+  greedy_ls    obj=   22.40 可行=16/16
+  ortools      obj=   24.85 可行=16/16
+  rl           obj=   18.68 可行=16/16
+  rl_ls        obj=   18.49 可行=16/16
+[B] flow8:
+  greedy       obj= 6067.47 可行=8/8
+  greedy_ls    obj= 4764.21 可行=8/8
+  ortools      obj= 6063.91 可行=8/8
+  rl           obj= 4525.04 可行=8/8
+  rl_ls        obj= 4218.81 可行=8/8
+[B] 强风: 风感知规划 1369.51 vs 欧氏规划 8788.02 (84.4%)
+[B] OOD(9): RL+LS vs 贪心+LS = 0/9 优 (明细见 json)
+loaded cfg: eastlake d= 128 use_edge= True tanh_prior= True
+
+[E] 东湖16 (t_service=1.0):
+  greedy       obj=   47.05 可行=16/16
+  greedy_ls    obj=   22.40 可行=16/16
+  ortools      obj=   24.85 可行=16/16
+  rl           obj=   18.84 可行=16/16
+  rl_ls        obj=   18.66 可行=16/16
+[E] flow8:
+  greedy       obj= 6067.47 可行=8/8
+  greedy_ls    obj= 4764.21 可行=8/8
+  ortools      obj= 6063.91 可行=8/8
+  rl           obj= 4517.97 可行=8/8
+  rl_ls        obj= 4220.41 可行=8/8
+[E] 强风: 风感知规划 6340.11 vs 欧氏规划 10038.64 (36.8%)
+[E] OOD(9): RL+LS vs 贪心+LS = 0/9 优 (明细见 json)
+
+saved -> out/exp_v3_env_eval.json
+M2-EVAL EXIT=0
