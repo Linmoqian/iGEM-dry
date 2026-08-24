@@ -105,8 +105,8 @@ def rollouts(policy, batch, S=8, greedy=False, anchor=False):
     cap2 = rep(t["cap"])
     en2 = rep(t["en"])
     W2 = rep(t["drone_w"])                                   # (B2,m) 空重; 全 0 = 未启用载荷耦合
-    kappa2 = rep(t["kappa"]).view(B2, m)
-    res2 = rep(t["e_res"]).view(B2, m)
+    kappa2 = rep(t["kappa"]).expand(B2, m)
+    res2 = rep(t["e_res"]).expand(B2, m)
     PKG = t["pack_kg"]
     use_payload = bool((W2 > 0).any())
     served = torch.zeros(B2, n)
@@ -217,7 +217,7 @@ def rollouts(policy, batch, S=8, greedy=False, anchor=False):
 
 
 def make_batch(seed, n_task, B, wind_hours, mode="eastlake", t_service=1.0, drone_w=None,
-               kappa=1.0, e_res=0.0):
+               kappa=1.0, e_res=0.0, wind_aug=0.0):
     rng = np.random.RandomState(seed)
     batch = []
     for b in range(B):
@@ -228,20 +228,27 @@ def make_batch(seed, n_task, B, wind_hours, mode="eastlake", t_service=1.0, dron
         else:
             sc = build_eastlake(seed=seed * 997 + b, n_alerts=n_task, wind_hour=int(rng.choice(wind_hours)))
             inst = build_instance_from_scenario(sc)
-        inst.hover_time = t_service
         inst.hover_time = t_service            # M1: 校准后的单点作业时间
         if drone_w is not None:
             inst.drone_w = np.array(drone_w, dtype=float)
         inst.kappa = kappa
         inst.energy_reserve = e_res
+        if wind_aug > 0.0 and rng.rand() < wind_aug:
+            # M2b: 合成强风增强 — 8-12 m/s 随机方向替换风矩阵 (训练分布鲁棒化)
+            ang = rng.uniform(0, 2 * np.pi)
+            wmag = rng.uniform(8.0, 12.0)
+            from scenario import wind_time_matrix
+            Tw = wind_time_matrix(inst.xy, drone_speed=15.0, wind=(wmag * np.cos(ang), wmag * np.sin(ang)))
+            inst.T = Tw[None].repeat(m, 0) / (np.array([15.0, 15.0, 13.0]) / 15.0)[:, None, None]
         batch.append(inst)
     return batch
 
 
 def eval_greedy(policy, n_inst=12, n_task=10, seed=12345, mode="eastlake",
-                  t_service=1.0, drone_w=None, kappa=1.0, e_res=0.0):
+                  t_service=1.0, drone_w=None, kappa=1.0, e_res=0.0, wind_aug=0.0):
     batch = make_batch(seed, n_task, n_inst, [0, 12, 36, 100, 200, 300], mode=mode,
-                       t_service=t_service, drone_w=drone_w, kappa=kappa, e_res=e_res)
+                       t_service=t_service, drone_w=drone_w, kappa=kappa, e_res=e_res,
+                       wind_aug=wind_aug)
     with torch.no_grad():
         logps, objs, routes_list, _ = rollouts(policy, batch, S=1, greedy=True)
     return float(objs.mean())
@@ -266,6 +273,7 @@ def main():
     ap.add_argument("--payload-w", default=None, help="逗号分隔空重kg/机 (启用载荷耦合能量 M2, 如 4,4,6)")
     ap.add_argument("--kappa", type=float, default=1.0, help="返航余量系数 κ (M3, 默认 1.0)")
     ap.add_argument("--e-res", type=float, default=0.0, help="绝对能量储备 E_res (min 等效, M3)")
+    ap.add_argument("--wind-aug", type=float, default=0.0, help="合成强风增强概率 (M2b: 训练分布注入 8-12 m/s 随机向, 默认 0)")
     ap.add_argument("--mode", default="eastlake", choices=["eastlake", "flow"], help="训练数据模式")
     args = ap.parse_args()
     wlist = ([float(x) for x in args.payload_w.split(",")] if args.payload_w else None)
@@ -287,7 +295,8 @@ def main():
     for step in range(args.steps):
         batch = make_batch(seed=args.seed * 1000 + step, n_task=args.n_task, B=args.batch,
                            wind_hours=[0, 12, 36, 100, 200, 300, 800, 1400], mode=args.mode,
-                           t_service=args.t_service, drone_w=wlist, kappa=args.kappa, e_res=args.e_res)
+                           t_service=args.t_service, drone_w=wlist, kappa=args.kappa, e_res=args.e_res,
+                           wind_aug=args.wind_aug)
         logps, objs, rts, _ = rollouts(policy, batch, S=args.samples, anchor=args.anchor)
         objs_arr = objs.view(args.batch, args.samples)
         baseline = objs_arr.mean(dim=1, keepdim=True)
@@ -304,7 +313,7 @@ def main():
         if step % 50 == 0 or step == args.steps - 1:
             val_obj = eval_greedy(policy, 12, args.n_task, seed=424242, mode=args.mode,
                                  t_service=args.t_service, drone_w=wlist,
-                                 kappa=args.kappa, e_res=args.e_res)
+                                 kappa=args.kappa, e_res=args.e_res, wind_aug=args.wind_aug)
             curve["step"].append(step)
             curve["train_obj"].append(float(objs.mean()))
             curve["val_obj"].append(val_obj)
