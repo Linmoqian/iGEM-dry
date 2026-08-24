@@ -19,10 +19,12 @@ setup_style()
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 PROC = os.path.join(ROOT, "data", "processed")
 FIG = os.path.join(ROOT, "figures")
-dom = dict(np.load(os.path.join(PROC, "domain.npz")))
-mask, xs, ys, dx = dom["mask"], dom["xs"], dom["ys"], float(dom["dx"])
+_exp = os.path.join(PROC, "domain_exp.npz")
+domA = dict(np.load(_exp if os.path.exists(_exp) else os.path.join(PROC, "domain.npz")))
+domB = dict(np.load(os.path.join(PROC, "domain.npz")))
+mask, xs, ys, dx = domB["mask"], domB["xs"], domB["ys"], float(domB["dx"])
 dist = distance_transform_edt(mask) * dx
-depthA = dom["depth"]
+depthA = domA["depth"]   # legacy exponential baseline
 depthB = np.where(mask, 4.66*(1.0 - np.exp(-np.power(dist/440.0, 0.39))), 0.0)
 
 CFG = dict(dt=20.0, n_manning=0.0238, nu=0.5, use_adv=True, use_coriolis=True, nu_mode="smag")

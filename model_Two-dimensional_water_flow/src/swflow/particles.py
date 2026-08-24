@@ -8,11 +8,18 @@ swflow.particles - Lagrangian particle tracking in a 2D flow field.
 import numpy as np
 
 class ParticleTracer:
-    def __init__(self, uc, vc, mask, xs, ys, dx=None, rng=None):
+    def __init__(self, uc, vc, mask, xs, ys, dx=None, rng=None, wind_vec=None, w_a=0.0):
         self.uc = uc; self.vc = vc; self.mask = mask
         self.xs = xs; self.ys = ys
         self.dx = float(dx) if dx is not None else float(xs[1]-xs[0])
         self.rng = rng or np.random.default_rng(7)
+        # surface wind drift (windage): adds w_a * wind_vec [m/s] on top of the
+        # depth-averaged current, because the 2D field underestimates the surface layer
+        # (Fenocchi et al. 2016; Wang et al. 2017). w_a ~ 0.02 (2%) recommended, based
+        # on report/实验记录 E3 (area insensitive, position highly sensitive).
+        self.wind_vec = None if wind_vec is None else np.asarray(wind_vec, float)
+        self.w_a = float(w_a)
+        self._has_wind = self.wind_vec is not None and self.w_a > 0.0
 
     def _cell_index(self, x, y):
         i = np.floor((x - self.xs[0]) / self.dx).astype(int)
@@ -44,14 +51,19 @@ class ParticleTracer:
         return self._interp(self.uc, x, y), self._interp(self.vc, x, y)
 
     def advect(self, pos, D=0.0, dt=1.0):
-        """one RK4 substep with random walk; pos (n,2)"""
+        """one RK4 substep with random walk (+ optional windage split symmetric); pos (n,2)"""
         x, y = pos[:, 0].copy(), pos[:, 1].copy()
+        if self._has_wind:
+            half = 0.5 * self.w_a * self.wind_vec * dt
+            x = x + half[0]; y = y + half[1]
         k1x, k1y = self._flow(x, y)
         k2x, k2y = self._flow(x + 0.5*dt*k1x, y + 0.5*dt*k1y)
         k3x, k3y = self._flow(x + 0.5*dt*k2x, y + 0.5*dt*k2y)
         k4x, k4y = self._flow(x + dt*k3x, y + dt*k3y)
         xn = x + dt*(k1x + 2*k2x + 2*k3x + k4x)/6.0
         yn = y + dt*(k1y + 2*k2y + 2*k3y + k4y)/6.0
+        if self._has_wind:
+            xn = xn + half[0]; yn = yn + half[1]
         if D > 0:
             s = np.sqrt(2*D*dt)
             xn = xn + s*self.rng.standard_normal(x.shape)

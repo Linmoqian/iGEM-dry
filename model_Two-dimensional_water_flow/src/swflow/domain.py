@@ -142,8 +142,22 @@ def rasterize_mask(sel, dx, xmin, xmax, ymin, ymax):
             mask &= ~m
     return mask, xs, ys
 
-def build_bathymetry(mask, dx, mean_depth, max_depth, seed_L=6.0):
+# B3 power-exponential bathymetry, calibrated against the 42 in-situ soundings of
+# Liu et al. (2019, J. Central China Normal Univ. 53(5):765-772, doi:10.19603/j.cnki.1000-1190.2019.05.015)
+# and anchored to the documented lake bulk stats (mean 2.48 m, max 4.66 m).
+# Validation (scripts/12,13): RMSE vs measured 1.015 m (pure exponential) -> 0.489 m.
+BATHY_B3 = dict(dmax=4.66, L=440.0, p=0.39, mean_target=2.48,
+                note="power-exp d = dmax*(1-exp(-(dist/L)^p)), dmax/L/p from Liu2019 42-pt + mean-constrained LSQ")
+
+def build_bathymetry(mask, dx, mean_depth, max_depth, seed_L=6.0, mode="powB3"):
+    """mode='powB3': data-calibrated power-exponential (production, see BATHY_B3);
+    mode='exp': legacy pure exponential (calibrated to mean_depth/max_depth)."""
     dist = distance_transform_edt(mask) * dx
+    if mode == "powB3":
+        b = BATHY_B3
+        L, p = b["L"], b["p"]
+        depth = np.where(mask, b["dmax"]*(1.0 - np.exp(-np.power(np.maximum(dist, 0.0)/L, p))), 0.0)
+        return depth, L, dist, b["note"]
     def mean_for_L(L):
         return (max_depth*(1.0-np.exp(-dist/L)))[mask].mean() - mean_depth
     lo, hi = seed_L, 2000.0
@@ -155,9 +169,10 @@ def build_bathymetry(mask, dx, mean_depth, max_depth, seed_L=6.0):
         else: hi = mid
     L = 0.5*(lo+hi)
     depth = np.where(mask, max_depth*(1.0-np.exp(-dist/L)), 0.0)
-    return depth, L, dist
+    return depth, L, dist, f"exp d = {max_depth}*(1-exp(-dist/L)), L={L:.2f} by mean {mean_depth}"
 
-def main(dx=50.0, mean_depth=2.21, max_depth=4.75):  # Donghu survey values (Li et al. 2020, doi:10.3390/ijgi9020094)
+def main(dx=50.0, mean_depth=2.21, max_depth=4.75, bathy_mode="powB3"):
+    # mean_depth/max_depth only used by the legacy 'exp' mode; production uses BATHY_B3
     polys = load_osm()
     sel = select_polys(polys)
     total = sum(a for _, a, _ in sel)
@@ -170,29 +185,47 @@ def main(dx=50.0, mean_depth=2.21, max_depth=4.75):  # Donghu survey values (Li 
     mask, xs, ys = rasterize_mask(sel, dx, x_min-pad, x_max+pad, y_min-pad, y_max+pad)
     area_km2 = mask.sum()*dx*dx/1e6
     print('grid: %s, wet cells: %d, area: %.2f km2' % (mask.shape, mask.sum(), area_km2))
-    depth, L, dist = build_bathymetry(mask, dx, mean_depth, max_depth)
-    print('bathymetry L=%.2f mean=%.2f max=%.2f' % (L, depth[mask].mean(), depth[mask].max()))
-    np.savez_compressed(os.path.join(PROC, 'domain.npz'), mask=mask, depth=depth, xs=xs, ys=ys, dx=dx)
+    depth, L, dist, note = build_bathymetry(mask, dx, mean_depth, max_depth, mode=bathy_mode)
+    print('bathymetry[%s] %s' % (bathy_mode, note))
+    print('  field: L=%.2f mean=%.2f max=%.2f' % (L, depth[mask].mean(), depth[mask].max()))
+    np.savez_compressed(os.path.join(PROC, 'domain.npz'), mask=mask, depth=depth, xs=xs, ys=ys, dx=dx,
+                        bathy_mode=bathy_mode)
     with open(os.path.join(PROC, 'domain_meta.json'), 'w', encoding='utf-8') as f:
         json.dump({'dx': dx, 'lat0': LAT0, 'lon0': LON0, 'area_km2': float(area_km2),
                    'grid_shape': [int(v) for v in mask.shape], 'depth_L': float(L),
-                   'mean_depth_target': mean_depth, 'max_depth': max_depth}, f, ensure_ascii=False, indent=1)
+                   'mean_depth_target': float(depth[mask].mean()),
+                   'max_depth': float(depth[mask].max()),
+                   'bathy_mode': bathy_mode,
+                   'bathy_note': note,
+                   'bathy_sources': '42 in-situ points Liu et al. 2019 (table1/2 digitized); '
+                                    'mean/max anchors Liu et al. 2019 (2.48/4.66 m)'},
+                  f, ensure_ascii=False, indent=1)
+    # keep the legacy exponential field as a comparison baseline
+    depth_exp, Lexp, _, _ = build_bathymetry(mask, dx, mean_depth, max_depth, mode="exp")
+    np.savez_compressed(os.path.join(PROC, 'domain_exp.npz'), mask=mask, depth=depth_exp,
+                        xs=xs, ys=ys, dx=dx, bathy_mode="exp")
+    print('saved domain.npz (production, %s) and domain_exp.npz (legacy baseline)' % bathy_mode)
     import matplotlib.font_manager as fm
     for _f in ('C:/Windows/Fonts/simhei.ttf', 'C:/Windows/Fonts/msyh.ttc', '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'):
         if os.path.exists(_f):
             fm.fontManager.addfont(_f)
             break
     plt.rcParams['font.family'] = 'SimHei' if os.path.exists('C:/Windows/Fonts/simhei.ttf') else 'sans-serif'
-    fig, axes = plt.subplots(1, 2, figsize=(15, 6.5))
+    fig, axes = plt.subplots(1, 3, figsize=(21, 6.5))
     ax = axes[0]
     ax.imshow(mask, origin='lower', extent=[xs[0], xs[-1], ys[0], ys[-1]], cmap='Blues', vmin=0, vmax=1)
     ax.set_title('武汉东湖水域掩膜 (OSM, 50m网格)  面积=%.1f km2' % area_km2, fontsize=13)
     ax.set_xlabel('x (m)'); ax.set_ylabel('y (m)')
     ax2 = axes[1]
     im = ax2.imshow(depth, origin='lower', extent=[xs[0], xs[-1], ys[0], ys[-1]], cmap='YlGnBu')
-    ax2.set_title('重构水深 (m) 均值=%.2f 最大=%.2f (标定目标 2.21/4.75m)' % (depth[mask].mean(), depth[mask].max()), fontsize=13)
+    ax2.set_title('B3幂指数水深 (生产) 均值=%.2f 最大=%.2f\n锚点: 42实测点+L=%.0f,p=%.2f (均值2.48/最大4.66)' % (depth[mask].mean(), depth[mask].max(), L, BATHY_B3['p']), fontsize=11)
     ax2.set_xlabel('x (m)')
     fig.colorbar(im, ax=ax2, shrink=0.8)
+    ax3 = axes[2]
+    im3 = ax3.imshow(depth_exp, origin='lower', extent=[xs[0], xs[-1], ys[0], ys[-1]], cmap='YlGnBu')
+    ax3.set_title('指数水深 (旧基线, domain_exp.npz) 均值=%.2f 最大=%.2f' % (depth_exp[mask].mean(), depth_exp[mask].max()), fontsize=11)
+    ax3.set_xlabel('x (m)')
+    fig.colorbar(im3, ax=ax3, shrink=0.8)
     plt.tight_layout()
     fig.savefig(os.path.join(FIG, 'fig01_domain_mask_depth.png'), dpi=130)
     print('figure saved')

@@ -29,7 +29,10 @@ RHO_W = 1000.0
 class SweConfigSI:
     def __init__(self, dx=50.0, lat=30.5566, dt=20.0, n_manning=0.0238,
                  c_d_wind=1.3e-3, nu=0.5, h_dry=0.15, use_adv=True, use_coriolis=True,
-                 nu_mode="const", cs=0.28, cg_rtol=1e-8, cg_maxiter=200):
+                 nu_mode="const", cs=0.29, cg_rtol=1e-8, cg_maxiter=200, cd_mode="lake"):
+        # note: production scripts (02/09/10/14) pass nu_mode='smag' explicitly
+        # (Smagorinsky cs~0.29, per MIKE21 Donghu calibration); 'const' kept as the
+        # class default so analytic/regression tests are unaffected.
         self.dx = dx; self.lat = lat; self.dt = dt
         self.n = n_manning; self.c_d_wind = c_d_wind
         self.nu = nu; self.h_dry = h_dry
@@ -37,6 +40,9 @@ class SweConfigSI:
         self.nu_mode = nu_mode; self.cs = cs
         self.cg_rtol = cg_rtol; self.cg_maxiter = cg_maxiter
         self.f = 2.0 * 7.2921e-5 * np.sin(np.radians(lat))
+        # cd_mode: 'lake' (Zhang et al. 2024 Fig.4b fit, production default), 'constant',
+        # 'wu' (Wu 1980). wind_stress() resolves the actual Cd.
+        self.cd_mode = cd_mode
 
 class ShallowWaterSolverSI:
     def __init__(self, mask, depth, cfg):
@@ -226,13 +232,25 @@ class ShallowWaterSolverSI:
         return float((H*self.mask).sum()) * self.cfg.dx**2
 
 
+def cd_lake(U):
+    """Lake wind drag coefficient for light-moderate winds (U in m/s).
+    Fit through the Zhang, Chen & Brett (2024, WRR 60:e2023WR035914) Fig.4b positive
+    branch (1.6 < U10 <= 3.0, r^2 = 0.901): Cd = 1.32e-3 + 1.27e-3*(U-1.6), clipped to
+    their measured band [1.2e-3, 3.6e-3]. Note: Eq. 11 itself requires a wave field and
+    collapses under equilibrium SMB waves (see report/实验记录 E1); this curve is the
+    parameterization actually adopted for production."""
+    return float(np.clip(1.32e-3 + 1.27e-3*(max(float(U), 0.0) - 1.6), 1.2e-3, 3.6e-3))
+
 def wind_stress(wind_mps, direction_deg, cd=1.3e-3, cd_mode="constant"):
     """Meteorological direction: the direction the wind comes FROM (deg, 0=N, 90=E).
-    cd_mode: 'constant' -> fixed cd; 'wu' -> Wu (1980): Cd = (0.8 + 0.065*U)*1e-3.
+    cd_mode: 'constant' -> fixed cd; 'wu' -> Wu (1980): Cd = (0.8 + 0.065*U)*1e-3;
+             'lake' -> cd_lake(U) (production default via SweConfigSI.cd_mode).
     Returns (tau_x, tau_y, cd_used) wind stress [N/m^2] (positive towards +x/+y)."""
     W = max(float(wind_mps), 0.0)
     if cd_mode == "wu":
         cd = (0.8 + 0.065*W)*1e-3
+    elif cd_mode == "lake":
+        cd = cd_lake(W)
     theta = np.radians(direction_deg)
     ux = -np.sin(theta)
     uy = -np.cos(theta)

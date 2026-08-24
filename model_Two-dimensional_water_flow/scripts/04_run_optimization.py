@@ -1,12 +1,27 @@
 # -*- coding: utf-8 -*-
-"""Drone drop-point optimization under wind uncertainty (ensemble of flow fields)"""
-import sys, os
+"""Drone drop-point optimization under wind uncertainty (ensemble of flow fields)."""
+import sys, os, argparse
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 import numpy as np
-from swflow.deployment import sim_drop, batch_sim_drops, bloom_patch
+from swflow.deployment import sim_drop, batch_sim_drops, bloom_patch, physical_thr_rel
 from swflow.viz import setup_style
 import matplotlib.pyplot as plt
 
+ap = argparse.ArgumentParser()
+ap.add_argument("--thr", type=float, default=0.05,
+                help="relative coverage threshold (demo 0.05; use --thr physical e.g. "
+                     "0.25 or omit and let --physical resolve from C0/t_ok/T/M)")
+ap.add_argument("--physical", action="store_true",
+                help="resolve thr_rel = physical_thr_rel(C0, t_ok, T_water, M) instead of --thr")
+ap.add_argument("--C0", type=float, default=2.85)
+ap.add_argument("--t_ok", type=float, default=24.0)
+ap.add_argument("--T_water", type=float, default=25.0)
+ap.add_argument("--M", type=float, default=1.0)
+ap.add_argument("--out", default="opt_result.npz", help="output filename under data/processed")
+args = ap.parse_args()
+THR = physical_thr_rel(args.C0, args.t_ok, args.T_water, args.M) if args.physical else float(args.thr)
+print("thr_rel = %.4f (%s)" % (THR, "physical C0=%.2f/t_ok=%.0fh/T=%.0fC/M=%.1f" % (args.C0, args.t_ok, args.T_water, args.M)
+                              if args.physical else "--thr given"))
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 PROC = os.path.join(ROOT, "data", "processed")
 FIG = os.path.join(ROOT, "figures")
@@ -50,7 +65,7 @@ print("candidates:", len(cands))
 T_h = 1.5
 scores = []
 for fi, f in enumerate(flows):
-    outs = batch_sim_drops(f, cands, T_h=T_h, dt=10.0, D=0.3, n=600, sigma0=25.0, thr_rel=0.05)
+    outs = batch_sim_drops(f, cands, T_h=T_h, dt=10.0, D=0.3, n=600, sigma0=25.0, thr_rel=THR)
     s = []
     for (area, cxy, C, cov) in outs:
         inter = (cov & patch).sum()
@@ -67,8 +82,9 @@ for k in order[:5]:
     print("  cand (%.0f,%.0f): expected frac=%.3f  (members:%s)"
           % (cands[k, 0], cands[k, 1], S[k], _np.round(Sarr[:, k], 3)))
 
-np.savez_compressed(os.path.join(PROC, "opt_result.npz"), cands=cands, scores=S,
-                    member_scores=np.array(scores), patch=patch)
+np.savez_compressed(os.path.join(PROC, args.out), cands=cands, scores=S,
+                    member_scores=np.array(scores), patch=patch, thr_rel=THR,
+                    thr_kind=("physical" if args.physical else "demo"))
 
 # figure
 fig, axes = plt.subplots(1, 2, figsize=(16, 6))
@@ -86,9 +102,9 @@ ax.legend()
 # coverage of best candidate under each member
 ax2 = axes[1]
 for fi, f in enumerate(flows):
-    outs = batch_sim_drops(f, cands[[best]], T_h=T_h, dt=10.0, D=0.3, n=2000, sigma0=25.0, thr_rel=0.05)
+    outs = batch_sim_drops(f, cands[[best]], T_h=T_h, dt=10.0, D=0.3, n=2000, sigma0=25.0, thr_rel=THR)
     area, cxy, C, cov = outs[0]
-    ax2.contour(xs, ys, C, levels=[0.05*np.max(C)], colors=["tab:red"], linewidths=1.4)
+    ax2.contour(xs, ys, C, levels=[THR*np.max(C)], colors=["tab:red"], linewidths=1.4)
     ax2.contour(xs, ys, patch.astype(float), levels=[0.5], colors="k", linewidths=1.2, linestyles="--")
     ax2.scatter([cands[best, 0]], [cands[best, 1]], c="b", s=80, marker="*")
 ax2.set_title("best drop: coverage contour per member (red) vs bloom patch (black)")

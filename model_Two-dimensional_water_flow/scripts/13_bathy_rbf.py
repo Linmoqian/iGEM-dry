@@ -49,7 +49,10 @@ POINTS = [
  (39, 114.422819, 30.556869, 3.58), (40, 114.422736, 30.560025, 3.67),
  (41, 114.427894, 30.559172, 2.67), (42, 114.428419, 30.555297, 3.17),
 ]
-domv = dict(np.load(os.path.join(PROC, "domain.npz")))
+# baseline "A" = legacy pure-exponential field (kept as domain_exp.npz by domain.py);
+# production domain.npz is now the B3 power-exponential field.
+_exp = os.path.join(PROC, "domain_exp.npz")
+domv = dict(np.load(_exp if os.path.exists(_exp) else os.path.join(PROC, "domain.npz")))
 mask, depth0, xs, ys, dx = domv["mask"], domv["depth"], domv["xs"], domv["ys"], float(domv["dx"])
 ny, nx = mask.shape
 dist = distance_transform_edt(mask) * dx          # meters to shore (same as domain.py)

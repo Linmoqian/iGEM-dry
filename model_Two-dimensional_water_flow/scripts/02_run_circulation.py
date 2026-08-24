@@ -17,11 +17,12 @@ dom = np.load(os.path.join(PROC, "domain.npz"))
 mask, depth, xs, ys, dx = dom["mask"], dom["depth"], dom["xs"], dom["ys"], float(dom["dx"])
 print("domain", mask.shape, "wet", int(mask.sum()), file=sys.stderr)
 
-def run_spinup(wind_mps, wind_dir, hours=36.0, dt=20.0, n=0.022, nu=0.5, label=""):
-    cfg = SweConfigSI(dx=dx, dt=dt, n_manning=n, nu=nu, use_adv=True, use_coriolis=True, nu_mode='smag')
+def run_spinup(wind_mps, wind_dir, hours=36.0, dt=20.0, n=0.0238, nu=0.5, label=""):
+    cfg = SweConfigSI(dx=dx, dt=dt, n_manning=n, nu=nu, use_adv=True, use_coriolis=True,
+                      nu_mode='smag', cs=0.29)   # Smagorinsky 0.29 = MIKE21 Donghu calibration
     solver = ShallowWaterSolverSI(mask, depth, cfg)
     st = solver.init_state()
-    tau_x, tau_y, _cd = wind_stress(wind_mps, wind_dir, cd=cfg.c_d_wind)
+    tau_x, tau_y, cd_used = wind_stress(wind_mps, wind_dir, cd_mode=cfg.cd_mode)  # 'lake' default
     nsteps = int(hours*3600.0/dt)
     trace = []
     vol0 = solver.volume(st)
@@ -34,11 +35,13 @@ def run_spinup(wind_mps, wind_dir, hours=36.0, dt=20.0, n=0.022, nu=0.5, label="
     uc, vc = cell_velocities(st)
     sp = np.sqrt(uc**2 + vc**2)
     vol_drift = abs(solver.volume(st)-vol0)/vol0
-    print("%s wind=%.1f m/s from %d deg: |u|max=%.4f mean=%.4f vol_drift=%.2e"
-          % (label, wind_mps, wind_dir, float(sp[mask].max()), float(sp[mask].mean()), vol_drift), file=sys.stderr)
+    print("%s wind=%.1f m/s from %d deg: |u|max=%.4f mean=%.4f vol_drift=%.2e (Cd=%.4g mode=%s)"
+          % (label, wind_mps, wind_dir, float(sp[mask].max()), float(sp[mask].mean()), vol_drift,
+             cd_used, cfg.cd_mode), file=sys.stderr)
     return {"u": st["u"], "v": st["v"], "eta": st["eta"], "uc": uc, "vc": vc,
             "mask": mask, "depth": depth, "xs": xs, "ys": ys, "dx": dx,
-            "trace": np.array(trace), "wind_mps": wind_mps, "wind_dir": wind_dir, "label": label}
+            "trace": np.array(trace), "wind_mps": wind_mps, "wind_dir": wind_dir,
+            "cd_used": cd_used, "cd_mode": cfg.cd_mode, "n_manning": n, "label": label}
 
 cases = [
     ("SE_2p5", 2.5, 135.0),
