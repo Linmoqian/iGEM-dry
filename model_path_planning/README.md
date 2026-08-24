@@ -1,7 +1,7 @@
 # model_path_planning — 无人机任务级路径规划模型
 
 > **定位**：五模型管线（浓度标定 → total MC/MC-LR 预测 → 二维浅水流 → 降解动力学 → **本模块**）中的决策链。输入为物理推演的**任务库**（投放点/剂量/窗口/时滞），输出为每架无人机的访问序列——目标是使**风险加权治理生效时间**最短。
-> **版本**：V2.6 基线（26 轮审查）+ V2.7 优化轮（质量审查修复 + 20 篇文献驱动改进 + v3.0 任务契约落地）。详见 `report/02` 与 `report/07`。
+> **版本**：V2.6 基线（26 轮审查）+ V2.7 优化轮（修复+文献驱动+v3.0 契约）+ **V3 模块验证轮（M1–M7，见 `report/09`）**。
 
 ## 报告速查
 
@@ -15,6 +15,7 @@
 | `report/06_五模型联动适配性审查与路径规划改进方向.md` | 五模块上下游接口契约、6 个失配点、v3.0 改进方向 |
 | `report/07_优化实验流程记录.md` | **2026-08-24 全部优化实验的流程记录**（修复验证、三组重训、强风压力测试、×8 增广、λ 敏感性、OOD 重测、v3.0 水流任务） |
 | `report/08_优化方案_不足与解决方案.md` | 最终优化方案；当前不足（诚实分级）；解决方案与优先级路线图 |
+| `report/09_模块级优化验证报告.md` | **V3 模块级验证**：8 项优化（M1–M7）逐一"改动→验收→实验→判定→交付决定"；4 通过/2 条件通过/2 不通过（M2 载荷训练驳回但保留可选审计） |
 | `data/数据调研与下载记录.md` | 数据集调研与下载状态（2026-08-24 更正 3 处失实）；`data/raw/` 已被 `.gitignore` 排除 |
 
 ## 快速复现
@@ -26,7 +27,8 @@ cd model_path_planning/code
 python scenario.py                    # 东湖场景自检
 python flow_tasks.py                  # v3.0 水流任务生成器自检 (需上游 SWF/降解数据)
 python train.py --steps 1200 --d 128 --out outA          # V2.7 基线 (独立时钟) ~25 min
-python train.py --steps 1200 --d 128 --use-edge --tanh-prior --out outB   # 边特征+解码先验
+python train.py --steps 1200 --d 128 --use-edge --tanh-prior --out outB   # 边特征+解码先验 (默认 t_service=1.0/κ=1.15)
+python train.py --steps 1000 --d 128 --use-edge --tanh-prior --n-task 50 --batch 8 --out outD   # n=50 规模模型 (M5)
 python train.py --steps 1200 --d 128 --use-edge --tanh-prior --mode flow --n-task 10 --out outC  # v3.0 水流任务
 python evaluate.py --ckpt outA/ckpt.pt          # 主对比 (可加 --augment *8 增广)
 python evaluate.py --ckpt outC/ckpt.pt --mode flow   # v3.0 任务对比

@@ -14,13 +14,22 @@ from model import PolicyNetwork
 from train import rollouts, make_batch
 
 
-def local_search(inst, routes, tsp_iters=600, seed=0):
+def local_search(inst, routes, tsp_iters=600, seed=0, constraint_aware=True):
     """简单 2-opt/relocate 局部搜索: 改进即接受, 始终维护当前最好解(修复版)。
-    修复说明: 旧版在拒绝扰动时将解重置回'最初输入'而非'当前最好解', 导致爬山退化(详见 05_质量审查报告 F1)。"""
+    修复说明: 旧版在拒绝扰动时将解重置回'最初输入'而非'当前最好解', 导致爬山退化(详见 05_质量审查报告 F1)。
+    constraint_aware=True (M4): 仅接受"能量审计通过 且 目标改进"的邻域解;
+      若输入解不可行, 先尝试用贪心修复作为起点 (贪心与 env 同口径能量审计)。
+    """
     import copy
     rng = np.random.RandomState(seed)
     cur = copy.deepcopy(routes)
-    best, _ = objective(inst, cur)
+    best, bfeas = objective(inst, cur)
+    if not bfeas:
+        # M4 修复: 起点不可行 → 用同口径贪心重造起点 (仍不可行则保持原样, LS 只接受可行改进)
+        g = greedy_solve(inst)
+        go, gfeas = objective(inst, g)
+        if gfeas and go < best:
+            cur, best, bfeas = g, go, gfeas
     best_rts = copy.deepcopy(cur)
     for it in range(tsp_iters):
         mode = rng.rand()
@@ -41,8 +50,11 @@ def local_search(inst, routes, tsp_iters=600, seed=0):
                 i = rng.randint(len(trial[k]) - 1)
                 j = rng.randint(i + 1, len(trial[k]))
                 trial[k][i:j + 1] = trial[k][i:j + 1][::-1]
-        o, _ = objective(inst, trial)
-        if o < best - 1e-9:
+        o, feas = objective(inst, trial)
+        ok = o < best - 1e-9
+        if constraint_aware:
+            ok = ok and feas
+        if ok:
             best = o
             best_rts = copy.deepcopy(trial)
             cur = copy.deepcopy(trial)

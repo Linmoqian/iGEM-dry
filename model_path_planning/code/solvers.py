@@ -5,7 +5,7 @@ solvers.py — 基线求解器: 风险邻接贪心 + OR-Tools(MDVRPTW 代理目�
       + 风险加权软时间窗惩罚; 最终所有方法用 env.objective() 统一评分。
 """
 import numpy as np
-from env import Instance, objective_times
+from env import Instance, objective_times, leg_energy
 
 
 # ---------------- 贪心 ----------------
@@ -30,8 +30,10 @@ def greedy_solve(inst, gamma=1.0, seed=0):
                 if load[k] < 1:
                     continue
                 leg = inst.T[k][pos[k]][j]
-                if energy[k] - leg < inst.T[k][j][inst.drone_depot[k]]:
-                    continue                     # 能量不足返回
+                e_leg = leg_energy(inst, k, leg, load[k])
+                e_ret = leg_energy(inst, k, inst.T[k][j][inst.drone_depot[k]], load[k] - 1.0)
+                if energy[k] - e_leg < inst.kappa * e_ret + inst.energy_reserve:
+                    continue                     # 能量不足返回 (M2/M3 审计口径)
                 score = leg * (1.0 + gamma * inst.risk[j]) + 0.2 * rng.rand()
                 if best is None or score < best[0]:
                     best = (score, k, j)
@@ -40,7 +42,7 @@ def greedy_solve(inst, gamma=1.0, seed=0):
         _, k, j = best
         leg = inst.T[k][pos[k]][j]
         t[k] += leg + inst.hover_time
-        energy[k] -= leg
+        energy[k] -= leg_energy(inst, k, leg, load[k])
         load[k] -= 1
         remaining[j] -= 1
         routes[k].append(int(j))

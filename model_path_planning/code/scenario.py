@@ -129,6 +129,7 @@ class Scenario:
     drone_energy: np.ndarray    # (m,) 每机续航 (min)
     drone_speed_k: np.ndarray   # (m,) 每机巡航速度 (各向同性比例)
     n_drone: int
+    t_service: float = 1.0       # 单点投放作业时间 min [V3 校准默认 1.0: 文献 72-120 s/点]
     meta: dict = field(default_factory=dict)
 
     def to_dict(self):
@@ -139,7 +140,7 @@ class Scenario:
         return d
 
 
-def build_eastlake(seed=0, n_alerts=None, wind_hour=0, random_device=False):
+def build_eastlake(seed=0, n_alerts=None, wind_hour=0, random_device=False, t_service=1.0):
     """构建东湖场景: 用 OSM 水多边形约束生成随机警报点; wind_hour 指定风场小时索引"""
     rng = random.Random(seed)
     polys = load_osm_water()
@@ -184,7 +185,7 @@ def build_eastlake(seed=0, n_alerts=None, wind_hour=0, random_device=False):
         xy=xy, depot_idx=np.arange(n_dep), task_idx=np.arange(n_dep, n),
         risk=risk, tw_start=tws, tw_end=twe, demand=demand, T=T,
         drone_speed=15.0, drone_capacity=cap, drone_energy=en, drone_speed_k=spd,
-        n_drone=m, meta={"n_dep": n_dep, "alerts": alerts, "wind": wind,
+        n_drone=m, t_service=t_service, meta={"n_dep": n_dep, "alerts": alerts, "wind": wind,
                          "wind_text": times[idx], "n_task": n_task})
     return sc
 
