@@ -1,0 +1,203 @@
+{
+ "env": {
+  "hover": 1.0,
+  "kappa": 1.15,
+  "e_res": 2.0
+ },
+ "B": {
+  "eastlake": {
+   "greedy": {
+    "obj": 6060.042046865363,
+    "feas": "8/8"
+   },
+   "greedy_ls": {
+    "obj": 4668.397400276457,
+    "feas": "8/8"
+   },
+   "ortools": {
+    "obj": 6056.489644836851,
+    "feas": "8/8"
+   },
+   "rl": {
+    "obj": 4498.877604499725,
+    "feas": "8/8"
+   },
+   "rl_ls": {
+    "obj": 4205.200638426279,
+    "feas": "8/8"
+   }
+  },
+  "flow": {
+   "greedy": {
+    "obj": 6060.042046865363,
+    "feas": "8/8"
+   },
+   "greedy_ls": {
+    "obj": 4668.397400276457,
+    "feas": "8/8"
+   },
+   "ortools": {
+    "obj": 6056.489644836851,
+    "feas": "8/8"
+   },
+   "rl": {
+    "obj": 4498.877604499725,
+    "feas": "8/8"
+   },
+   "rl_ls": {
+    "obj": 4205.200638426279,
+    "feas": "8/8"
+   }
+  },
+  "strong_wind": {
+   "wind": 37.25981422202679,
+   "euclid": 1287.7435956351594
+  },
+  "ood": [
+   {
+    "name": "VRPTW_C1_10_1.vrp",
+    "greedy_ls": 584.0,
+    "rl_ls": 584.0
+   },
+   {
+    "name": "VRPTW_C1_10_10.vrp",
+    "greedy_ls": 459.3,
+    "rl_ls": 459.3
+   },
+   {
+    "name": "VRPTW_C1_10_2.vrp",
+    "greedy_ls": 538.5,
+    "rl_ls": 538.5
+   },
+   {
+    "name": "MDVRPTW_PR11A.vrp",
+    "greedy_ls": 1467.9,
+    "rl_ls": 1467.9
+   },
+   {
+    "name": "MDVRPTW_PR11B.vrp",
+    "greedy_ls": 2294.0,
+    "rl_ls": 2294.0
+   },
+   {
+    "name": "MDVRPTW_PR12A.vrp",
+    "greedy_ls": 1343.4,
+    "rl_ls": 1343.4
+   },
+   {
+    "name": "HFVRP_X1001-FSMF.vrp",
+    "greedy_ls": 1522.6,
+    "rl_ls": 1522.6
+   },
+   {
+    "name": "HFVRP_X101-FSMFD.vrp",
+    "greedy_ls": 781.1,
+    "rl_ls": 781.1
+   },
+   {
+    "name": "HFVRP_X106-FSMD.vrp",
+    "greedy_ls": 1593.4,
+    "rl_ls": 1593.4
+   }
+  ],
+  "ood_win": "0/9"
+ },
+ "F": {
+  "eastlake": {
+   "greedy": {
+    "obj": 6060.042046865363,
+    "feas": "8/8"
+   },
+   "greedy_ls": {
+    "obj": 4668.397400276457,
+    "feas": "8/8"
+   },
+   "ortools": {
+    "obj": 6056.489644836851,
+    "feas": "8/8"
+   },
+   "rl": {
+    "obj": 4477.4047374453,
+    "feas": "8/8"
+   },
+   "rl_ls": {
+    "obj": 4210.856531838082,
+    "feas": "8/8"
+   }
+  },
+  "flow": {
+   "greedy": {
+    "obj": 6060.042046865363,
+    "feas": "8/8"
+   },
+   "greedy_ls": {
+    "obj": 4668.397400276457,
+    "feas": "8/8"
+   },
+   "ortools": {
+    "obj": 6056.489644836851,
+    "feas": "8/8"
+   },
+   "rl": {
+    "obj": 4477.4047374453,
+    "feas": "8/8"
+   },
+   "rl_ls": {
+    "obj": 4210.856531838082,
+    "feas": "8/8"
+   }
+  },
+  "strong_wind": {
+   "wind": 38.85748121173521,
+   "euclid": 3787.4554190703448
+  },
+  "ood": [
+   {
+    "name": "VRPTW_C1_10_1.vrp",
+    "greedy_ls": 584.0,
+    "rl_ls": 584.0
+   },
+   {
+    "name": "VRPTW_C1_10_10.vrp",
+    "greedy_ls": 459.3,
+    "rl_ls": 459.3
+   },
+   {
+    "name": "VRPTW_C1_10_2.vrp",
+    "greedy_ls": 538.5,
+    "rl_ls": 538.5
+   },
+   {
+    "name": "MDVRPTW_PR11A.vrp",
+    "greedy_ls": 1467.9,
+    "rl_ls": 1467.9
+   },
+   {
+    "name": "MDVRPTW_PR11B.vrp",
+    "greedy_ls": 2294.0,
+    "rl_ls": 2294.0
+   },
+   {
+    "name": "MDVRPTW_PR12A.vrp",
+    "greedy_ls": 1343.4,
+    "rl_ls": 1343.4
+   },
+   {
+    "name": "HFVRP_X1001-FSMF.vrp",
+    "greedy_ls": 1522.6,
+    "rl_ls": 1522.6
+   },
+   {
+    "name": "HFVRP_X101-FSMFD.vrp",
+    "greedy_ls": 781.1,
+    "rl_ls": 781.1
+   },
+   {
+    "name": "HFVRP_X106-FSMD.vrp",
+    "greedy_ls": 1593.4,
+    "rl_ls": 1593.4
+   }
+  ],
+  "ood_win": "0/9"
+ }
+}
