@@ -2,7 +2,7 @@
 """
 replan_demo.py — 动态警报注入下的滚动重规划演示（离散事件仿真器 DES）
 事件: t=0 初始5点; t=20 +2点; t=45 +3点; t=70 +2点
-策略: ①固定计划(事件0求解,后续点排队续飞) ②事件重规划(全部未完成重解) ③最近邻即时指派
+策略: ①固定计划(事件0求解,后续点排队续飞) ②事件重规划(全部未完成重解) ③邻接贪心重规划(F9: 原"最近邻"名不副实, 改名披露)
 指标: 风险加权响应延迟 Σ w_i·(t_i - t_alert_i); 服务数; 最晚完成
 输出: out/replan_results.json + out/figs/fig8_replan_gantt.png
 """
@@ -32,10 +32,6 @@ def make_replan_instance(base, drones, tasks, demand_of=1.0):
     for t, nd in enumerate(tasks):
         xy[ndep + t] = base.xy[nd]
     T = np.zeros((m, n, n))
-    for k in range(m):
-        for i in range(n):
-            for j in range(n):
-                ni = base.xy.index(xy[i]) if False else None
     # 直接用节点索引映射(更稳): 保留索引表
     idx_map = [d["pos"] for d in drones] + list(tasks)
     for k in range(m):
@@ -60,7 +56,8 @@ def solve(rl, inst, greedy=False, prob_n=16, method="rl"):
     if method == "greedy":
         return greedy_solve(inst)
     if method == "ortools":
-        return ortools_solve(inst, time_limit=4.0)
+        routes, _ = ortools_solve(inst, time_limit=4.0)
+        return routes
     with torch.no_grad():
         lp, objs, rts, _ = rollouts(rl, [inst] * prob_n, S=1, greedy=False)
     return rts[int(objs.argmin())]
@@ -74,16 +71,8 @@ def main():
     ckpt = os.path.join(os.path.dirname(os.path.abspath(__file__)), args.ckpt)
     rl = None
     if os.path.exists(ckpt):
-        for (d, L) in [(128, 3), (96, 3), (64, 2)]:
-            try:
-                rl = PolicyNetwork(d=d, L=L)
-                rl.load_state_dict(torch.load(ckpt, map_location="cpu"))
-                rl.eval()
-                print("loaded ckpt d=", d, "L=", L)
-                break
-            except Exception:
-                rl = None
-                continue
+        from evaluate import load_policy
+        rl = load_policy(ckpt)
     sc = build_eastlake(seed=args.seed, n_alerts=10, wind_hour=24)
     base = build_instance_from_scenario(sc)
     tasks_all = [int(j) for j in list(base.task_ids())]
@@ -92,7 +81,7 @@ def main():
               (45.0, tasks_all[n0 + 2:n0 + 5]), (70.0, tasks_all[n0 + 5:])]
 
     results = {}
-    for strategy in ["static", "replan", "nearest"]:
+    for strategy in ["static", "replan", "greedy_replan"]:
         A = base.xy[base.drone_depot.astype(int)].astype(float)
         m = len(base.drone_cap)
         dron = [dict(pos=int(base.drone_depot[k]), t=0.0, cap=float(base.drone_cap[k]),
@@ -101,7 +90,6 @@ def main():
         arrival = {}
         task_alert = {j: float("inf") for j in tasks_all}
         committed = []          # 已下发但未完成的路线(节点序列,按机)
-        pending_history = []    # 已到达未服务
         n_wave = 0
         for (te, tks) in events:
             for j in tks:
@@ -149,12 +137,12 @@ def main():
                 committed = [[] for _ in range(m)]
                 continue
             inst_r, idx_map = make_replan_instance(base, dron, sub)
-            if strategy == "nearest":
+            if strategy == "greedy_replan":  # F9 修正: 原"nearest"实为邻接贪心+全量重规划, 改名如实披露
                 routes = greedy_solve(inst_r)
             elif rl is not None:
                 routes = solve(rl, inst_r, prob_n=24)
             else:
-                routes = ortools_solve(inst_r, time_limit=4.0)
+                routes, _ = ortools_solve(inst_r, time_limit=4.0)
             committed = []
             for k in range(m):
                 seq = []
@@ -191,9 +179,9 @@ def main():
     plt.rcParams["font.sans-serif"] = ["Microsoft YaHei", "SimHei"]
     plt.rcParams["axes.unicode_minus"] = False
     fig, ax = plt.subplots(figsize=(10.5, 4.8))
-    cols = {"static": "#9e9e9e", "replan": "#2e7d32", "nearest": "#e65100"}
+    cols = {"static": "#9e9e9e", "replan": "#2e7d32", "greedy_replan": "#e65100"}
     tasks_plot = [j for j in tasks_all]
-    ys = {st: i for i, st in enumerate(["static", "replan", "nearest"])}
+    ys = {st: i for i, st in enumerate(["static", "replan", "greedy_replan"])}
     for st, res in results.items():
         for j in tasks_plot:
             t = res["arr"].get(str(j), -1)
@@ -205,7 +193,7 @@ def main():
         if tks:
             ax.text(te, 2.85, f"t={te:.0f}min +{len(tks)}", ha="center", fontsize=8, color="#7b1fa2")
     ax.set_yticks([0.6, 1.6, 2.6])
-    ax.set_yticklabels(["固定计划(按波次)", "事件重规划", "最近邻即时指派"], fontsize=10)
+    ax.set_yticklabels(["固定计划(按波次)", "事件重规划", "邻接贪心重规划"], fontsize=10)
     ax.set_xlabel("时间 (min)"); ax.set_xlim(-2, 130)
     ax.grid(alpha=0.3, axis="x")
     ax.set_title("图8 动态警报下各策略的投放完成时间（条=任务, 起点=警报时刻）", fontsize=12)

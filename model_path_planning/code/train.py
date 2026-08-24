@@ -21,11 +21,12 @@ HOVER = 0.13
 DEMAND_MAX = 6.0
 
 
-def inst_tensors(batch):
+def inst_tensors(batch, use_edge=False):
     n = max(len(i.xy) for i in batch)
     m = len(batch[0].drone_cap)
     B = len(batch)
-    x = torch.zeros(B, n, 6)
+    nf = 9 if use_edge else 6
+    x = torch.zeros(B, n, nf)
     is_dep = torch.zeros(B, n, dtype=torch.long)
     T = torch.zeros(B, m, n, n)
     demand = torch.zeros(B, n)
@@ -45,7 +46,22 @@ def inst_tensors(batch):
         x[b, :ni, 2] = dn / DEMAND_MAX
         x[b, :ni, 3] = rk
         x[b, :ni, 4] = twv / inst.horizon
-        x[b, :ni, 5] = 0.0
+        if use_edge:
+            # 特征5: 返航难度先验 (到最近停机坪距离/时域内最大航程)
+            dep_xy = torch.tensor(inst.xy[:inst.n_dep], dtype=torch.float32)
+            node_xy = torch.tensor(inst.xy, dtype=torch.float32)
+            d_dep = torch.linalg.vector_norm(node_xy[:, None, :] - dep_xy[None, :, :], dim=-1).min(dim=1).values
+            x[b, :ni, 5] = d_dep / 162.0   # 15 m/s × 180 min
+            # 特征6-8: ANE-lite 边聚合 (RRNCO ANE 思想的聚合近似)
+            Tmean = torch.tensor(inst.T, dtype=torch.float32).mean(0)          # (n,n) 机型平均
+            scale = Tmean[Tmean > 0].median()
+            e_in = Tmean.mean(0) / scale          # 到达 j 的平均成本
+            e_out = Tmean.mean(1) / scale         # 从 j 出发的平均成本
+            x[b, :ni, 6] = e_in[:ni]
+            x[b, :ni, 7] = e_out[:ni]
+            x[b, :ni, 8] = (e_in - e_out)[:ni]    # 非对称度 (风偏)
+        else:
+            x[b, :ni, 5] = 0.0
         is_dep[b, :ni] = (torch.arange(ni) < inst.n_dep).long()
         T[b, :, :ni, :ni] = torch.tensor(inst.T, dtype=torch.float32)
         demand[b, :ni] = dn
@@ -58,9 +74,13 @@ def inst_tensors(batch):
                 depot_of=depot_of, cap=cap, en=en)
 
 
-def rollouts(policy, batch, S=8, greedy=False):
-    """batch: list[Instance]; 返回 (logps:(B*S,), objs:(B*S,), routes_list, metas)"""
-    t = inst_tensors(batch)
+def rollouts(policy, batch, S=8, greedy=False, anchor=False):
+    """batch: list[Instance]; 返回 (logps:(B*S,), objs:(B*S,), routes_list, metas)
+    anchor=True: 真 POMO 锚定 — 每个实例的 S 条轨迹分别强制'无人机0的首个目标=任务s'(不同起点)。
+    use_edge/tanh_prior 从 policy 结构推断。
+    """
+    use_edge = policy.use_edge
+    t = inst_tensors(batch, use_edge=use_edge)
     B, m = t["cap"].shape
     n = t["x"].shape[1]
     h = policy.encode(t["x"], t["is_dep"])
@@ -77,7 +97,7 @@ def rollouts(policy, batch, S=8, greedy=False):
     cur = depot2.clone()
     cap_rem = cap2.clone()
     en_rem = en2.clone()
-    tnow = torch.zeros(B2)
+    tnow = torch.zeros(B2, m)                       # F3 修复: 每机独立时钟 (B2, m)
     logps = torch.zeros(B2)
     actions = [[] for _ in range(B2)]
     max_steps = min(2 * int(demand2.sum()) + 4 * m + 8, 100)
@@ -85,6 +105,15 @@ def rollouts(policy, batch, S=8, greedy=False):
     arB = torch.arange(B2).view(B2, 1, 1)
     arM = torch.arange(m).view(1, m, 1)
     arN = torch.arange(n).view(1, 1, n)
+    T_scale = float(T2.max()) + 1e-6            # 边成本归一化尺度 (全批标量, 稳定)
+    # 锚定任务: 实例内轨迹 s -> 任务 (s+b)%n_task (假设各实例任务数相同)
+    anchor_j = None
+    if anchor:
+        n_task = int((~t["is_dep"].bool()).sum(dim=1).min())
+        base = (torch.arange(S).view(1, S).repeat(B, 1) + torch.arange(B).view(B, 1)) % n_task
+        base = base.reshape(B2)
+        dep_cnt = t["is_dep"].sum(dim=1).min().long()
+        anchor_j = base + dep_cnt + torch.arange(B2) * 0  # (B2,) 节点索引
     for step in range(max_steps):
         # 索引快照(避免 in-place 更新污染 autograd 版本计数)
         curc = cur.detach().clone()
@@ -97,7 +126,7 @@ def rollouts(policy, batch, S=8, greedy=False):
         served_ok = (served.unsqueeze(1) < demand2.unsqueeze(1)).expand(B2, m, n)
         load_ok = (cap_rem.unsqueeze(-1) >= 1.0).expand(B2, m, n)
         en_ok_task = (en_rem.unsqueeze(-1) - T_leg - T_ret) >= 0.0
-        time_ok = (tnow.unsqueeze(-1).unsqueeze(-1).expand(B2, m, n) + T_leg) <= HORIZON
+        time_ok = (tnow.unsqueeze(-1).expand(B2, m, n) + T_leg) <= HORIZON
         infeasible = infeasible | (is_task & (~served_ok))
         infeasible = infeasible | (is_task & (~load_ok))
         infeasible = infeasible | (is_task & (~en_ok_task))
@@ -107,12 +136,19 @@ def rollouts(policy, batch, S=8, greedy=False):
         dep_ok = (depot2.unsqueeze(-1) == arN.expand(B2, m, n)) & need_refill & (curc.unsqueeze(-1) != arN.expand(B2, m, n))
         en_ok_dep = (en_rem.unsqueeze(-1) - T_leg) >= 0.0
         infeasible = infeasible | ((~is_task) & (infeasible | (~dep_ok | ~en_ok_dep)))
+        if step == 0 and anchor:
+            # 真 POMO 锚定: 本条轨迹的第一步固定为 (无人机0, anchor_j) — 其余动作全部屏蔽
+            infeasible[arB[:, 0, 0], :, :] = True
+            infeasible[arB[:, 0, 0], 0, anchor_j] = False
         # 全部不可行 -> 终止(未服务计入惩罚)
         if infeasible.all():
             break
-        logits = policy.logits(h2, curc, cap_rem, en_rem, tnow, infeasible)
+        logits = policy.logits(h2, curc, cap_rem, en_rem, tnow, infeasible, edge_prior=T_leg / T_scale)
         lsm = F.log_softmax(logits.reshape(B2, -1), dim=-1)
-        if greedy:
+        if anchor and step == 0:
+            idx = torch.zeros(B2, dtype=torch.long)
+            idx = idx * 0 + (0 * n + anchor_j)   # 强制锚定动作
+        elif greedy:
             idx = lsm.argmax(dim=-1)
         else:
             idx = torch.multinomial(lsm.exp(), 1).squeeze(-1)
@@ -122,17 +158,17 @@ def rollouts(policy, batch, S=8, greedy=False):
             jj = int(idx[b] % n)
             if jj != int(cur[b, kk]):
                 leg = float(T2[b, kk, cur[b, kk], jj])
-                tnow[b] += leg
+                tnow[b, kk] += leg
                 en_rem[b, kk] = max(0.0, float(en_rem[b, kk]) - leg)
                 if jj == int(depot2[b, kk]):
                     cap_rem[b, kk] = cap2[b, kk]
                     en_rem[b, kk] = en2[b, kk]
-                    tnow[b] += REFILL
+                    tnow[b, kk] += REFILL
                     actions[b].append((int(kk), jj))    # 停机坪补货
                 else:
                     served[b, jj] += 1.0
                     cap_rem[b, kk] -= 1.0
-                    tnow[b] += HOVER
+                    tnow[b, kk] += HOVER
                     actions[b].append((int(kk), jj))
                 cur[b, kk] = jj
         if (served >= total_demand).all():
@@ -151,17 +187,23 @@ def rollouts(policy, batch, S=8, greedy=False):
     return logps, torch.tensor(objs, dtype=torch.float32), routes_list, None
 
 
-def make_batch(seed, n_task, B, wind_hours):
+def make_batch(seed, n_task, B, wind_hours, mode="eastlake"):
     rng = np.random.RandomState(seed)
     batch = []
     for b in range(B):
-        sc = build_eastlake(seed=seed * 997 + b, n_alerts=n_task, wind_hour=int(rng.choice(wind_hours)))
-        batch.append(build_instance_from_scenario(sc))
+        if mode == "flow":
+            from flow_tasks import build_flow_instance
+            inst, _ = build_flow_instance(seed=seed * 997 + b, wind_hour=int(rng.choice(wind_hours)),
+                                          n_task=n_task)
+        else:
+            sc = build_eastlake(seed=seed * 997 + b, n_alerts=n_task, wind_hour=int(rng.choice(wind_hours)))
+            inst = build_instance_from_scenario(sc)
+        batch.append(inst)
     return batch
 
 
-def eval_greedy(policy, n_inst=12, n_task=10, seed=12345):
-    batch = make_batch(seed, n_task, n_inst, [0, 12, 36, 100, 200, 300])
+def eval_greedy(policy, n_inst=12, n_task=10, seed=12345, mode="eastlake"):
+    batch = make_batch(seed, n_task, n_inst, [0, 12, 36, 100, 200, 300], mode=mode)
     with torch.no_grad():
         logps, objs, routes_list, _ = rollouts(policy, batch, S=1, greedy=True)
     return float(objs.mean())
@@ -174,24 +216,34 @@ def main():
     ap.add_argument("--samples", type=int, default=8)
     ap.add_argument("--n-task", type=int, default=10)
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--d", type=int, default=96)
+    ap.add_argument("--d", type=int, default=128)
     ap.add_argument("--L", type=int, default=3)
     ap.add_argument("--lr", type=float, default=1e-4)
     ap.add_argument("--out", type=str, default="out")
+    ap.add_argument("--use-edge", action="store_true", help="ANE-lite 边特征(9维)")
+    ap.add_argument("--tanh-prior", action="store_true", help="RRNCO 式解码先验(C·tanh + −β·log T)")
+    ap.add_argument("--anchor", action="store_true", help="真 POMO 锚定(各轨迹首任务不同)")
+    ap.add_argument("--mode", default="eastlake", choices=["eastlake", "flow"], help="训练数据模式")
     args = ap.parse_args()
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
-    policy = PolicyNetwork(d=args.d, L=args.L)
+    cfg = dict(d=args.d, L=args.L, n_feat=(9 if args.use_edge else 6),
+               use_edge=args.use_edge, tanh_prior=args.tanh_prior)
+    policy = PolicyNetwork(d=args.d, L=args.L, n_feat=cfg["n_feat"],
+                           use_edge=args.use_edge, tanh_prior=args.tanh_prior)
     opt = torch.optim.Adam(policy.parameters(), lr=args.lr)
     out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), args.out)
     os.makedirs(out_dir, exist_ok=True)
+    with open(os.path.join(out_dir, "ckpt_config.json"), "w", encoding="utf-8") as f:
+        json.dump(dict(**cfg, steps=args.steps, batch=args.batch, samples=args.samples,
+                       n_task=args.n_task, mode=args.mode, anchor=args.anchor), f, indent=1)
     curve = {"step": [], "train_obj": [], "val_obj": []}
     t0 = time.time()
     val_last = None
     for step in range(args.steps):
         batch = make_batch(seed=args.seed * 1000 + step, n_task=args.n_task, B=args.batch,
-                           wind_hours=[0, 12, 36, 100, 200, 300, 800, 1400])
-        logps, objs, rts, _ = rollouts(policy, batch, S=args.samples)
+                           wind_hours=[0, 12, 36, 100, 200, 300, 800, 1400], mode=args.mode)
+        logps, objs, rts, _ = rollouts(policy, batch, S=args.samples, anchor=args.anchor)
         objs_arr = objs.view(args.batch, args.samples)
         baseline = objs_arr.mean(dim=1, keepdim=True)
         adv = (baseline - objs_arr)                     # 优于基线的轨迹给正优势
@@ -202,7 +254,7 @@ def main():
         torch.nn.utils.clip_grad_norm_(policy.parameters(), 1.0)
         opt.step()
         if step % 50 == 0 or step == args.steps - 1:
-            val_obj = eval_greedy(policy, 12, args.n_task, seed=424242)
+            val_obj = eval_greedy(policy, 12, args.n_task, seed=424242, mode=args.mode)
             curve["step"].append(step)
             curve["train_obj"].append(float(objs.mean()))
             curve["val_obj"].append(val_obj)

@@ -94,15 +94,8 @@ def main():
     ckpt = args.ckpt if os.path.exists(args.ckpt) or os.path.isabs(args.ckpt) else os.path.join(os.path.dirname(os.path.abspath(__file__)), args.ckpt)
     rl = None
     if os.path.exists(ckpt):
-        for (d, L) in [(128, 3), (96, 3), (64, 2)]:
-            try:
-                rl = PolicyNetwork(d=d, L=L)
-                rl.load_state_dict(torch.load(ckpt, map_location="cpu"))
-                rl.eval()
-                print("loaded ckpt d=", d, "L=", L)
-                break
-            except Exception:
-                rl = None
+        from evaluate import load_policy
+        rl = load_policy(ckpt)
     cands = []
     for sub in ["VRPTW", "MDVRPTW", "HFVRP"]:
         d = os.path.join(RAW, sub)
@@ -128,7 +121,7 @@ def main():
                          drone_depot=np.zeros(len(inst.drone_cap), dtype=int))
         rg = greedy_solve(sub_i)
         o1, f1 = objective(sub_i, rg)
-        r2 = ortools_solve(sub_i, time_limit=3.0)
+        r2, ot_status = ortools_solve(sub_i, time_limit=3.0)
         o2, f2 = objective(sub_i, r2)
         if rl is not None:
             with torch.no_grad():
@@ -138,9 +131,10 @@ def main():
         else:
             r3, o3, f3 = rg, o1, f1
         n_task = len(idx)
-        print(f"{sub_i.name:16s} n={n_task:3d} | greedy {o1:8.1f} f={int(f1)} | ortools {o2:8.1f} f={int(f2)} | rl {o3:8.1f} f={int(f3)}")
+        print(f"{sub_i.name:16s} n={n_task:3d} | greedy {o1:8.1f} f={int(f1)} | ortools {o2:8.1f} f={int(f2)} {ot_status} | rl {o3:8.1f} f={int(f3)}")
         out_rows.append(dict(name=sub_i.name, n=n_task, greedy=round(o1, 2), ortools=round(o2, 2), rl=round(o3, 2),
-                             f_greedy=bool(f1), f_ortools=bool(f2), f_rl=bool(f3)))
+                             f_greedy=bool(f1), f_ortools=bool(f2), f_rl=bool(f3),
+                             ot_status=ot_status))
     out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out", "ood_results.json")
     with open(out, "w", encoding="utf-8") as f:
         json.dump(out_rows, f, ensure_ascii=False, indent=1)

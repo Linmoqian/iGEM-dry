@@ -59,6 +59,11 @@ def greedy_solve(inst, gamma=1.0, seed=0):
 
 # ---------------- OR-Tools ----------------
 def ortools_solve(inst, gamma=1.0, time_limit=8.0):
+    """返回 (routes, status); status ∈ {'solved','fallback'} — F2 修复: 失败不再静默。
+    OR-Tools 无法直接表达 Σ w_i*t_i, 采用代理代价 c[i][j] = T[i][j]*(1+γ*w_j)
+      + 风险加权软时间窗惩罚; 最终所有方法用 env.objective() 统一评分。
+    失败(无可行解)时回退贪心并在 status 中显式记录, 供评测端披露。
+    """
     from ortools.constraint_solver import routing_enums_pb2
     from ortools.constraint_solver import pywrapcp
     n = len(inst.xy)
@@ -100,7 +105,7 @@ def ortools_solve(inst, gamma=1.0, time_limit=8.0):
     params.log_search = False
     sol = routing.SolveWithParameters(params)
     if sol is None:
-        return greedy_solve(inst, gamma)
+        return greedy_solve(inst, gamma), "fallback"
     routes = [[] for _ in range(m)]
     for k in range(m):
         idx = sol.Value(routing.NextVar(routing.Start(k)))  # 跳过起点停机坪
@@ -108,4 +113,4 @@ def ortools_solve(inst, gamma=1.0, time_limit=8.0):
             node = manager.IndexToNode(idx)
             routes[k].append(node)
             idx = sol.Value(routing.NextVar(idx))
-    return routes
+    return routes, "solved"

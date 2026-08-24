@@ -27,6 +27,8 @@ class Instance:
     unserved_penalty: float = 50.0 # ν: 未服务惩罚 (乘 w_i)
     refill_time: float = 12.0      # 停机坪补货/充电时间 (min)
     hover_time: float = 0.13       # 每次投放悬停时间 (min)
+    eff_lag: np.ndarray = None     # (n,) 治理生效时滞 = T_drift + t_safe(D_j,C0_j) (min, 0 for depot); 为 None 时目标退化为 t_arrival
+    use_eff: bool = False          # 目标是否使用 t_eff = t_arrival + eff_lag (v3.0 治理生效目标)
 
     def task_ids(self):
         return np.arange(self.n_dep, len(self.xy))
@@ -65,6 +67,7 @@ def objective_times(inst, routes):
     m = len(routes)
     t_complete = np.full(n, np.inf)
     visit_count = np.zeros(n, dtype=int)
+    visit_times = [[] for _ in range(n)]   # 每次访问的时刻（升序）
     end_time = np.zeros(m)
     feasible = True
     for k in range(m):
@@ -86,24 +89,38 @@ def objective_times(inst, routes):
             if energy < ret:
                 feasible = False
             visit_count[nxt] += 1
+            visit_times[nxt].append(t)
             t += inst.hover_time
-            if visit_count[nxt] >= inst.demand[nxt]:
-                t_complete[nxt] = min(t_complete[nxt], t)
             cur = nxt
         leg = inst.T[k][cur][depot]
         end_time[k] = t + leg
+    # 完成时刻 = 第 demand 次访问的时刻（严格语义；旧版用 min 会把多访问任务完成时刻取早）
+    for j in range(n):
+        need = int(inst.demand[j])
+        if need > 0 and len(visit_times[j]) >= need:
+            t_complete[j] = visit_times[j][need - 1]
     return t_complete, visit_count, end_time, feasible
+
+
+def eff_time(inst, t_complete):
+    """治理生效时刻 t_eff_j = t_arrival_j + eff_lag_j（未服务用 horizon+10）"""
+    tasks = inst.task_ids()
+    tc = np.where(np.isfinite(t_complete[tasks]), t_complete[tasks], inst.horizon + 10.0)
+    if inst.eff_lag is not None and inst.use_eff:
+        tc = tc + inst.eff_lag[tasks]
+    return tc
 
 
 def objective(inst, routes):
     """
-    总目标 = Σ w_i*t_i + λ*Σ w_i*max(0,t_i-l_i) + μ*makespan + ν*Σ(未服务 w_i)
+    总目标 = Σ w_i*t_eff_i + λ*Σ w_i*max(0,t_eff_i-l_i) + μ*makespan + ν*Σ(未服务 w_i)
+    t_eff = t_arrival (+ eff_lag 若 use_eff, v3.0 治理生效目标)。
     未服务点按 horizon+10 计入(软惩罚)。
     """
     t_complete, vc, end_time, feasible = objective_times(inst, routes)
     tasks = inst.task_ids()
     w = inst.risk[tasks]
-    tc = np.where(np.isfinite(t_complete[tasks]), t_complete[tasks], inst.horizon + 10.0)
+    tc = eff_time(inst, t_complete)
     late = np.maximum(0.0, tc - inst.tw_end[tasks])
     unserved_mask = tc >= inst.horizon + 10.0
     obj = float(np.sum(w * tc) + inst.late_penalty * float(np.sum(w * late))
@@ -113,9 +130,14 @@ def objective(inst, routes):
 
 
 def risk_weighted_time(inst, routes):
-    """指标: (风险加权完成时间 Σ w_i t_i, makespan max_end, 已服务任务数)"""
+    """指标: (风险加权完成时间 Σ w_i t_i, makespan max_end, 已服务任务数)
+    t 为到达时刻; 若 use_eff 则同时返回治理生效版 Σw·t_eff。"""
     t_complete, vc, end_time, _ = objective_times(inst, routes)
     tasks = inst.task_ids()
     w = inst.risk[tasks]
     tc = np.where(np.isfinite(t_complete[tasks]), t_complete[tasks], inst.horizon + 10.0)
-    return float(np.sum(w * tc)), float(np.max(end_time)), int(np.sum(np.isfinite(t_complete[tasks])))
+    base = (float(np.sum(w * tc)), float(np.max(end_time)), int(np.sum(np.isfinite(t_complete[tasks]))))
+    if inst.use_eff:
+        tce = eff_time(inst, t_complete)
+        return base + (float(np.sum(w * tce)),)
+    return base
