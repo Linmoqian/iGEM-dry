@@ -4,10 +4,10 @@
   "n": 15,
   "greedy": 889.55,
   "ortools": 889.55,
-  "rl": 5228.69,
+  "rl": 1936.99,
   "f_greedy": true,
   "f_ortools": true,
-  "f_rl": true,
+  "f_rl": false,
   "ot_status": "fallback"
  },
  {
@@ -15,7 +15,7 @@
   "n": 15,
   "greedy": 752.96,
   "ortools": 752.96,
-  "rl": 4984.13,
+  "rl": 1741.08,
   "f_greedy": true,
   "f_ortools": true,
   "f_rl": true,
@@ -26,7 +26,7 @@
   "n": 15,
   "greedy": 870.79,
   "ortools": 870.79,
-  "rl": 4988.08,
+  "rl": 1507.18,
   "f_greedy": true,
   "f_ortools": true,
   "f_rl": true,
@@ -37,10 +37,10 @@
   "n": 15,
   "greedy": 1531.51,
   "ortools": 1531.51,
-  "rl": 3546.23,
+  "rl": 2107.97,
   "f_greedy": true,
   "f_ortools": true,
-  "f_rl": true,
+  "f_rl": false,
   "ot_status": "fallback"
  },
  {
@@ -48,10 +48,10 @@
   "n": 15,
   "greedy": 2176.33,
   "ortools": 2176.33,
-  "rl": 3777.27,
+  "rl": 2471.14,
   "f_greedy": true,
   "f_ortools": true,
-  "f_rl": true,
+  "f_rl": false,
   "ot_status": "fallback"
  },
  {
@@ -59,10 +59,10 @@
   "n": 15,
   "greedy": 1412.22,
   "ortools": 1412.22,
-  "rl": 3331.21,
+  "rl": 1869.7,
   "f_greedy": true,
   "f_ortools": true,
-  "f_rl": true,
+  "f_rl": false,
   "ot_status": "fallback"
  },
  {
@@ -70,10 +70,10 @@
   "n": 15,
   "greedy": 959.45,
   "ortools": 959.45,
-  "rl": 2122.28,
+  "rl": 1104.27,
   "f_greedy": true,
   "f_ortools": true,
-  "f_rl": true,
+  "f_rl": false,
   "ot_status": "fallback"
  },
  {
@@ -81,10 +81,10 @@
   "n": 15,
   "greedy": 707.43,
   "ortools": 707.43,
-  "rl": 1403.6,
+  "rl": 840.45,
   "f_greedy": true,
   "f_ortools": true,
-  "f_rl": true,
+  "f_rl": false,
   "ot_status": "fallback"
  },
  {
@@ -92,7 +92,7 @@
   "n": 15,
   "greedy": 1468.92,
   "ortools": 1468.92,
-  "rl": 1593.04,
+  "rl": 1475.11,
   "f_greedy": true,
   "f_ortools": true,
   "f_rl": true,

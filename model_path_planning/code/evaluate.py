@@ -100,8 +100,11 @@ def augment8(inst):
     return outs
 
 
-def solve_rl(policy, inst, n_try=32, n_task=10, augment=False):
-    """RL: 批量采样 n_try 条轨迹取最优; augment=True 时对 8 个变换各采样 n_try//8 条, 统一评分选最优"""
+def solve_rl(policy, inst, n_try=32, n_task=10, augment=False, seed=None):
+    """RL: 批量采样 n_try 条轨迹取最优; augment=True 时对 8 个变换各采样 n_try//8 条, 统一评分选最优
+    seed: 采样随机种子 (None=不固定; 实验对比请固定以消除采样噪声)"""
+    if seed is not None:
+        torch.manual_seed(seed)
     aug_vs = augment8(inst) if augment else [inst]
     per = max(1, n_try // len(aug_vs))
     best = None
