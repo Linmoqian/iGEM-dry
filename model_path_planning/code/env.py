@@ -32,8 +32,8 @@ class Instance:
     infeasible_penalty: float = 0.0  # 能量审计不通过时的固定罚 (V2.7+: 默认 0 保持 V2.6 可比, 实验协议设 1e4)
     drone_w: np.ndarray = None     # (m,) 空重 kg; 非 None 时启用载荷耦合能量 E∝(W+m·kg)^{3/2}
     pack_kg: float = 0.5           # 每包质量 kg (文献 D: 500 mL 菌液瓶)
-    kappa: float = 1.0             # 返航余量系数 κ (BER RETURNOK; 1.0=V2.7 语义, 建议 1.15)
-    energy_reserve: float = 0.0    # 绝对能量储备 E_res (min 等效)
+    kappa: float = 1.15            # 返航余量系数 κ (M3 交付默认 1.15; 1.0=V2.7 旧语义)
+    energy_reserve: float = 2.0    # 绝对能量储备 E_res (M3 交付默认 2.0 min 等效)
 
     def task_ids(self):
         return np.arange(self.n_dep, len(self.xy))
