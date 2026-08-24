@@ -67,6 +67,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ckpt", default="out/ckpt.pt")
     ap.add_argument("--seed", type=int, default=9100)
+    ap.add_argument("--event-mode", default="original", choices=["original", "highprio"],
+                    help="original=原演示流; highprio=M6: 后到点风险最高(穿插高优先级警报)")
     args = ap.parse_args()
     ckpt = os.path.join(os.path.dirname(os.path.abspath(__file__)), args.ckpt)
     rl = None
@@ -77,8 +79,16 @@ def main():
     base = build_instance_from_scenario(sc)
     tasks_all = [int(j) for j in list(base.task_ids())]
     n0 = 5
-    events = [(0.0, tasks_all[:n0]), (20.0, tasks_all[n0:n0 + 2]),
-              (45.0, tasks_all[n0 + 2:n0 + 5]), (70.0, tasks_all[n0 + 5:])]
+    if args.event_mode == "highprio":
+        # M6: 高风险点穿插后到 — 按风险排序: 波1=风险最低5点, 波2=次低3点, 波3=最高风险2点(t=45), 波4=余下
+        order = sorted(tasks_all, key=lambda j: -float(base.risk[j]))
+        low, high = order[5:], order[:5]
+        events = [(0.0, sorted(low[:5], key=lambda j: float(base.risk[j]))), (20.0, low[5:8]),
+                  (45.0, high), (70.0, low[8:])]
+        print("[M6] 高优先级穿插流: t=45 到达风险点:", [(j, round(float(base.risk[j]), 2)) for j in high], flush=True)
+    else:
+        events = [(0.0, tasks_all[:n0]), (20.0, tasks_all[n0:n0 + 2]),
+                  (45.0, tasks_all[n0 + 2:n0 + 5]), (70.0, tasks_all[n0 + 5:])]
 
     results = {}
     for strategy in ["static", "replan", "greedy_replan"]:

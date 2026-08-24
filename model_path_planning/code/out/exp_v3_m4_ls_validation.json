@@ -1,0 +1,41 @@
+{
+ "eastlake": {
+  "old_ls": 18.536888644225254,
+  "new_ls": 18.536888644225254,
+  "feas": "16/16"
+ },
+ "flow": {
+  "old_ls": 4209.057032710074,
+  "new_ls": 4209.057032710074,
+  "feas": "8/8"
+ },
+ "ood": [
+  {
+   "name": "VRPTW_C1_10_1.vrp",
+   "rl": 2014.1,
+   "rl_f": 1,
+   "rl_cals_ls": 641.5,
+   "rl_cals_ls_f": 1,
+   "greedy": 1113.4,
+   "greedy_f": 1
+  },
+  {
+   "name": "VRPTW_C1_10_10.vrp",
+   "rl": 2476.3,
+   "rl_f": 1,
+   "rl_cals_ls": 689.1,
+   "rl_cals_ls_f": 1,
+   "greedy": 968.2,
+   "greedy_f": 1
+  },
+  {
+   "name": "HFVRP_X101-FSMFD.vrp",
+   "rl": 635.6,
+   "rl_f": 1,
+   "rl_cals_ls": 403.1,
+   "rl_cals_ls_f": 1,
+   "greedy": 787.1,
+   "greedy_f": 1
+  }
+ ]
+}
