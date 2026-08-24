@@ -63,6 +63,15 @@ def build_instance_from_scenario(sc):
     return inst
 
 
+
+
+def leg_energy(inst, k, t_leg, load):
+    """载荷耦合能量 (min 等效): E = T_leg · ((W + pack_kg·load)/W)^{3/2}; drone_w=None 时退化为 T_leg"""
+    if inst.drone_w is None:
+        return t_leg
+    W = float(inst.drone_w[k])
+    return t_leg * ((W + inst.pack_kg * max(float(load), 0.0)) / W) ** 1.5
+
 def objective_times(inst, routes):
     """
     给定解 routes (list[list[int]], 每架无人机访问序列, 元素为停机坪编号表示补货),
