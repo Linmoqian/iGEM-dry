@@ -83,6 +83,7 @@ def rollouts(policy, batch, S=8, greedy=False, anchor=False):
     t = inst_tensors(batch, use_edge=use_edge)
     B, m = t["cap"].shape
     n = t["x"].shape[1]
+    H = max(float(i.horizon) for i in batch)   # 批次内时域 (兼容 v3.0 flow 实例 480 min)
     h = policy.encode(t["x"], t["is_dep"])
     B2 = B * S
     rep = lambda z: z.repeat_interleave(S, dim=0) if z.dim() >= 1 else z
@@ -126,11 +127,14 @@ def rollouts(policy, batch, S=8, greedy=False, anchor=False):
         served_ok = (served.unsqueeze(1) < demand2.unsqueeze(1)).expand(B2, m, n)
         load_ok = (cap_rem.unsqueeze(-1) >= 1.0).expand(B2, m, n)
         en_ok_task = (en_rem.unsqueeze(-1) - T_leg - T_ret) >= 0.0
-        time_ok = (tnow.unsqueeze(-1).expand(B2, m, n) + T_leg) <= HORIZON
+        time_ok = (tnow.unsqueeze(-1).expand(B2, m, n) + T_leg) <= H
         infeasible = infeasible | (is_task & (~served_ok))
         infeasible = infeasible | (is_task & (~load_ok))
         infeasible = infeasible | (is_task & (~en_ok_task))
         infeasible = infeasible | (is_task & (~time_ok))
+        # 禁止自环 (j == cur): 原地停留是无意义的占位动作, 且会因 log(T→0) 先验获得高偏置
+        self_ok = (curc.unsqueeze(-1) != arN.expand(B2, m, n))
+        infeasible = infeasible | (is_task & (~self_ok))
         # 停机坪规则: 仅本机停机坪 & 需要补给 & 不在停机坪 & 能量满足
         need_refill = ((cap_rem < 1.0) | (en_rem < 0.5 * en2)).unsqueeze(-1)
         dep_ok = (depot2.unsqueeze(-1) == arN.expand(B2, m, n)) & need_refill & (curc.unsqueeze(-1) != arN.expand(B2, m, n))
@@ -223,6 +227,7 @@ def main():
     ap.add_argument("--use-edge", action="store_true", help="ANE-lite 边特征(9维)")
     ap.add_argument("--tanh-prior", action="store_true", help="RRNCO 式解码先验(C·tanh + −β·log T)")
     ap.add_argument("--anchor", action="store_true", help="真 POMO 锚定(各轨迹首任务不同)")
+    ap.add_argument("--beta-max", type=float, default=None, help="解码先验 β 上限截断(防先验主导坍缩, 默认不截断)")
     ap.add_argument("--mode", default="eastlake", choices=["eastlake", "flow"], help="训练数据模式")
     args = ap.parse_args()
     torch.manual_seed(args.seed)
@@ -236,7 +241,7 @@ def main():
     os.makedirs(out_dir, exist_ok=True)
     with open(os.path.join(out_dir, "ckpt_config.json"), "w", encoding="utf-8") as f:
         json.dump(dict(**cfg, steps=args.steps, batch=args.batch, samples=args.samples,
-                       n_task=args.n_task, mode=args.mode, anchor=args.anchor), f, indent=1)
+                       n_task=args.n_task, mode=args.mode, anchor=args.anchor, beta_max=args.beta_max), f, indent=1)
     curve = {"step": [], "train_obj": [], "val_obj": []}
     t0 = time.time()
     val_last = None
@@ -249,6 +254,9 @@ def main():
         adv = (baseline - objs_arr)                     # 优于基线的轨迹给正优势
         lp = logps.view(args.batch, args.samples)
         loss = -(adv.detach() * lp).mean()
+        if args.beta_max is not None and getattr(policy, "prior_beta", None) is not None:
+            with torch.no_grad():
+                policy.prior_beta.clamp_(0.0, args.beta_max)
         opt.zero_grad()
         loss.backward()
         torch.nn.utils.clip_grad_norm_(policy.parameters(), 1.0)
