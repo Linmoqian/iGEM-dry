@@ -1,0 +1,92 @@
+[
+ {
+  "name": "VRPTW_C1_10_1.vrp",
+  "n": 15,
+  "greedy": 892.03,
+  "ortools": 892.03,
+  "rl": 4016.66,
+  "f_greedy": true,
+  "f_ortools": true,
+  "f_rl": true
+ },
+ {
+  "name": "VRPTW_C1_10_10.vrp",
+  "n": 15,
+  "greedy": 755.19,
+  "ortools": 755.19,
+  "rl": 4593.89,
+  "f_greedy": true,
+  "f_ortools": true,
+  "f_rl": true
+ },
+ {
+  "name": "VRPTW_C1_10_2.vrp",
+  "n": 15,
+  "greedy": 873.02,
+  "ortools": 873.02,
+  "rl": 4582.64,
+  "f_greedy": true,
+  "f_ortools": true,
+  "f_rl": true
+ },
+ {
+  "name": "MDVRPTW_PR11A.vrp",
+  "n": 15,
+  "greedy": 1533.63,
+  "ortools": 1533.63,
+  "rl": 5301.66,
+  "f_greedy": true,
+  "f_ortools": true,
+  "f_rl": true
+ },
+ {
+  "name": "MDVRPTW_PR11B.vrp",
+  "n": 15,
+  "greedy": 2177.61,
+  "ortools": 2177.61,
+  "rl": 3771.51,
+  "f_greedy": true,
+  "f_ortools": true,
+  "f_rl": true
+ },
+ {
+  "name": "MDVRPTW_PR12A.vrp",
+  "n": 15,
+  "greedy": 1414.15,
+  "ortools": 1414.15,
+  "rl": 4821.06,
+  "f_greedy": true,
+  "f_ortools": true,
+  "f_rl": true
+ },
+ {
+  "name": "HFVRP_X1001-FSMF.vrp",
+  "n": 15,
+  "greedy": 960.25,
+  "ortools": 960.25,
+  "rl": 1726.06,
+  "f_greedy": true,
+  "f_ortools": true,
+  "f_rl": true
+ },
+ {
+  "name": "HFVRP_X101-FSMFD.vrp",
+  "n": 15,
+  "greedy": 708.51,
+  "ortools": 708.51,
+  "rl": 1876.81,
+  "f_greedy": true,
+  "f_ortools": true,
+  "f_rl": true
+ },
+ {
+  "name": "HFVRP_X106-FSMD.vrp",
+  "n": 15,
+  "greedy": 1469.43,
+  "ortools": 1469.43,
+  "rl": 836.04,
+  "f_greedy": true,
+  "f_ortools": true,
+  "f_rl": false
+ }
+]
