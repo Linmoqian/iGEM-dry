@@ -1,0 +1,22 @@
+loaded cfg: eastlake d= 128 use_edge= False tanh_prior= False
+
+[东湖16场景 | A]
+method              rwt    rwt_eff  makespan  served        obj   time_s
+greedy            33.46       0.00     42.01    10.0      37.45    0.000
+greedy_ls         16.74       0.00     31.61    10.0      18.32    0.036
+ortools           19.83       0.00     14.52    10.0      20.56    5.008  (ot_fb=0/16)
+rl                15.51       0.00     22.59    10.0      16.64    0.051
+rl_ls             15.18       0.00     21.09    10.0      16.23    0.042
+
+[强风 10 m/s 压力测试: A]  (按真实强风成本评分)
+  风感知规划 37.10 vs 欧氏规划 1035.61  | 差距 96.4% (含不可行重罚协议)
+
+[v3.0 水流任务16场景 (t_eff 目标) | A]
+method              rwt    rwt_eff  makespan  served        obj   time_s
+greedy           325.26    2891.73     96.90    10.0    3917.72    0.000
+greedy_ls         80.23    2646.70     65.79    10.0    3141.25    0.038
+ortools          287.29    2853.75     73.29    10.0    3818.71    4.127  (ot_fb=7/16)
+rl                96.43    2662.90     40.85    10.0    3185.11    0.047
+rl_ls             41.63    2608.10     32.15    10.0    3021.17    0.055
+
+saved -> out/exp_v27.json

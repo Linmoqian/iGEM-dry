@@ -1,0 +1,23 @@
+loaded cfg: flow d= 128 use_edge= True tanh_prior= True
+
+[东湖16场景 | C]
+method              rwt    rwt_eff  makespan  served        obj   time_s
+greedy            33.46       0.00     42.01    10.0      37.45    0.000
+greedy_ls         16.74       0.00     31.61    10.0      18.32    0.047
+ortools           19.83       0.00     14.52    10.0      20.56    5.009  (ot_fb=0/16)
+rl                19.38       0.00     29.80    10.0      20.87    0.072
+rl_ls             15.35       0.00     23.64    10.0      16.54    0.055
+
+[强风 10 m/s 压力测试: C]  (按真实强风成本评分)
+  风感知规划 47.38 vs 欧氏规划 8047.17  | 差距 99.4% (含不可行重罚协议)
+
+[v3.0 水流任务16场景 (t_eff 目标) | C]
+method              rwt    rwt_eff  makespan  served        obj   time_s
+greedy           325.26    2891.73     96.90    10.0    3917.72    0.000
+greedy_ls         80.23    2646.70     65.79    10.0    3141.25    0.048
+ortools          287.29    2853.75     73.29    10.0    3818.71    4.127  (ot_fb=7/16)
+rl                91.19    2657.66     50.57    10.0    3170.24    0.061
+rl_ls             42.33    2608.79     32.63    10.0    3022.25    0.070
+
+saved -> out/exp_v27.json
+EXIT=0

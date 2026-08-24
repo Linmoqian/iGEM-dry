@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
-"""E1: wave-dependent wind drag coefficient (Zhang, Chen & Brett 2024, WRR 60:e2023WR035914)
-vs constant 1.3e-3 vs Wu(1980), for the three production wind scenarios.
+"""E1v2: lake-appropriate wind drag coefficient vs the constant 1.3e-3 and Wu(1980).
 
-Wave-dependent model (their Eq. 11 + Toba et al. 1990 Charnock scaling):
-  Cd = 1.956 * alpha * (U10/u*)^-1.996 * Fr_H^0.213 * Re_H^0.298
-  alpha = 0.02 * beta*^0.5 ;  beta* = cp/u* ; cp = g*Ts/(2 pi)
-  Fr_H = u*/sqrt(g*Hs) ; Re_H = u**Hs/nu_a ; nu_a = 1.46e-5 m2/s
-Waves: fetch-limited SMB estimates per cell (fetch = along-wind distance to upwind shore);
-  g*Hs/U^2 = 0.283*tanh(0.0125*X^0.42), g*Ts/(2 pi U) = 1.20*tanh(0.077*X^0.25), X = gF/U^2.
-u* from fixed-point iteration: u* = U*sqrt(Cd).
+Background (first attempt, kept in the experiment log): direct application of Zhang et al.
+(2024) Eq. 11 with fetch-limited SMB EQUILIBRIUM waves collapses to Cd ~ 1.3e-4 — the
+regression was calibrated on their physical-pool wave states (young wind-sea, beta* small);
+equilibrium SMB waves give beta* = 7-22 (fully developed), far outside calibration.
+The paper's practical findings for OUR wind range (2-3 m/s, buoyancy of light winds):
+  - Cd at light winds is 1.0-3.1x the ocean-linear extrapolation (Fig. 4b; r^2=0.901 for
+    1.6 < U10 <= 3.0, positive slope);
+  - model (UKL) velocities with wave-dependent Cd were 57-90% higher vs Wu(1982);
+  - Delft3D default Cd = 0.0025, MIKE21 uses 0.0016-0.0026 by wind range.
+
+E1v2 uses: Cd(U) linear fit through their Fig.4b positive branch endpoints
+(1.32e-3 at U=1.6 -> 3.22e-3 at U=3.0), with a mild fetch-based spatial modulation
+(higher stress over open water, as found in the UKL application), then spin-ups.
 """
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -27,13 +32,15 @@ FIG = os.path.join(ROOT, "figures")
 dom = dict(np.load(os.path.join(PROC, "domain.npz")))
 mask, depth, xs, ys, dx = dom["mask"], dom["depth"], dom["xs"], dom["ys"], float(dom["dx"])
 ny, nx = mask.shape
-G, RHO_AIR, NU_A = 9.81, 1.225, 1.46e-5
+RHO_AIR = 1.225
+
+def cd_lake(U):
+    """Zhang et al. 2024 Fig.4b positive-branch linear fit (1.6 < U <= 3.0)."""
+    return float(np.clip(1.32e-3 + 1.27e-3*(U - 1.6), 1.2e-3, 3.6e-3))
 
 def fetch_field(wind_dir_deg):
-    """along-wind fetch: distance (m) from each wet cell to the upwind shore
-    (ray cast toward the wind source; waves grow over this distance)."""
     th = np.radians(wind_dir_deg)
-    o = np.array([np.sin(th), np.cos(th)])  # upwind unit vector (x, y)
+    o = np.array([np.sin(th), np.cos(th)])
     jj, ii = np.where(mask)
     n = len(jj)
     posx = xs[ii] + 0.0; posy = ys[jj] + 0.0
@@ -45,79 +52,58 @@ def fetch_field(wind_dir_deg):
         inw = np.zeros(n, bool); inw[ok] = mask[j2[ok], i2[ok]]
         still = inw & (cur[jj, ii] <= 0)
         cur[jj[still], ii[still]] = k*dx
-    fetch = cur
-    return fetch
+    return cur
 
-def wave_dependent_cd_field(U, wind_dir_deg, cd0=1.5e-3, iters=6):
-    """return (cd field ny,nx, Hs field, Ts field, tau field (tau_x,tau_y arrays at faces handled outside))"""
-    F = fetch_field(wind_dir_deg)
-    F = np.where(mask, np.maximum(F, 2*dx), 0.0)
-    Xv = G*F/U**2
-    Hs = 0.283*(U**2/G)*np.tanh(0.0125*np.power(np.maximum(Xv, 1e-6), 0.42))
-    Ts = (2*np.pi*U/G)*(1.20)*np.tanh(0.077*np.power(np.maximum(Xv, 1e-6), 0.25))
-    Hs = np.where(mask, Hs, 0.0); Ts = np.where(mask, Ts, 0.0)
-    cd = np.where(mask, cd0, 0.0)
-    for _ in range(iters):
-        ustar = U*np.sqrt(cd)
-        cp = G*Ts/(2*np.pi)
-        beta = cp/np.maximum(ustar, 1e-6)
-        alpha = 0.02*np.sqrt(np.maximum(beta, 1e-6))
-        FrH = ustar/np.sqrt(G*np.maximum(Hs, 1e-4))
-        ReH = ustar*Hs/NU_A
-        cd_new = 1.956*alpha*np.power(U/np.maximum(ustar, 1e-6), -1.996) \
-                 * np.power(np.maximum(FrH, 1e-12), 0.213) * np.power(np.maximum(ReH, 1e-12), 0.298)
-        cd = np.where(mask, 0.5*(cd + cd_new), 0.0)
-    return cd, Hs, Ts
-
-def tau_faces(cd_field, U, wind_dir_deg):
-    th = np.radians(wind_dir_deg)
+def tau_faces_fetch(U, dgr, fscale=0.35):
+    """cd_cell = cd_lake(U) * (1 + fscale*(fetch/fetch_max - 0.5))"""
+    F = fetch_field(dgr)
+    F = np.where(mask, F, 0.0)
+    Fmax = F[mask].max()
+    cd = np.where(mask, cd_lake(U)*(1.0 + fscale*(F/max(Fmax, 1.0) - 0.5)), 0.0)
+    th = np.radians(dgr)
     ux, uy = -np.sin(th), -np.cos(th)
-    tau = RHO_AIR * cd_field * U**2
-    tux, tuy = tau*ux, tau*uy
-    tux_f = np.zeros((ny, nx+1)); tux_f[:, 1:nx] = 0.5*(tux[:, :-1] + tux[:, 1:])
-    tuy_f = np.zeros((ny+1, nx)); tuy_f[1:ny, :] = 0.5*(tuy[:-1, :] + tuy[1:, :])
-    return tux_f, tuy_f
+    tau = RHO_AIR*cd*U**2
+    tux_f = np.zeros((ny, nx+1)); tux_f[:, 1:nx] = 0.5*(tau*ux)[:, :-1] + 0.5*(tau*ux)[:, 1:]
+    tuy_f = np.zeros((ny+1, nx)); tuy_f[1:ny, :] = 0.5*(tau*uy)[:-1, :] + 0.5*(tau*uy)[1:, :]
+    return cd, tux_f, tuy_f, F
 
 CFG = dict(dt=20.0, n_manning=0.0238, nu=0.5, use_adv=True, use_coriolis=True, nu_mode="smag")
 cfg = SweConfigSI(dx=dx, **CFG)
 
-def spin24(tau_x, tau_y, depth_field=None, label=""):
-    solver = ShallowWaterSolverSI(mask, depth_field if depth_field is not None else depth, cfg)
+def spin24(tau_x, tau_y, label=""):
+    solver = ShallowWaterSolverSI(mask, depth, cfg)
     st = solver.init_state()
     for _ in range(int(24*3600.0/cfg.dt)):
         solver.step(st, tau_x, tau_y)
     uc, vc = cell_velocities(st)
     sp = np.sqrt(uc**2 + vc**2)
-    print("%-22s |u|max=%.4f mean=%.4f" % (label, float(sp[mask].max()), float(sp[mask].mean())))
+    print("%-26s |u|max=%.4f mean=%.4f" % (label, float(sp[mask].max()), float(sp[mask].mean())))
     return dict(uc=uc, vc=vc, u=st["u"], v=st["v"], eta=st["eta"], mask=mask, depth=depth, xs=xs, ys=ys, dx=dx)
 
 results = {}
 for lab, (U, dgr) in [("SE_2p5", (2.5, 135.0)), ("N_3p0", (3.0, 0.0)), ("W_2p0", (2.0, 270.0))]:
-    cd_w, Hs, Ts = wave_dependent_cd_field(U, dgr)
-    m = mask
-    print("%s: Cd field min=%.4g mean=%.4g max=%.4g  Hs mean=%.3f (max %.3f)  Ts mean=%.2f"
-          % (lab, cd_w[m].min(), cd_w[m].mean(), cd_w[m].max(), Hs[m].mean(), Hs[m].max(), Ts[m].mean()))
-    tuxf, tuyf = tau_faces(cd_w, U, dgr)
-    tuxc, tuyc = wind_stress(U, dgr, cd=1.3e-3)[:2]
+    cd, tuxf, tuyf, F = tau_faces_fetch(U, dgr)
+    tuxc, tuyc, _ = wind_stress(U, dgr, cd=1.3e-3)
     tuxw, tuyw, cdw = wind_stress(U, dgr, cd_mode="wu")
-    fs = spin24(tauxf if False else tuxf, tuyf, label="%s wave-dep Cd" % lab)
+    fs = spin24(tuxf, tuyf, label="%s lake-Cd(%.2f%% fetch mod)" % (lab, 100*0.35*(1/2)))
     fc = spin24(np.full((ny, nx+1), tuxc), np.full((ny+1, nx), tuyc), label="%s const Cd=1.3e-3" % lab)
     fw = spin24(np.full((ny, nx+1), tuxw), np.full((ny+1, nx), tuyw), label="%s Wu1980 Cd=%.4g" % (lab, cdw))
-    results[lab] = dict(wave=fs, const=fc, wu=fw, cd=cd_w, Hs=Hs, Ts=Ts, U=U, dir=dgr)
-    np.savez_compressed(os.path.join(PROC, "flow_%s_cdwav.npz" % lab), **fs)
+    results[lab] = dict(wave=fs, const=fc, wu=fw, cd=cd, F=F, U=U, dir=dgr)
+    np.savez_compressed(os.path.join(PROC, "flow_%s_cdlake.npz" % lab), **fs)
+    print("  %s: Cd mean=%.4g min=%.4g max=%.4g ; fetch mean=%.0f max=%.0f m"
+          % (lab, cd[mask].mean(), cd[mask].min(), cd[mask].max(), F[mask].mean(), F[mask].max()))
 
-# figure: Cd fields + speed ratios
 fig, axes = plt.subplots(2, 3, figsize=(18, 8.0))
 for k, lab in enumerate(["SE_2p5", "N_3p0", "W_2p0"]):
     r = results[lab]
     im = axes[0][k].pcolormesh(xs, ys, r["cd"], cmap="plasma", shading="auto")
-    axes[0][k].set_title("%s: Cd field (mean %.2g)" % (lab, r["cd"][mask].mean()))
+    axes[0][k].set_title("%s: lake-Cd field (mean %.2g)" % (lab, r["cd"][mask].mean()))
     fig.colorbar(im, ax=axes[0][k], shrink=0.8)
     spw = np.sqrt(r["wave"]["uc"]**2 + r["wave"]["vc"]**2)
     spc = np.sqrt(r["const"]["uc"]**2 + r["const"]["vc"]**2)
     ratio = spw/np.maximum(spc, 1e-6)
-    im2 = axes[1][k].pcolormesh(xs, ys, np.where(mask, ratio, np.nan), cmap="RdBu_r", vmin=0.7, vmax=1.6, shading="auto")
-    axes[1][k].set_title("speed ratio wave/const (mean %.2f)" % np.nanmean(ratio[mask]))
+    im2 = axes[1][k].pcolormesh(xs, ys, np.where(mask, ratio, np.nan), cmap="RdBu_r", vmin=0.7, vmax=1.8, shading="auto")
+    axes[1][k].set_title("speed ratio lake-Cd/const (mean %.2f)" % np.nanmean(ratio[mask]))
     fig.colorbar(im2, ax=axes[1][k], shrink=0.8)
 plt.tight_layout()
 fig.savefig(os.path.join(FIG, "fig09_wave_dependent_cd.png"), dpi=130)
