@@ -35,6 +35,10 @@ def inst_tensors(batch, use_edge=False):
     depot_of = torch.zeros(B, m, dtype=torch.long)
     cap = torch.zeros(B, m)
     en = torch.zeros(B, m)
+    drone_w = torch.zeros(B, m)
+    kappa = torch.ones(B, 1).float()
+    e_res = torch.zeros(B, 1).float()
+    pack_kg = 0.5
     for b, inst in enumerate(batch):
         ni = len(inst.xy)
         xyz = torch.tensor(inst.xy, dtype=torch.float32)
@@ -70,8 +74,14 @@ def inst_tensors(batch, use_edge=False):
         depot_of[b] = torch.tensor(inst.drone_depot, dtype=torch.long)
         cap[b] = torch.tensor(inst.drone_cap, dtype=torch.float32)
         en[b] = torch.tensor(inst.drone_energy, dtype=torch.float32)
+        if inst.drone_w is not None:
+            drone_w[b] = torch.tensor(inst.drone_w, dtype=torch.float32)
+            kappa[b] = float(inst.kappa)
+            e_res[b] = float(inst.energy_reserve)
+            pack_kg = float(inst.pack_kg)
     return dict(x=x, is_dep=is_dep, T=T, demand=demand, risk=risk, tw=tw,
-                depot_of=depot_of, cap=cap, en=en)
+                depot_of=depot_of, cap=cap, en=en, drone_w=drone_w, kappa=kappa,
+                e_res=e_res, pack_kg=pack_kg)
 
 
 def rollouts(policy, batch, S=8, greedy=False, anchor=False):
@@ -94,6 +104,11 @@ def rollouts(policy, batch, S=8, greedy=False, anchor=False):
     depot2 = rep(t["depot_of"])
     cap2 = rep(t["cap"])
     en2 = rep(t["en"])
+    W2 = rep(t["drone_w"])                                   # (B2,m) 空重; 全 0 = 未启用载荷耦合
+    kappa2 = rep(t["kappa"]).view(B2, m)
+    res2 = rep(t["e_res"]).view(B2, m)
+    PKG = t["pack_kg"]
+    use_payload = bool((W2 > 0).any())
     served = torch.zeros(B2, n)
     cur = depot2.clone()
     cap_rem = cap2.clone()
@@ -126,7 +141,15 @@ def rollouts(policy, batch, S=8, greedy=False, anchor=False):
         # 任务规则
         served_ok = (served.unsqueeze(1) < demand2.unsqueeze(1)).expand(B2, m, n)
         load_ok = (cap_rem.unsqueeze(-1) >= 1.0).expand(B2, m, n)
-        en_ok_task = (en_rem.unsqueeze(-1) - T_leg - T_ret) >= 0.0
+        if use_payload:
+            fac_leg = ((W2 + PKG * cap_rem) / W2.clamp(min=1e-6)) ** 1.5
+            fac_ret = ((W2 + PKG * (cap_rem - 1.0).clamp(min=0.0)) / W2.clamp(min=1e-6)) ** 1.5
+            en_leg = T_leg * fac_leg.unsqueeze(-1)
+            en_ret = T_ret * fac_ret.unsqueeze(-1)
+        else:
+            en_leg = T_leg
+            en_ret = T_ret
+        en_ok_task = (en_rem.unsqueeze(-1) - en_leg - kappa2.unsqueeze(-1) * en_ret - res2.unsqueeze(-1)) >= 0.0
         time_ok = (tnow.unsqueeze(-1).expand(B2, m, n) + T_leg) <= H
         infeasible = infeasible | (is_task & (~served_ok))
         infeasible = infeasible | (is_task & (~load_ok))
@@ -138,7 +161,7 @@ def rollouts(policy, batch, S=8, greedy=False, anchor=False):
         # 停机坪规则: 仅本机停机坪 & 需要补给 & 不在停机坪 & 能量满足
         need_refill = ((cap_rem < 1.0) | (en_rem < 0.5 * en2)).unsqueeze(-1)
         dep_ok = (depot2.unsqueeze(-1) == arN.expand(B2, m, n)) & need_refill & (curc.unsqueeze(-1) != arN.expand(B2, m, n))
-        en_ok_dep = (en_rem.unsqueeze(-1) - T_leg) >= 0.0
+        en_ok_dep = (en_rem.unsqueeze(-1) - en_leg - res2.unsqueeze(-1)) >= 0.0
         infeasible = infeasible | ((~is_task) & (infeasible | (~dep_ok | ~en_ok_dep)))
         if step == 0 and anchor:
             # 真 POMO 锚定: 本条轨迹的第一步固定为 (无人机0, anchor_j) — 其余动作全部屏蔽
@@ -163,7 +186,9 @@ def rollouts(policy, batch, S=8, greedy=False, anchor=False):
             if jj != int(cur[b, kk]):
                 leg = float(T2[b, kk, cur[b, kk], jj])
                 tnow[b, kk] += leg
-                en_rem[b, kk] = max(0.0, float(en_rem[b, kk]) - leg)
+                load_now = float(cap_rem[b, kk])
+                fac = (float(W2[b, kk] + PKG * load_now) / max(float(W2[b, kk]), 1e-6)) ** 1.5 if use_payload else 1.0
+                en_rem[b, kk] = max(0.0, float(en_rem[b, kk]) - leg * fac)
                 if jj == int(depot2[b, kk]):
                     cap_rem[b, kk] = cap2[b, kk]
                     en_rem[b, kk] = en2[b, kk]
@@ -191,7 +216,8 @@ def rollouts(policy, batch, S=8, greedy=False, anchor=False):
     return logps, torch.tensor(objs, dtype=torch.float32), routes_list, None
 
 
-def make_batch(seed, n_task, B, wind_hours, mode="eastlake"):
+def make_batch(seed, n_task, B, wind_hours, mode="eastlake", t_service=1.0, drone_w=None,
+               kappa=1.0, e_res=0.0):
     rng = np.random.RandomState(seed)
     batch = []
     for b in range(B):
@@ -202,12 +228,20 @@ def make_batch(seed, n_task, B, wind_hours, mode="eastlake"):
         else:
             sc = build_eastlake(seed=seed * 997 + b, n_alerts=n_task, wind_hour=int(rng.choice(wind_hours)))
             inst = build_instance_from_scenario(sc)
+        inst.hover_time = t_service
+        inst.hover_time = t_service            # M1: 校准后的单点作业时间
+        if drone_w is not None:
+            inst.drone_w = np.array(drone_w, dtype=float)
+        inst.kappa = kappa
+        inst.energy_reserve = e_res
         batch.append(inst)
     return batch
 
 
-def eval_greedy(policy, n_inst=12, n_task=10, seed=12345, mode="eastlake"):
-    batch = make_batch(seed, n_task, n_inst, [0, 12, 36, 100, 200, 300], mode=mode)
+def eval_greedy(policy, n_inst=12, n_task=10, seed=12345, mode="eastlake",
+                  t_service=1.0, drone_w=None, kappa=1.0, e_res=0.0):
+    batch = make_batch(seed, n_task, n_inst, [0, 12, 36, 100, 200, 300], mode=mode,
+                       t_service=t_service, drone_w=drone_w, kappa=kappa, e_res=e_res)
     with torch.no_grad():
         logps, objs, routes_list, _ = rollouts(policy, batch, S=1, greedy=True)
     return float(objs.mean())
@@ -228,8 +262,13 @@ def main():
     ap.add_argument("--tanh-prior", action="store_true", help="RRNCO 式解码先验(C·tanh + −β·log T)")
     ap.add_argument("--anchor", action="store_true", help="真 POMO 锚定(各轨迹首任务不同)")
     ap.add_argument("--beta-max", type=float, default=None, help="解码先验 β 上限截断(防先验主导坍缩, 默认不截断)")
+    ap.add_argument("--t-service", type=float, default=1.0, help="单点投放作业时间 min (M1, 默认 1.0 校准值)")
+    ap.add_argument("--payload-w", default=None, help="逗号分隔空重kg/机 (启用载荷耦合能量 M2, 如 4,4,6)")
+    ap.add_argument("--kappa", type=float, default=1.0, help="返航余量系数 κ (M3, 默认 1.0)")
+    ap.add_argument("--e-res", type=float, default=0.0, help="绝对能量储备 E_res (min 等效, M3)")
     ap.add_argument("--mode", default="eastlake", choices=["eastlake", "flow"], help="训练数据模式")
     args = ap.parse_args()
+    wlist = ([float(x) for x in args.payload_w.split(",")] if args.payload_w else None)
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
     cfg = dict(d=args.d, L=args.L, n_feat=(9 if args.use_edge else 6),
@@ -247,7 +286,8 @@ def main():
     val_last = None
     for step in range(args.steps):
         batch = make_batch(seed=args.seed * 1000 + step, n_task=args.n_task, B=args.batch,
-                           wind_hours=[0, 12, 36, 100, 200, 300, 800, 1400], mode=args.mode)
+                           wind_hours=[0, 12, 36, 100, 200, 300, 800, 1400], mode=args.mode,
+                           t_service=args.t_service, drone_w=wlist, kappa=args.kappa, e_res=args.e_res)
         logps, objs, rts, _ = rollouts(policy, batch, S=args.samples, anchor=args.anchor)
         objs_arr = objs.view(args.batch, args.samples)
         baseline = objs_arr.mean(dim=1, keepdim=True)
@@ -262,7 +302,9 @@ def main():
         torch.nn.utils.clip_grad_norm_(policy.parameters(), 1.0)
         opt.step()
         if step % 50 == 0 or step == args.steps - 1:
-            val_obj = eval_greedy(policy, 12, args.n_task, seed=424242, mode=args.mode)
+            val_obj = eval_greedy(policy, 12, args.n_task, seed=424242, mode=args.mode,
+                                 t_service=args.t_service, drone_w=wlist,
+                                 kappa=args.kappa, e_res=args.e_res)
             curve["step"].append(step)
             curve["train_obj"].append(float(objs.mean()))
             curve["val_obj"].append(val_obj)

@@ -26,10 +26,14 @@ class Instance:
     makespan_penalty: float = 0.05 # μ: 最晚返航惩罚
     unserved_penalty: float = 50.0 # ν: 未服务惩罚 (乘 w_i)
     refill_time: float = 12.0      # 停机坪补货/充电时间 (min)
-    hover_time: float = 0.13       # 每次投放悬停时间 (min)
+    hover_time: float = 1.0        # 单点投放作业时间 t_service (min) [V3 默认 1.0; 0.13 为 V2.7 旧值, 敏感性见 07 M1]
     eff_lag: np.ndarray = None     # (n,) 治理生效时滞 = T_drift + t_safe(D_j,C0_j) (min, 0 for depot); 为 None 时目标退化为 t_arrival
     use_eff: bool = False          # 目标是否使用 t_eff = t_arrival + eff_lag (v3.0 治理生效目标)
     infeasible_penalty: float = 0.0  # 能量审计不通过时的固定罚 (V2.7+: 默认 0 保持 V2.6 可比, 实验协议设 1e4)
+    drone_w: np.ndarray = None     # (m,) 空重 kg; 非 None 时启用载荷耦合能量 E∝(W+m·kg)^{3/2}
+    pack_kg: float = 0.5           # 每包质量 kg (文献 D: 500 mL 菌液瓶)
+    kappa: float = 1.0             # 返航余量系数 κ (BER RETURNOK; 1.0=V2.7 语义, 建议 1.15)
+    energy_reserve: float = 0.0    # 绝对能量储备 E_res (min 等效)
 
     def task_ids(self):
         return np.arange(self.n_dep, len(self.xy))
@@ -54,7 +58,8 @@ def build_instance_from_scenario(sc):
         name=sc.name, xy=sc.xy, n_dep=ndep, T=T_all, demand=demand, risk=risk,
         tw_end=tw, drone_cap=sc.drone_capacity.copy(), drone_energy=sc.drone_energy.copy(),
         drone_depot=np.arange(m) % ndep, horizon=180.0,
-        late_penalty=2.0, makespan_penalty=0.05, unserved_penalty=50.0, refill_time=12.0)
+        late_penalty=2.0, makespan_penalty=0.05, unserved_penalty=50.0, refill_time=12.0,
+        hover_time=float(getattr(sc, 't_service', 1.0)))
     return inst
 
 
@@ -71,9 +76,11 @@ def objective_times(inst, routes):
     visit_times = [[] for _ in range(n)]   # 每次访问的时刻（升序）
     end_time = np.zeros(m)
     feasible = True
+    W = inst.drone_w
     for k in range(m):
         t = 0.0
         energy = inst.drone_energy[k]
+        load = inst.drone_cap[k]
         depot = inst.drone_depot[k]
         cur = depot
         for nxt in routes[k]:
@@ -82,12 +89,17 @@ def objective_times(inst, routes):
                 cur = depot
                 t += inst.refill_time
                 energy = inst.drone_energy[k]
+                load = inst.drone_cap[k]
                 continue
-            leg = inst.T[k][cur][nxt]
-            t += leg
+            # M2: 载荷耦合能量 E_leg = T_leg · ((W + pack_kg·load)/W)^{3/2} (空载=基准)
+            fac = 1.0 if W is None else ((W[k] + inst.pack_kg * load) / W[k]) ** 1.5
+            leg = inst.T[k][cur][nxt] * fac
+            t += inst.T[k][cur][nxt]
             energy = max(0.0, energy - leg)
-            ret = inst.T[k][nxt][depot]
-            if energy < ret:
+            load = max(0.0, load - 1.0)
+            fac_ret = 1.0 if W is None else ((W[k] + inst.pack_kg * load) / W[k]) ** 1.5
+            ret = inst.T[k][nxt][depot] * fac_ret
+            if energy < inst.kappa * ret + inst.energy_reserve:
                 feasible = False
             visit_count[nxt] += 1
             visit_times[nxt].append(t)
