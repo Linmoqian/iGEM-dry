@@ -5,7 +5,7 @@
 > 前置知识：偏微分方程的基础直觉、Python + numpy 基本读写、数值方法入门（CFL 条件、隐式/显式的区别）。
 > 配套阅读：`README.md`（结论速览）｜`MODEL_ARCHITECTURE.md`（正式架构文档）｜`ARCHITECTURE_ITERATIONS.md`（25 轮审查日志）｜`REVIEW_REPORT.md`（独立审查报告，含已知问题清单）。
 >
-> **v2 修订说明（2026-08-24）**：① §5 数值已随演进更新——当前域标定 均值 2.21 m/最大 4.75 m（MIKE21 论文值）、L≈381 m、场上实际最大 4.64 m（原"5.8/5.47/L≈498"为旧版本）；② 默认参数已对齐 MIKE21 校准（n=0.0238、use_adv=True）；③ `batch_sim_drops` 阈值重抽样 bug 已修复；④ 新增 E0–E6 六组文献驱动的实验（38→42 实测点水深标定、波依赖 Cd、湖陆风、表层风漂移、C_req 联标、风场景库、多航次接口），完整记录见 `report/实验记录_EXPERIMENTS.md`，结论与建议见 `report/优化方案与不足_OPTIMIZATION_PLAN.md`。
+> **v2 修订说明（2026-08-24）**：① §5 数值已随演进更新——当前域标定 均值 2.21 m/最大 4.75 m（MIKE21 论文值）、L≈381 m、场上实际最大 4.64 m（原"5.8/5.47/L≈498"为旧版本）；② 默认参数已对齐 MIKE21 校准（n=0.0238、use_adv=True）；③ `batch_sim_drops` 阈值重抽样 bug 已修复；④ 新增 E0–E14 文献驱动的实验（42 实测点水深标定→B3 幂指数生产水深、湖面 Cd、湖陆风、表层风漂移 2%、C_req 物理联标、风场景库、多航次接口、六项改动落地验证 E8–E13 与生产刷新 E14），完整记录见 `report/实验记录_EXPERIMENTS.md` 与 `report/experiments/E8–E14_*.md`，结论与建议见 `report/优化方案与不足_OPTIMIZATION_PLAN.md`（A 项均已标注 ✅ 已落地+验证）。
 
 ---
 

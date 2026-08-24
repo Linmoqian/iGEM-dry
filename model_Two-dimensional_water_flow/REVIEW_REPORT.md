@@ -9,6 +9,7 @@
 > - **P2-2 fig05 / P2-3 A1 下载状态 / P2-6 编号**：随本次文献下载与重绘更新（文综 v2 下载表、21 篇通读）。
 > - **P3 类（.gitignore、绝对路径、use_adv 默认、死代码、字体回退）**：多数已随演进修复；仍有未决项（见优化方案 §未决）。
 > - 新增可复现脚本：`12_validate_bathymetry.py`–`20_wind_scenario_quantiles.py`（E0–E6 实验，记录于实验文档）。
+> **2026-08-25 再修订（第二轮优化落地）**：A1–A6 全部落地并经 E8–E13 实验证明（commit 089ee1a/d6b3d78，报告 `report/experiments/E8–E13`）：B3 幂指数水深（RMSE 1.015→0.486）、cd_mode='lake' 默认（流速 +22~+57%）、windage 2% 默认、physical_thr_rel 接口（物理阈值 0.2465 下 top5 重排、最优点上风移 1.0 km）、p75 场景成员（Cd 于 3.4 m/s 封顶 3.6e-3）、接口定稿（续航语义歧义已定位）；生产刷新链完成（E14），旧产物归档 `*_v1_legacy.npz`。
 
 ---
 
