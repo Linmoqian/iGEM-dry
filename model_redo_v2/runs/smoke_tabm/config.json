@@ -1,0 +1,75 @@
+{
+  "seed": 42,
+  "data_dir": "D:\\AAAProject\\IGEM\\IGEM-dry\\model_redo_v2\\data\\model_tables",
+  "runs_dir": "D:\\AAAProject\\IGEM\\IGEM-dry\\model_redo_v2\\runs",
+  "target": "total_microcystins",
+  "panel": "core_field",
+  "split_protocol": "source_ood",
+  "test_fold": 0,
+  "validation_fold": 1,
+  "n_folds": 5,
+  "minimum_feature_count": 3,
+  "models": [
+    "tabm_censored"
+  ],
+  "stacking_folds": 2,
+  "censored_stacking_weight": 0.25,
+  "conformal_alpha": 0.2,
+  "risk_thresholds_ug_l": [],
+  "refit_on_train_validation": false,
+  "xgb_aft": {
+    "num_boost_round": 25,
+    "early_stopping_rounds": 5,
+    "learning_rate": 0.03,
+    "max_depth": 3,
+    "min_child_weight": 5.0,
+    "subsample": 0.85,
+    "colsample_bytree": 0.85,
+    "reg_lambda": 2.0,
+    "distribution": "normal",
+    "distribution_scale": 1.0,
+    "tree_method": "hist",
+    "device": "cpu"
+  },
+  "catboost_quantile": {
+    "iterations": 25,
+    "depth": 4,
+    "learning_rate": 0.035,
+    "l2_leaf_reg": 5.0,
+    "early_stopping_rounds": 5,
+    "censored_weight": 0.25,
+    "task_type": "CPU"
+  },
+  "lightgbm_quantile": {
+    "n_estimators": 30,
+    "learning_rate": 0.025,
+    "num_leaves": 15,
+    "min_child_samples": 30,
+    "subsample": 0.85,
+    "colsample_bytree": 0.85,
+    "reg_lambda": 2.0,
+    "censored_weight": 0.25,
+    "early_stopping_rounds": 5
+  },
+  "tabm_censored": {
+    "ensemble_size": 4,
+    "hidden_dims": [
+      64,
+      32
+    ],
+    "dropout": 0.15,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "batch_size": 1024,
+    "max_epochs": 3,
+    "patience": 2,
+    "gradient_clip": 1.0,
+    "device": "auto"
+  },
+  "tabicl": {
+    "n_estimators": 2,
+    "batch_size": 2,
+    "device": null,
+    "exact_only": true
+  }
+}

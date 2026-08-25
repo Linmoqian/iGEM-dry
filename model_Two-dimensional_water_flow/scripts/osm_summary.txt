@@ -1,0 +1,8 @@
+WAY id=103504237 name=官桥湖 npts=0
+WAY id=122747058 name=水果湖 npts=0
+WAY id=881445354 name=内沙湖 npts=0
+REL id=1687983 name=汤菱湖 members=0 outer=0 inner=0 with_geom=0
+REL id=7160933 name=沙湖 members=0 outer=0 inner=0 with_geom=0
+REL id=20174744 name=东湖 members=0 outer=0 inner=0 with_geom=0
+REL id=20174962 name=庙湖 members=0 outer=0 inner=0 with_geom=0
+REL id=20174963 name=筲箕湖 members=0 outer=0 inner=0 with_geom=0

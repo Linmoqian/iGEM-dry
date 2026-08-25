@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+
+# Keep immutable data and run artifacts on the server, but version their
+# manifests/configuration instead of committing hundreds of megabytes to Git.
+data/
+runs/*
+!runs/README.md
+references/papers/
+tmp_code/*.whl

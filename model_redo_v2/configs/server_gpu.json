@@ -1,0 +1,26 @@
+{
+  "xgb_aft": {
+    "tree_method": "hist",
+    "device": "cuda"
+  },
+  "xgb_quantile": {
+    "tree_method": "hist",
+    "device": "cuda"
+  },
+  "xgb_quantile_tail": {
+    "tree_method": "hist",
+    "device": "cuda"
+  },
+  "tabm_censored": {
+    "device": "cuda",
+    "batch_size": 2048,
+    "ensemble_size": 24,
+    "amp": true
+  },
+  "catboost_quantile": {
+    "task_type": "GPU",
+    "devices": "0",
+    "gpu_ram_part": 0.65,
+    "thread_count": 16
+  }
+}

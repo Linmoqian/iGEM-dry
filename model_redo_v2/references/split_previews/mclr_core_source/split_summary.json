@@ -1,0 +1,26 @@
+{
+  "protocol": "source_ood",
+  "roles": {
+    "train": {
+      "rows": 342,
+      "sources": 1,
+      "waterbodies": 342,
+      "date_min": "2015-06-09",
+      "date_max": "2015-10-05"
+    },
+    "validation": {
+      "rows": 2393,
+      "sources": 1,
+      "waterbodies": 49,
+      "date_min": "2008-12-17",
+      "date_max": "2019-02-25"
+    },
+    "test": {
+      "rows": 102,
+      "sources": 1,
+      "waterbodies": 1,
+      "date_min": "2018-05-29",
+      "date_max": "2019-10-03"
+    }
+  }
+}

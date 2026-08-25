@@ -1,0 +1,442 @@
+{
+  "ood": {
+    "method": "training-only Ledoit-Wolf Mahalanobis",
+    "threshold_quantile": 0.99,
+    "threshold": 194.8919715279097,
+    "validation_flag_rate": 0.1764423076923077,
+    "test_flag_rate": 0.9930200093066542
+  },
+  "validation": {
+    "base_models": {
+      "xgb_aft": {
+        "rows": 4160,
+        "exact_rows": 678,
+        "censored_rows": 3482,
+        "point": {
+          "exact_rows": 678,
+          "mae_ug_l": 0.23143956795888665,
+          "median_ae_ug_l": 0.055486514985561376,
+          "rmse_ug_l": 1.2630910287439916,
+          "log1p_mae": 0.11570792247529683,
+          "log1p_rmse": 0.27737976342281007,
+          "r2": -0.010851264274008399,
+          "spearman": 0.20368574125929065,
+          "within_factor_2": 0.8377581120943953
+        },
+        "interval_distance_mae_ug_l": 0.08379673540213933,
+        "observation_interval_compatibility": 0.9889423076923077,
+        "exact_q10_q90_coverage": 0.9321533923303835,
+        "exact_q10_q90_mean_width_ug_l": 0.6040626930102349,
+        "by_source": [
+          {
+            "source": "NCCA2020",
+            "rows": 1326,
+            "exact_rows": 131,
+            "log1p_mae": 0.17045891787572282,
+            "interval_distance_mae_ug_l": 0.05778191577291417
+          },
+          {
+            "source": "NRSA2018_19",
+            "rows": 2111,
+            "exact_rows": 234,
+            "log1p_mae": 0.10871751947263791,
+            "interval_distance_mae_ug_l": 0.08537763067824419
+          },
+          {
+            "source": "NWCA2021",
+            "rows": 723,
+            "exact_rows": 313,
+            "log1p_mae": 0.09801902121384762,
+            "interval_distance_mae_ug_l": 0.12689269792011337
+          }
+        ],
+        "source_macro_log1p_mae": 0.12573181952073612,
+        "worst_source_log1p_mae": 0.17045891787572282,
+        "risk_thresholds": {}
+      },
+      "catboost_quantile": {
+        "rows": 4160,
+        "exact_rows": 678,
+        "censored_rows": 3482,
+        "point": {
+          "exact_rows": 678,
+          "mae_ug_l": 0.2691418749795892,
+          "median_ae_ug_l": 0.084788505205523,
+          "rmse_ug_l": 1.2832972364146005,
+          "log1p_mae": 0.14901819069346095,
+          "log1p_rmse": 0.3093952845956378,
+          "r2": -0.043451999451318724,
+          "spearman": 0.07998294193922742,
+          "within_factor_2": 0.5648967551622419
+        },
+        "interval_distance_mae_ug_l": 0.045747128640958756,
+        "observation_interval_compatibility": 0.994951923076923,
+        "exact_q10_q90_coverage": 0.9690265486725663,
+        "exact_q10_q90_mean_width_ug_l": 1.4402331200134946,
+        "by_source": [
+          {
+            "source": "NCCA2020",
+            "rows": 1326,
+            "exact_rows": 131,
+            "log1p_mae": 0.22269874312682192,
+            "interval_distance_mae_ug_l": 0.040232957818117344
+          },
+          {
+            "source": "NRSA2018_19",
+            "rows": 2111,
+            "exact_rows": 234,
+            "log1p_mae": 0.11545274509449048,
+            "interval_distance_mae_ug_l": 0.024947160089980828
+          },
+          {
+            "source": "NWCA2021",
+            "rows": 723,
+            "exact_rows": 313,
+            "log1p_mae": 0.14327429900460734,
+            "interval_distance_mae_ug_l": 0.11659156034524937
+          }
+        ],
+        "source_macro_log1p_mae": 0.16047526240863993,
+        "worst_source_log1p_mae": 0.22269874312682192,
+        "risk_thresholds": {}
+      },
+      "tabm_censored": {
+        "rows": 4160,
+        "exact_rows": 678,
+        "censored_rows": 3482,
+        "point": {
+          "exact_rows": 678,
+          "mae_ug_l": 0.3634647470402284,
+          "median_ae_ug_l": 0.18,
+          "rmse_ug_l": 1.3047600930425072,
+          "log1p_mae": 0.23717370484996994,
+          "log1p_rmse": 0.35857814626261686,
+          "r2": -0.07864687018568661,
+          "spearman": 0.23992220911350534,
+          "within_factor_2": 0.2235294117647059
+        },
+        "interval_distance_mae_ug_l": 0.06149622060487425,
+        "observation_interval_compatibility": 0.9689903846153847,
+        "exact_q10_q90_coverage": 0.8097345132743363,
+        "exact_q10_q90_mean_width_ug_l": 0.9887412019745137,
+        "by_source": [
+          {
+            "source": "NCCA2020",
+            "rows": 1326,
+            "exact_rows": 131,
+            "log1p_mae": 0.30252695482519876,
+            "interval_distance_mae_ug_l": 0.04856304979100286
+          },
+          {
+            "source": "NRSA2018_19",
+            "rows": 2111,
+            "exact_rows": 234,
+            "log1p_mae": 0.21020277427878864,
+            "interval_distance_mae_ug_l": 0.033880379849853745
+          },
+          {
+            "source": "NWCA2021",
+            "rows": 723,
+            "exact_rows": 313,
+            "log1p_mae": 0.2299849572681854,
+            "interval_distance_mae_ug_l": 0.16584812148045067
+          }
+        ],
+        "source_macro_log1p_mae": 0.2475715621240576,
+        "worst_source_log1p_mae": 0.30252695482519876,
+        "risk_thresholds": {}
+      }
+    },
+    "ensemble_uncalibrated": {
+      "rows": 4160,
+      "exact_rows": 678,
+      "censored_rows": 3482,
+      "point": {
+        "exact_rows": 678,
+        "mae_ug_l": 0.3634647470402284,
+        "median_ae_ug_l": 0.18,
+        "rmse_ug_l": 1.3047600930425072,
+        "log1p_mae": 0.23717370484996994,
+        "log1p_rmse": 0.35857814626261686,
+        "r2": -0.07864687018568661,
+        "spearman": 0.23992220911350534,
+        "within_factor_2": 0.2235294117647059
+      },
+      "interval_distance_mae_ug_l": 0.06149622060487425,
+      "observation_interval_compatibility": 0.9689903846153847,
+      "exact_q10_q90_coverage": 0.8097345132743363,
+      "exact_q10_q90_mean_width_ug_l": 0.9887412019745137,
+      "by_source": [
+        {
+          "source": "NCCA2020",
+          "rows": 1326,
+          "exact_rows": 131,
+          "log1p_mae": 0.30252695482519876,
+          "interval_distance_mae_ug_l": 0.04856304979100286
+        },
+        {
+          "source": "NRSA2018_19",
+          "rows": 2111,
+          "exact_rows": 234,
+          "log1p_mae": 0.21020277427878864,
+          "interval_distance_mae_ug_l": 0.033880379849853745
+        },
+        {
+          "source": "NWCA2021",
+          "rows": 723,
+          "exact_rows": 313,
+          "log1p_mae": 0.2299849572681854,
+          "interval_distance_mae_ug_l": 0.16584812148045067
+        }
+      ],
+      "source_macro_log1p_mae": 0.2475715621240576,
+      "worst_source_log1p_mae": 0.30252695482519876,
+      "risk_thresholds": {}
+    },
+    "ensemble_calibrated": {
+      "rows": 4160,
+      "exact_rows": 678,
+      "censored_rows": 3482,
+      "point": {
+        "exact_rows": 678,
+        "mae_ug_l": 0.3634647470402284,
+        "median_ae_ug_l": 0.18,
+        "rmse_ug_l": 1.3047600930425072,
+        "log1p_mae": 0.23717370484996994,
+        "log1p_rmse": 0.35857814626261686,
+        "r2": -0.07864687018568661,
+        "spearman": 0.23992220911350534,
+        "within_factor_2": 0.2235294117647059
+      },
+      "interval_distance_mae_ug_l": 0.06149622060487425,
+      "observation_interval_compatibility": 0.9689903846153847,
+      "exact_q10_q90_coverage": 0.8097345132743363,
+      "exact_q10_q90_mean_width_ug_l": 0.9887412019745137,
+      "by_source": [
+        {
+          "source": "NCCA2020",
+          "rows": 1326,
+          "exact_rows": 131,
+          "log1p_mae": 0.30252695482519876,
+          "interval_distance_mae_ug_l": 0.04856304979100286
+        },
+        {
+          "source": "NRSA2018_19",
+          "rows": 2111,
+          "exact_rows": 234,
+          "log1p_mae": 0.21020277427878864,
+          "interval_distance_mae_ug_l": 0.033880379849853745
+        },
+        {
+          "source": "NWCA2021",
+          "rows": 723,
+          "exact_rows": 313,
+          "log1p_mae": 0.2299849572681854,
+          "interval_distance_mae_ug_l": 0.16584812148045067
+        }
+      ],
+      "source_macro_log1p_mae": 0.2475715621240576,
+      "worst_source_log1p_mae": 0.30252695482519876,
+      "risk_thresholds": {}
+    }
+  },
+  "test": {
+    "base_models": {
+      "xgb_aft": {
+        "rows": 4298,
+        "exact_rows": 1876,
+        "censored_rows": 2422,
+        "point": {
+          "exact_rows": 1876,
+          "mae_ug_l": 1.389682389963283,
+          "median_ae_ug_l": 0.13836106765270234,
+          "rmse_ug_l": 8.45119323253544,
+          "log1p_mae": 0.3760801789545067,
+          "log1p_rmse": 0.7169722784942137,
+          "r2": -0.025715881525556705,
+          "spearman": -0.15596916441437733,
+          "within_factor_2": 0.3294243070362473
+        },
+        "interval_distance_mae_ug_l": 0.6079888041967455,
+        "observation_interval_compatibility": 0.796649604467194,
+        "exact_q10_q90_coverage": 0.5341151385927505,
+        "exact_q10_q90_mean_width_ug_l": 0.41244530918802164,
+        "by_source": [
+          {
+            "source": "HABsDrivers_NLA",
+            "rows": 3663,
+            "exact_rows": 1241,
+            "log1p_mae": 0.5039372565034471,
+            "interval_distance_mae_ug_l": 0.6749380549907424
+          },
+          {
+            "source": "NWCA2011",
+            "rows": 635,
+            "exact_rows": 635,
+            "log1p_mae": 0.12620516598090833,
+            "interval_distance_mae_ug_l": 0.2217917874118475
+          }
+        ],
+        "source_macro_log1p_mae": 0.31507121124217774,
+        "worst_source_log1p_mae": 0.5039372565034471,
+        "risk_thresholds": {}
+      },
+      "catboost_quantile": {
+        "rows": 4298,
+        "exact_rows": 1876,
+        "censored_rows": 2422,
+        "point": {
+          "exact_rows": 1876,
+          "mae_ug_l": 1.347398856510997,
+          "median_ae_ug_l": 0.11518092196585872,
+          "rmse_ug_l": 8.441896801438714,
+          "log1p_mae": 0.338191334432162,
+          "log1p_rmse": 0.6884662287342905,
+          "r2": -0.02346051895959489,
+          "spearman": 0.431754723193271,
+          "within_factor_2": 0.5122601279317697
+        },
+        "interval_distance_mae_ug_l": 0.5921835894472266,
+        "observation_interval_compatibility": 0.957422056770591,
+        "exact_q10_q90_coverage": 0.902452025586354,
+        "exact_q10_q90_mean_width_ug_l": 2.042483491091784,
+        "by_source": [
+          {
+            "source": "HABsDrivers_NLA",
+            "rows": 3663,
+            "exact_rows": 1241,
+            "log1p_mae": 0.4476064383688573,
+            "interval_distance_mae_ug_l": 0.6568137923489964
+          },
+          {
+            "source": "NWCA2011",
+            "rows": 635,
+            "exact_rows": 635,
+            "log1p_mae": 0.12435803681729755,
+            "interval_distance_mae_ug_l": 0.2193640095587497
+          }
+        ],
+        "source_macro_log1p_mae": 0.2859822375930774,
+        "worst_source_log1p_mae": 0.4476064383688573,
+        "risk_thresholds": {}
+      },
+      "tabm_censored": {
+        "rows": 4298,
+        "exact_rows": 1876,
+        "censored_rows": 2422,
+        "point": {
+          "exact_rows": 1876,
+          "mae_ug_l": 1.4179568911933405,
+          "median_ae_ug_l": 0.22603596198275422,
+          "rmse_ug_l": 8.42237622641331,
+          "log1p_mae": 0.4060210811199505,
+          "log1p_rmse": 0.7159134804608692,
+          "r2": -0.01873280439909597,
+          "spearman": 0.2725185364831809,
+          "within_factor_2": 0.2344213649851632
+        },
+        "interval_distance_mae_ug_l": 0.6307380087824321,
+        "observation_interval_compatibility": 0.9043741275011633,
+        "exact_q10_q90_coverage": 0.7809168443496801,
+        "exact_q10_q90_mean_width_ug_l": 1.408949909079731,
+        "by_source": [
+          {
+            "source": "HABsDrivers_NLA",
+            "rows": 3663,
+            "exact_rows": 1241,
+            "log1p_mae": 0.5221959727994036,
+            "interval_distance_mae_ug_l": 0.692259549979135
+          },
+          {
+            "source": "NWCA2011",
+            "rows": 635,
+            "exact_rows": 635,
+            "log1p_mae": 0.1789769227353815,
+            "interval_distance_mae_ug_l": 0.27585075617845967
+          }
+        ],
+        "source_macro_log1p_mae": 0.3505864477673925,
+        "worst_source_log1p_mae": 0.5221959727994036,
+        "risk_thresholds": {}
+      }
+    },
+    "ensemble_uncalibrated": {
+      "rows": 4298,
+      "exact_rows": 1876,
+      "censored_rows": 2422,
+      "point": {
+        "exact_rows": 1876,
+        "mae_ug_l": 1.4179568911933405,
+        "median_ae_ug_l": 0.22603596198275422,
+        "rmse_ug_l": 8.42237622641331,
+        "log1p_mae": 0.4060210811199505,
+        "log1p_rmse": 0.7159134804608692,
+        "r2": -0.01873280439909597,
+        "spearman": 0.2725185364831809,
+        "within_factor_2": 0.2344213649851632
+      },
+      "interval_distance_mae_ug_l": 0.6307380087824321,
+      "observation_interval_compatibility": 0.9043741275011633,
+      "exact_q10_q90_coverage": 0.7809168443496801,
+      "exact_q10_q90_mean_width_ug_l": 1.408949909079731,
+      "by_source": [
+        {
+          "source": "HABsDrivers_NLA",
+          "rows": 3663,
+          "exact_rows": 1241,
+          "log1p_mae": 0.5221959727994036,
+          "interval_distance_mae_ug_l": 0.692259549979135
+        },
+        {
+          "source": "NWCA2011",
+          "rows": 635,
+          "exact_rows": 635,
+          "log1p_mae": 0.1789769227353815,
+          "interval_distance_mae_ug_l": 0.27585075617845967
+        }
+      ],
+      "source_macro_log1p_mae": 0.3505864477673925,
+      "worst_source_log1p_mae": 0.5221959727994036,
+      "risk_thresholds": {}
+    },
+    "ensemble_calibrated": {
+      "rows": 4298,
+      "exact_rows": 1876,
+      "censored_rows": 2422,
+      "point": {
+        "exact_rows": 1876,
+        "mae_ug_l": 1.4179568911933405,
+        "median_ae_ug_l": 0.22603596198275422,
+        "rmse_ug_l": 8.42237622641331,
+        "log1p_mae": 0.4060210811199505,
+        "log1p_rmse": 0.7159134804608692,
+        "r2": -0.01873280439909597,
+        "spearman": 0.2725185364831809,
+        "within_factor_2": 0.2344213649851632
+      },
+      "interval_distance_mae_ug_l": 0.6307380087824321,
+      "observation_interval_compatibility": 0.9043741275011633,
+      "exact_q10_q90_coverage": 0.7809168443496801,
+      "exact_q10_q90_mean_width_ug_l": 1.408949909079731,
+      "by_source": [
+        {
+          "source": "HABsDrivers_NLA",
+          "rows": 3663,
+          "exact_rows": 1241,
+          "log1p_mae": 0.5221959727994036,
+          "interval_distance_mae_ug_l": 0.692259549979135
+        },
+        {
+          "source": "NWCA2011",
+          "rows": 635,
+          "exact_rows": 635,
+          "log1p_mae": 0.1789769227353815,
+          "interval_distance_mae_ug_l": 0.27585075617845967
+        }
+      ],
+      "source_macro_log1p_mae": 0.3505864477673925,
+      "worst_source_log1p_mae": 0.5221959727994036,
+      "risk_thresholds": {}
+    }
+  }
+}

@@ -1,0 +1,272 @@
+{
+  "ood": {
+    "method": "training-only Ledoit-Wolf Mahalanobis",
+    "threshold_quantile": 0.99,
+    "threshold": 119.29090758212034,
+    "validation_flag_rate": 0.02821869488536155,
+    "test_flag_rate": 0.1619718309859155
+  },
+  "validation": {
+    "base_models": {
+      "xgb_aft": {
+        "rows": 567,
+        "exact_rows": 567,
+        "censored_rows": 0,
+        "point": {
+          "exact_rows": 567,
+          "mae_ug_l": 94.16671073503005,
+          "median_ae_ug_l": 0.21302645802497866,
+          "rmse_ug_l": 1418.3806698655,
+          "log1p_mae": 0.49514033989403244,
+          "log1p_rmse": 1.0965839128105344,
+          "r2": -0.004387184991826887,
+          "spearman": 0.49226504041516767,
+          "within_factor_2": 0.3424124513618677
+        },
+        "interval_distance_mae_ug_l": 94.16671073503005,
+        "observation_interval_compatibility": 0.6843033509700176,
+        "exact_q10_q90_coverage": 0.6843033509700176,
+        "exact_q10_q90_mean_width_ug_l": 1.080611082063091,
+        "by_source": [
+          {
+            "source": "EMLS",
+            "rows": 68,
+            "exact_rows": 68,
+            "log1p_mae": 0.08327378257985474,
+            "interval_distance_mae_ug_l": 0.10125432394541364
+          },
+          {
+            "source": "Uruguay_Rio_de_la_Plata",
+            "rows": 499,
+            "exact_rows": 499,
+            "log1p_mae": 0.5512664438967662,
+            "interval_distance_mae_ug_l": 106.98524988523798
+          }
+        ],
+        "source_macro_log1p_mae": 0.31727011323831045,
+        "worst_source_log1p_mae": 0.5512664438967662,
+        "risk_thresholds": {}
+      }
+    },
+    "ensemble_uncalibrated": {
+      "rows": 567,
+      "exact_rows": 567,
+      "censored_rows": 0,
+      "point": {
+        "exact_rows": 567,
+        "mae_ug_l": 94.16671073503005,
+        "median_ae_ug_l": 0.21302645802497866,
+        "rmse_ug_l": 1418.3806698655,
+        "log1p_mae": 0.49514033989403244,
+        "log1p_rmse": 1.0965839128105344,
+        "r2": -0.004387184991826887,
+        "spearman": 0.49226504041516767,
+        "within_factor_2": 0.3424124513618677
+      },
+      "interval_distance_mae_ug_l": 94.16671073503005,
+      "observation_interval_compatibility": 0.6843033509700176,
+      "exact_q10_q90_coverage": 0.6843033509700176,
+      "exact_q10_q90_mean_width_ug_l": 1.080611082063091,
+      "by_source": [
+        {
+          "source": "EMLS",
+          "rows": 68,
+          "exact_rows": 68,
+          "log1p_mae": 0.08327378257985474,
+          "interval_distance_mae_ug_l": 0.10125432394541364
+        },
+        {
+          "source": "Uruguay_Rio_de_la_Plata",
+          "rows": 499,
+          "exact_rows": 499,
+          "log1p_mae": 0.5512664438967662,
+          "interval_distance_mae_ug_l": 106.98524988523798
+        }
+      ],
+      "source_macro_log1p_mae": 0.31727011323831045,
+      "worst_source_log1p_mae": 0.5512664438967662,
+      "risk_thresholds": {}
+    },
+    "ensemble_calibrated": {
+      "rows": 567,
+      "exact_rows": 567,
+      "censored_rows": 0,
+      "point": {
+        "exact_rows": 567,
+        "mae_ug_l": 94.16671073503005,
+        "median_ae_ug_l": 0.21302645802497866,
+        "rmse_ug_l": 1418.3806698655,
+        "log1p_mae": 0.49514033989403244,
+        "log1p_rmse": 1.0965839128105344,
+        "r2": -0.004387184991826887,
+        "spearman": 0.49226504041516767,
+        "within_factor_2": 0.3424124513618677
+      },
+      "interval_distance_mae_ug_l": 94.16671073503005,
+      "observation_interval_compatibility": 0.8042328042328042,
+      "exact_q10_q90_coverage": 0.8042328042328042,
+      "exact_q10_q90_mean_width_ug_l": 1.268433476835348,
+      "by_source": [
+        {
+          "source": "EMLS",
+          "rows": 68,
+          "exact_rows": 68,
+          "log1p_mae": 0.08327378257985474,
+          "interval_distance_mae_ug_l": 0.10125432394541364
+        },
+        {
+          "source": "Uruguay_Rio_de_la_Plata",
+          "rows": 499,
+          "exact_rows": 499,
+          "log1p_mae": 0.5512664438967662,
+          "interval_distance_mae_ug_l": 106.98524988523798
+        }
+      ],
+      "source_macro_log1p_mae": 0.31727011323831045,
+      "worst_source_log1p_mae": 0.5512664438967662,
+      "risk_thresholds": {}
+    }
+  },
+  "test": {
+    "base_models": {
+      "xgb_aft": {
+        "rows": 568,
+        "exact_rows": 568,
+        "censored_rows": 0,
+        "point": {
+          "exact_rows": 568,
+          "mae_ug_l": 32.215308546829064,
+          "median_ae_ug_l": 0.17902196824550629,
+          "rmse_ug_l": 394.7336657736365,
+          "log1p_mae": 0.33947734029288007,
+          "log1p_rmse": 0.919388283559389,
+          "r2": -0.006523419513335682,
+          "spearman": 0.4807764649579455,
+          "within_factor_2": 0.3653061224489796
+        },
+        "interval_distance_mae_ug_l": 32.215308546829064,
+        "observation_interval_compatibility": 0.7095070422535211,
+        "exact_q10_q90_coverage": 0.7095070422535211,
+        "exact_q10_q90_mean_width_ug_l": 0.9743541508614142,
+        "by_source": [
+          {
+            "source": "Buffalo_Pound_2018_2019",
+            "rows": 102,
+            "exact_rows": 102,
+            "log1p_mae": 0.3085448934883237,
+            "interval_distance_mae_ug_l": 0.7796966061442506
+          },
+          {
+            "source": "EMLS",
+            "rows": 70,
+            "exact_rows": 70,
+            "log1p_mae": 0.09864678554192742,
+            "interval_distance_mae_ug_l": 0.13772763940010746
+          },
+          {
+            "source": "Uruguay_Rio_de_la_Plata",
+            "rows": 396,
+            "exact_rows": 396,
+            "log1p_mae": 0.39001584637023223,
+            "interval_distance_mae_ug_l": 45.982639560641886
+          }
+        ],
+        "source_macro_log1p_mae": 0.26573584180016113,
+        "worst_source_log1p_mae": 0.39001584637023223,
+        "risk_thresholds": {}
+      }
+    },
+    "ensemble_uncalibrated": {
+      "rows": 568,
+      "exact_rows": 568,
+      "censored_rows": 0,
+      "point": {
+        "exact_rows": 568,
+        "mae_ug_l": 32.215308546829064,
+        "median_ae_ug_l": 0.17902196824550629,
+        "rmse_ug_l": 394.7336657736365,
+        "log1p_mae": 0.33947734029288007,
+        "log1p_rmse": 0.919388283559389,
+        "r2": -0.006523419513335682,
+        "spearman": 0.4807764649579455,
+        "within_factor_2": 0.3653061224489796
+      },
+      "interval_distance_mae_ug_l": 32.215308546829064,
+      "observation_interval_compatibility": 0.7095070422535211,
+      "exact_q10_q90_coverage": 0.7095070422535211,
+      "exact_q10_q90_mean_width_ug_l": 0.9743541508614142,
+      "by_source": [
+        {
+          "source": "Buffalo_Pound_2018_2019",
+          "rows": 102,
+          "exact_rows": 102,
+          "log1p_mae": 0.3085448934883237,
+          "interval_distance_mae_ug_l": 0.7796966061442506
+        },
+        {
+          "source": "EMLS",
+          "rows": 70,
+          "exact_rows": 70,
+          "log1p_mae": 0.09864678554192742,
+          "interval_distance_mae_ug_l": 0.13772763940010746
+        },
+        {
+          "source": "Uruguay_Rio_de_la_Plata",
+          "rows": 396,
+          "exact_rows": 396,
+          "log1p_mae": 0.39001584637023223,
+          "interval_distance_mae_ug_l": 45.982639560641886
+        }
+      ],
+      "source_macro_log1p_mae": 0.26573584180016113,
+      "worst_source_log1p_mae": 0.39001584637023223,
+      "risk_thresholds": {}
+    },
+    "ensemble_calibrated": {
+      "rows": 568,
+      "exact_rows": 568,
+      "censored_rows": 0,
+      "point": {
+        "exact_rows": 568,
+        "mae_ug_l": 32.215308546829064,
+        "median_ae_ug_l": 0.17902196824550629,
+        "rmse_ug_l": 394.7336657736365,
+        "log1p_mae": 0.33947734029288007,
+        "log1p_rmse": 0.919388283559389,
+        "r2": -0.006523419513335682,
+        "spearman": 0.4807764649579455,
+        "within_factor_2": 0.3653061224489796
+      },
+      "interval_distance_mae_ug_l": 32.215308546829064,
+      "observation_interval_compatibility": 0.8908450704225352,
+      "exact_q10_q90_coverage": 0.8908450704225352,
+      "exact_q10_q90_mean_width_ug_l": 1.1549318655945167,
+      "by_source": [
+        {
+          "source": "Buffalo_Pound_2018_2019",
+          "rows": 102,
+          "exact_rows": 102,
+          "log1p_mae": 0.3085448934883237,
+          "interval_distance_mae_ug_l": 0.7796966061442506
+        },
+        {
+          "source": "EMLS",
+          "rows": 70,
+          "exact_rows": 70,
+          "log1p_mae": 0.09864678554192742,
+          "interval_distance_mae_ug_l": 0.13772763940010746
+        },
+        {
+          "source": "Uruguay_Rio_de_la_Plata",
+          "rows": 396,
+          "exact_rows": 396,
+          "log1p_mae": 0.39001584637023223,
+          "interval_distance_mae_ug_l": 45.982639560641886
+        }
+      ],
+      "source_macro_log1p_mae": 0.26573584180016113,
+      "worst_source_log1p_mae": 0.39001584637023223,
+      "risk_thresholds": {}
+    }
+  }
+}

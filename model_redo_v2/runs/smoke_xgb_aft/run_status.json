@@ -1,0 +1,24 @@
+{
+  "status": "failed",
+  "started_at_utc": "2026-08-10T12:29:39.941992+00:00",
+  "git_commit": "f3c2224de0c70651885e7bda8dd6c0b2622a695e",
+  "python": "3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:26:47) [MSC v.1942 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "hostname": "OVO",
+  "packages": {
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "scipy": "1.18.0",
+    "scikit-learn": "1.9.0",
+    "pyarrow": "25.0.0",
+    "xgboost": "3.4.0",
+    "lightgbm": "4.7.0",
+    "catboost": "1.2.10",
+    "torch": null,
+    "tabicl": null
+  },
+  "failed_at_utc": "2026-08-10T12:29:40.817552+00:00",
+  "error_type": "ValueError",
+  "error": "output array is read-only",
+  "traceback": "Traceback (most recent call last):\n  File \"D:\\AAAProject\\IGEM\\IGEM-dry\\model_redo_v2\\src\\cmadre\\pipeline.py\", line 212, in run_training\n    oof_predictions = _generate_oof_predictions(data, split.train, model_names, config)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\AAAProject\\IGEM\\IGEM-dry\\model_redo_v2\\src\\cmadre\\pipeline.py\", line 120, in _generate_oof_predictions\n    weights = source_balanced_weights(fit_data.metadata)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\AAAProject\\IGEM\\IGEM-dry\\model_redo_v2\\src\\cmadre\\pipeline.py\", line 80, in source_balanced_weights\n    weights /= weights.mean()\nValueError: output array is read-only\n"
+}
