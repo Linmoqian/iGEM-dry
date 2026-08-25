@@ -1,0 +1,10 @@
+{
+  "target": "mc_lr",
+  "panel": "core_field",
+  "split_protocol": "source_ood",
+  "n_folds": 3,
+  "test_fold": 0,
+  "validation_fold": 1,
+  "models": ["catboost_quantile", "tabm_censored"],
+  "risk_thresholds_ug_l": []
+}

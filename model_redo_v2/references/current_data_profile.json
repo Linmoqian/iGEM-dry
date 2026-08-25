@@ -1,0 +1,1644 @@
+{
+  "source_root": "model_redo/data/data_processed",
+  "tables": {
+    "total_microcystins_enriched_all.csv": {
+      "file": "model_redo/data/data_processed/model_tables/total_microcystins_enriched_all.csv",
+      "rows": 22009,
+      "columns": 138,
+      "memory_mb": 33.134,
+      "target_model": {
+        "non_null": 21591,
+        "zero_or_less": 644,
+        "positive": 20947,
+        "quantiles_ug_l": {
+          "0.0": 0.0,
+          "0.01": 0.0,
+          "0.05": 0.05,
+          "0.25": 0.05,
+          "0.5": 0.075,
+          "0.75": 0.171,
+          "0.95": 2.817,
+          "0.99": 12.880299999999849,
+          "1.0": 743.75
+        }
+      },
+      "target_observed": {
+        "non_null": 10581,
+        "zero_or_less": 644,
+        "positive": 9937,
+        "quantiles_ug_l": {
+          "0.0": 0.0,
+          "0.01": 0.0,
+          "0.05": 0.0,
+          "0.25": 0.11,
+          "0.5": 0.174,
+          "0.75": 0.6,
+          "0.95": 6.03,
+          "0.99": 21.00600000000002,
+          "1.0": 743.75
+        }
+      },
+      "counts_is_censored": {
+        "1": 11458,
+        "0": 10551
+      },
+      "counts_detected": {
+        "0.0": 11355,
+        "1.0": 10133,
+        "<missing>": 521
+      },
+      "counts_target_quality_flag": {
+        "censored_substitution": 11355,
+        "valid": 10133,
+        "missing": 418,
+        "interval_censored_component_midpoint": 103
+      },
+      "counts_matrix": {
+        "water": 12564,
+        "WATER": 9421,
+        "Saline Water": 24
+      },
+      "counts_method": {
+        "ELISA": 19146,
+        "IMNT2": 717,
+        "ADDA-ELISA": 676,
+        "PPIA": 478,
+        "Freshwater": 429,
+        "Saltwater": 213,
+        "particulate + dissolved microcystin": 121,
+        "LC-MS/MS; reconstructed extracellular+intracellular": 116,
+        "source analytical method": 72,
+        "immunoassay": 20,
+        "ESS ENV TOX METHOD 2100": 13,
+        "18_01_13": 8
+      },
+      "counts_training_tier": {
+        "field_monitoring": 21267,
+        "static_context_only": 527,
+        "target_only": 215
+      },
+      "unique_dataset_id": 22,
+      "top_dataset_id": {
+        "HABsDrivers_NLA": 3664,
+        "NOAA_Lake_Erie_2013_2025": 3074,
+        "NRSA2013_14": 2261,
+        "NRSA2023_24": 2133,
+        "NRSA2018_19": 2111,
+        "NCCA2020": 1326,
+        "NLA2012": 1230,
+        "NLA2022": 1225,
+        "NLA2017": 1186,
+        "NWCA2016": 738,
+        "NWCA2021": 726,
+        "USDA_Georgia_Farm_Ponds": 676,
+        "NWCA2011": 642,
+        "San_Francisco_Estuary": 478,
+        "NOAA_Saginaw_Bay_2019_2021": 121,
+        "Buffalo_Pound_2018_2019": 116,
+        "USGS_Sacramento_Delta": 77,
+        "USGS_SE_Wadeable_Streams": 76,
+        "Rider_Cyanotoxin_Rivers": 72,
+        "USGS_Raritan_2020_2021": 31,
+        "USGS_Five_River_Basins": 26,
+        "USGS_NC_Reservoirs_2014": 20
+      },
+      "unique_site_id": 16849,
+      "unique_waterbody_name": 3562,
+      "unique_country": 2,
+      "top_country": {
+        "United States": 21893,
+        "Canada": 116
+      },
+      "dated_rows": 21455,
+      "date_min": "2007-05-08",
+      "date_max": "2024-10-22",
+      "dynamic_model_eligible": 20852,
+      "static_baseline_eligible": 20941,
+      "feature_coverage": {
+        "water_temp_c_best": {
+          "non_null": 7804,
+          "fraction": 0.354582
+        },
+        "water_temp_c": {
+          "non_null": 7338,
+          "fraction": 0.333409
+        },
+        "do_mg_l": {
+          "non_null": 4569,
+          "fraction": 0.207597
+        },
+        "ph": {
+          "non_null": 17870,
+          "fraction": 0.811941
+        },
+        "turbidity_ntu": {
+          "non_null": 15958,
+          "fraction": 0.725067
+        },
+        "conductivity_us_cm": {
+          "non_null": 14390,
+          "fraction": 0.653823
+        },
+        "tn_mg_l": {
+          "non_null": 19962,
+          "fraction": 0.906993
+        },
+        "tp_mg_l": {
+          "non_null": 20331,
+          "fraction": 0.923758
+        },
+        "ammonia_n_mg_l": {
+          "non_null": 19163,
+          "fraction": 0.870689
+        },
+        "nitrate_n_mg_l": {
+          "non_null": 16989,
+          "fraction": 0.771911
+        },
+        "nitrate_nitrite_n_mg_l": {
+          "non_null": 6409,
+          "fraction": 0.291199
+        },
+        "doc_mg_l": {
+          "non_null": 15230,
+          "fraction": 0.69199
+        },
+        "toc_mg_l": {
+          "non_null": 115,
+          "fraction": 0.005225
+        },
+        "tss_mg_l": {
+          "non_null": 7587,
+          "fraction": 0.344723
+        },
+        "chlorophyll_a_ug_l": {
+          "non_null": 16727,
+          "fraction": 0.760007
+        },
+        "secchi_m": {
+          "non_null": 2853,
+          "fraction": 0.129629
+        },
+        "silica_mg_l": {
+          "non_null": 10122,
+          "fraction": 0.459903
+        },
+        "cyanobacteria_cells_ml": {
+          "non_null": 3661,
+          "fraction": 0.166341
+        },
+        "lswt_current_c": {
+          "non_null": 1219,
+          "fraction": 0.055386
+        },
+        "lake_area_km2": {
+          "non_null": 8621,
+          "fraction": 0.391703
+        },
+        "lake_mean_depth_m": {
+          "non_null": 8621,
+          "fraction": 0.391703
+        },
+        "chelsa_annual_mean_air_temp_c": {
+          "non_null": 17746,
+          "fraction": 0.806307
+        },
+        "hydrobasins_id": {
+          "non_null": 17152,
+          "fraction": 0.779318
+        },
+        "worldcover_5km_cropland_fraction": {
+          "non_null": 3635,
+          "fraction": 0.16516
+        }
+      }
+    },
+    "total_microcystins_enriched_dynamic_ready.csv": {
+      "file": "model_redo/data/data_processed/model_tables/total_microcystins_enriched_dynamic_ready.csv",
+      "rows": 20852,
+      "columns": 138,
+      "memory_mb": 31.351,
+      "target_model": {
+        "non_null": 20852,
+        "zero_or_less": 321,
+        "positive": 20531,
+        "quantiles_ug_l": {
+          "0.0": 0.0,
+          "0.01": 0.0,
+          "0.05": 0.05,
+          "0.25": 0.05,
+          "0.5": 0.075,
+          "0.75": 0.17,
+          "0.95": 2.8794500000000007,
+          "0.99": 13.021470000000004,
+          "1.0": 743.75
+        }
+      },
+      "target_observed": {
+        "non_null": 9892,
+        "zero_or_less": 321,
+        "positive": 9571,
+        "quantiles_ug_l": {
+          "0.0": 0.0,
+          "0.01": 0.0,
+          "0.05": 0.03,
+          "0.25": 0.114,
+          "0.5": 0.18,
+          "0.75": 0.66,
+          "0.95": 6.332699999999994,
+          "0.99": 21.53630000000001,
+          "1.0": 743.75
+        }
+      },
+      "counts_is_censored": {
+        "1": 11324,
+        "0": 9528
+      },
+      "counts_detected": {
+        "0.0": 11221,
+        "1.0": 9528,
+        "<missing>": 103
+      },
+      "counts_target_quality_flag": {
+        "censored_substitution": 11221,
+        "valid": 9528,
+        "interval_censored_component_midpoint": 103
+      },
+      "counts_matrix": {
+        "water": 11412,
+        "WATER": 9416,
+        "Saline Water": 24
+      },
+      "counts_method": {
+        "ELISA": 18512,
+        "IMNT2": 717,
+        "ADDA-ELISA": 672,
+        "Freshwater": 423,
+        "Saltwater": 212,
+        "particulate + dissolved microcystin": 121,
+        "LC-MS/MS; reconstructed extracellular+intracellular": 102,
+        "source analytical method": 72,
+        "ESS ENV TOX METHOD 2100": 13,
+        "18_01_13": 8
+      },
+      "counts_training_tier": {
+        "field_monitoring": 20852
+      },
+      "unique_dataset_id": 16,
+      "top_dataset_id": {
+        "HABsDrivers_NLA": 3663,
+        "NOAA_Lake_Erie_2013_2025": 2656,
+        "NRSA2013_14": 2261,
+        "NRSA2023_24": 2132,
+        "NRSA2018_19": 2111,
+        "NCCA2020": 1326,
+        "NLA2012": 1230,
+        "NLA2022": 1224,
+        "NLA2017": 1186,
+        "NWCA2016": 738,
+        "NWCA2021": 723,
+        "USDA_Georgia_Farm_Ponds": 672,
+        "NWCA2011": 635,
+        "NOAA_Saginaw_Bay_2019_2021": 121,
+        "Buffalo_Pound_2018_2019": 102,
+        "Rider_Cyanotoxin_Rivers": 72
+      },
+      "unique_site_id": 16356,
+      "unique_waterbody_name": 3467,
+      "unique_country": 2,
+      "top_country": {
+        "United States": 20750,
+        "Canada": 102
+      },
+      "dated_rows": 20852,
+      "date_min": "2007-05-08",
+      "date_max": "2024-10-22",
+      "dynamic_model_eligible": 20852,
+      "static_baseline_eligible": 20852,
+      "feature_coverage": {
+        "water_temp_c_best": {
+          "non_null": 7445,
+          "fraction": 0.35704
+        },
+        "water_temp_c": {
+          "non_null": 6979,
+          "fraction": 0.334692
+        },
+        "do_mg_l": {
+          "non_null": 4568,
+          "fraction": 0.219068
+        },
+        "ph": {
+          "non_null": 17869,
+          "fraction": 0.856944
+        },
+        "turbidity_ntu": {
+          "non_null": 15957,
+          "fraction": 0.76525
+        },
+        "conductivity_us_cm": {
+          "non_null": 14390,
+          "fraction": 0.690102
+        },
+        "tn_mg_l": {
+          "non_null": 19640,
+          "fraction": 0.941876
+        },
+        "tp_mg_l": {
+          "non_null": 19967,
+          "fraction": 0.957558
+        },
+        "ammonia_n_mg_l": {
+          "non_null": 18757,
+          "fraction": 0.89953
+        },
+        "nitrate_n_mg_l": {
+          "non_null": 16583,
+          "fraction": 0.795271
+        },
+        "nitrate_nitrite_n_mg_l": {
+          "non_null": 6004,
+          "fraction": 0.287934
+        },
+        "doc_mg_l": {
+          "non_null": 15229,
+          "fraction": 0.730338
+        },
+        "toc_mg_l": {
+          "non_null": 115,
+          "fraction": 0.005515
+        },
+        "tss_mg_l": {
+          "non_null": 7455,
+          "fraction": 0.35752
+        },
+        "chlorophyll_a_ug_l": {
+          "non_null": 16384,
+          "fraction": 0.785728
+        },
+        "secchi_m": {
+          "non_null": 2619,
+          "fraction": 0.125599
+        },
+        "silica_mg_l": {
+          "non_null": 10122,
+          "fraction": 0.485421
+        },
+        "cyanobacteria_cells_ml": {
+          "non_null": 3660,
+          "fraction": 0.175523
+        },
+        "lswt_current_c": {
+          "non_null": 1219,
+          "fraction": 0.05846
+        },
+        "lake_area_km2": {
+          "non_null": 8619,
+          "fraction": 0.413342
+        },
+        "lake_mean_depth_m": {
+          "non_null": 8619,
+          "fraction": 0.413342
+        },
+        "chelsa_annual_mean_air_temp_c": {
+          "non_null": 17218,
+          "fraction": 0.825724
+        },
+        "hydrobasins_id": {
+          "non_null": 16649,
+          "fraction": 0.798437
+        },
+        "worldcover_5km_cropland_fraction": {
+          "non_null": 3631,
+          "fraction": 0.174132
+        }
+      }
+    },
+    "total_microcystins_enriched_static_baseline_ready.csv": {
+      "file": "model_redo/data/data_processed/model_tables/total_microcystins_enriched_static_baseline_ready.csv",
+      "rows": 20941,
+      "columns": 138,
+      "memory_mb": 31.49,
+      "target_model": {
+        "non_null": 20941,
+        "zero_or_less": 321,
+        "positive": 20620,
+        "quantiles_ug_l": {
+          "0.0": 0.0,
+          "0.01": 0.0,
+          "0.05": 0.05,
+          "0.25": 0.05,
+          "0.5": 0.075,
+          "0.75": 0.17,
+          "0.95": 2.86,
+          "0.99": 13.01199999999997,
+          "1.0": 743.75
+        }
+      },
+      "target_observed": {
+        "non_null": 9979,
+        "zero_or_less": 321,
+        "positive": 9658,
+        "quantiles_ug_l": {
+          "0.0": 0.0,
+          "0.01": 0.0,
+          "0.05": 0.03235000000000001,
+          "0.25": 0.113,
+          "0.5": 0.18,
+          "0.75": 0.65,
+          "0.95": 6.258595,
+          "0.99": 21.522199999999994,
+          "1.0": 743.75
+        }
+      },
+      "counts_is_censored": {
+        "1": 11364,
+        "0": 9577
+      },
+      "counts_detected": {
+        "0.0": 11261,
+        "1.0": 9577,
+        "<missing>": 103
+      },
+      "counts_target_quality_flag": {
+        "censored_substitution": 11261,
+        "valid": 9577,
+        "interval_censored_component_midpoint": 103
+      },
+      "counts_matrix": {
+        "water": 11496,
+        "WATER": 9421,
+        "Saline Water": 24
+      },
+      "counts_method": {
+        "ELISA": 18594,
+        "IMNT2": 717,
+        "ADDA-ELISA": 672,
+        "Freshwater": 429,
+        "Saltwater": 213,
+        "particulate + dissolved microcystin": 121,
+        "LC-MS/MS; reconstructed extracellular+intracellular": 102,
+        "source analytical method": 72,
+        "ESS ENV TOX METHOD 2100": 13,
+        "18_01_13": 8
+      },
+      "counts_training_tier": {
+        "field_monitoring": 20852,
+        "static_context_only": 89
+      },
+      "unique_dataset_id": 17,
+      "top_dataset_id": {
+        "HABsDrivers_NLA": 3663,
+        "NOAA_Lake_Erie_2013_2025": 2656,
+        "NRSA2013_14": 2261,
+        "NRSA2023_24": 2133,
+        "NRSA2018_19": 2111,
+        "NCCA2020": 1326,
+        "NLA2012": 1230,
+        "NLA2022": 1225,
+        "NLA2017": 1186,
+        "NWCA2016": 738,
+        "NWCA2021": 726,
+        "USDA_Georgia_Farm_Ponds": 672,
+        "NWCA2011": 642,
+        "NOAA_Saginaw_Bay_2019_2021": 121,
+        "Buffalo_Pound_2018_2019": 102,
+        "USGS_Sacramento_Delta": 77,
+        "Rider_Cyanotoxin_Rivers": 72
+      },
+      "unique_site_id": 16399,
+      "unique_waterbody_name": 3500,
+      "unique_country": 2,
+      "top_country": {
+        "United States": 20839,
+        "Canada": 102
+      },
+      "dated_rows": 20941,
+      "date_min": "2007-05-08",
+      "date_max": "2024-10-22",
+      "dynamic_model_eligible": 20852,
+      "static_baseline_eligible": 20941,
+      "feature_coverage": {
+        "water_temp_c_best": {
+          "non_null": 7445,
+          "fraction": 0.355523
+        },
+        "water_temp_c": {
+          "non_null": 6979,
+          "fraction": 0.33327
+        },
+        "do_mg_l": {
+          "non_null": 4568,
+          "fraction": 0.218137
+        },
+        "ph": {
+          "non_null": 17869,
+          "fraction": 0.853302
+        },
+        "turbidity_ntu": {
+          "non_null": 15957,
+          "fraction": 0.761998
+        },
+        "conductivity_us_cm": {
+          "non_null": 14390,
+          "fraction": 0.687169
+        },
+        "tn_mg_l": {
+          "non_null": 19640,
+          "fraction": 0.937873
+        },
+        "tp_mg_l": {
+          "non_null": 19967,
+          "fraction": 0.953488
+        },
+        "ammonia_n_mg_l": {
+          "non_null": 18757,
+          "fraction": 0.895707
+        },
+        "nitrate_n_mg_l": {
+          "non_null": 16583,
+          "fraction": 0.791892
+        },
+        "nitrate_nitrite_n_mg_l": {
+          "non_null": 6004,
+          "fraction": 0.28671
+        },
+        "doc_mg_l": {
+          "non_null": 15229,
+          "fraction": 0.727234
+        },
+        "toc_mg_l": {
+          "non_null": 115,
+          "fraction": 0.005492
+        },
+        "tss_mg_l": {
+          "non_null": 7455,
+          "fraction": 0.356
+        },
+        "chlorophyll_a_ug_l": {
+          "non_null": 16386,
+          "fraction": 0.782484
+        },
+        "secchi_m": {
+          "non_null": 2619,
+          "fraction": 0.125066
+        },
+        "silica_mg_l": {
+          "non_null": 10122,
+          "fraction": 0.483358
+        },
+        "cyanobacteria_cells_ml": {
+          "non_null": 3660,
+          "fraction": 0.174777
+        },
+        "lswt_current_c": {
+          "non_null": 1219,
+          "fraction": 0.058211
+        },
+        "lake_area_km2": {
+          "non_null": 8620,
+          "fraction": 0.411633
+        },
+        "lake_mean_depth_m": {
+          "non_null": 8620,
+          "fraction": 0.411633
+        },
+        "chelsa_annual_mean_air_temp_c": {
+          "non_null": 17307,
+          "fraction": 0.826465
+        },
+        "hydrobasins_id": {
+          "non_null": 16737,
+          "fraction": 0.799245
+        },
+        "worldcover_5km_cropland_fraction": {
+          "non_null": 3635,
+          "fraction": 0.173583
+        }
+      }
+    },
+    "mc_lr_enriched_all.csv": {
+      "file": "model_redo/data/data_processed/model_tables/mc_lr_enriched_all.csv",
+      "rows": 20828,
+      "columns": 138,
+      "memory_mb": 30.268,
+      "target_model": {
+        "non_null": 18718,
+        "zero_or_less": 559,
+        "positive": 18159,
+        "quantiles_ug_l": {
+          "0.0": -0.25,
+          "0.01": 0.0,
+          "0.05": 0.005,
+          "0.25": 0.04,
+          "0.5": 0.25,
+          "0.75": 0.25,
+          "0.95": 3.7,
+          "0.99": 33.0,
+          "1.0": 26105.59
+        }
+      },
+      "target_observed": {
+        "non_null": 18689,
+        "zero_or_less": 559,
+        "positive": 18130,
+        "quantiles_ug_l": {
+          "0.0": -0.25,
+          "0.01": 0.0,
+          "0.05": 0.01,
+          "0.25": 0.05,
+          "0.5": 0.25,
+          "0.75": 0.25,
+          "0.95": 3.753999999999869,
+          "0.99": 33.0,
+          "1.0": 26105.59
+        }
+      },
+      "counts_is_censored": {
+        "0": 16821,
+        "1": 4007
+      },
+      "counts_detected": {
+        "1.0": 14711,
+        "0.0": 4007,
+        "<missing>": 2110
+      },
+      "counts_target_quality_flag": {
+        "valid": 14670,
+        "censored_substitution": 4007,
+        "missing": 2110,
+        "extreme_review_gt_1000": 29,
+        "negative_excluded": 12
+      },
+      "counts_matrix": {
+        "water": 20828
+      },
+      "counts_method": {
+        "Water Quality Portal mixed methods": 13776,
+        "LCMSMS": 3551,
+        "mixed monitoring methods": 2404,
+        "LC-MS/MS": 612,
+        "mixed literature methods": 369,
+        "LC-MS/MS; reconstructed extracellular+intracellular": 116
+      },
+      "counts_training_tier": {
+        "target_only": 14402,
+        "static_context_only": 3577,
+        "field_monitoring": 2841,
+        "remote_dynamic": 5,
+        "hybrid_dynamic": 3
+      },
+      "unique_dataset_id": 7,
+      "top_dataset_id": {
+        "WQP_Microcystin_LR": 13776,
+        "USGS_Sacramento_Delta": 3551,
+        "Uruguay_Rio_de_la_Plata": 2404,
+        "NCCA2015_GreatLakes": 592,
+        "EMLS": 369,
+        "Buffalo_Pound_2018_2019": 116,
+        "USGS_NC_Reservoirs_2014": 20
+      },
+      "unique_site_id": 5482,
+      "unique_waterbody_name": 503,
+      "unique_country": 30,
+      "top_country": {
+        "United States": 17939,
+        "Uruguay": 2404,
+        "Canada": 116,
+        "Poland": 66,
+        "Turkey": 56,
+        "Spain": 38,
+        "Germany": 34,
+        "Netherlands": 16,
+        "Switzerland": 15,
+        "Croatia": 15,
+        "Lithouania": 15,
+        "Sweden": 12,
+        "Czech Republic": 11,
+        "Norway": 10,
+        "Portugal": 10,
+        "Estonia": 9,
+        "Denmark": 8,
+        "UK": 8,
+        "Finland": 7,
+        "Italy": 7,
+        "Cyprus": 5,
+        "Ireland": 4,
+        "Slovenia": 4,
+        "Slovakia": 4,
+        "Greece": 3
+      },
+      "dated_rows": 20236,
+      "date_min": "2005-02-02",
+      "date_max": "2026-06-30",
+      "dynamic_model_eligible": 2837,
+      "static_baseline_eligible": 6409,
+      "feature_coverage": {
+        "water_temp_c_best": {
+          "non_null": 2471,
+          "fraction": 0.118638
+        },
+        "water_temp_c": {
+          "non_null": 2344,
+          "fraction": 0.112541
+        },
+        "do_mg_l": {
+          "non_null": 194,
+          "fraction": 0.009314
+        },
+        "ph": {
+          "non_null": 646,
+          "fraction": 0.031016
+        },
+        "turbidity_ntu": {
+          "non_null": 2282,
+          "fraction": 0.109564
+        },
+        "conductivity_us_cm": {
+          "non_null": 2209,
+          "fraction": 0.106059
+        },
+        "tn_mg_l": {
+          "non_null": 1457,
+          "fraction": 0.069954
+        },
+        "tp_mg_l": {
+          "non_null": 1455,
+          "fraction": 0.069858
+        },
+        "ammonia_n_mg_l": {
+          "non_null": 282,
+          "fraction": 0.013539
+        },
+        "nitrate_n_mg_l": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "nitrate_nitrite_n_mg_l": {
+          "non_null": 238,
+          "fraction": 0.011427
+        },
+        "doc_mg_l": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "toc_mg_l": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "tss_mg_l": {
+          "non_null": 607,
+          "fraction": 0.029143
+        },
+        "chlorophyll_a_ug_l": {
+          "non_null": 2205,
+          "fraction": 0.105867
+        },
+        "secchi_m": {
+          "non_null": 546,
+          "fraction": 0.026215
+        },
+        "silica_mg_l": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "cyanobacteria_cells_ml": {
+          "non_null": 612,
+          "fraction": 0.029384
+        },
+        "lswt_current_c": {
+          "non_null": 127,
+          "fraction": 0.006098
+        },
+        "lake_area_km2": {
+          "non_null": 369,
+          "fraction": 0.017717
+        },
+        "lake_mean_depth_m": {
+          "non_null": 369,
+          "fraction": 0.017717
+        },
+        "chelsa_annual_mean_air_temp_c": {
+          "non_null": 6324,
+          "fraction": 0.30363
+        },
+        "hydrobasins_id": {
+          "non_null": 6219,
+          "fraction": 0.298588
+        },
+        "worldcover_5km_cropland_fraction": {
+          "non_null": 0,
+          "fraction": 0.0
+        }
+      }
+    },
+    "mc_lr_enriched_dynamic_ready.csv": {
+      "file": "model_redo/data/data_processed/model_tables/mc_lr_enriched_dynamic_ready.csv",
+      "rows": 2837,
+      "columns": 138,
+      "memory_mb": 4.241,
+      "target_model": {
+        "non_null": 2837,
+        "zero_or_less": 319,
+        "positive": 2518,
+        "quantiles_ug_l": {
+          "0.0": 0.0,
+          "0.01": 0.0,
+          "0.05": 0.0,
+          "0.25": 0.15,
+          "0.5": 0.15,
+          "0.75": 0.31,
+          "0.95": 6.0,
+          "0.99": 492.3999999999796,
+          "1.0": 26105.59
+        }
+      },
+      "target_observed": {
+        "non_null": 2837,
+        "zero_or_less": 319,
+        "positive": 2518,
+        "quantiles_ug_l": {
+          "0.0": 0.0,
+          "0.01": 0.0,
+          "0.05": 0.0,
+          "0.25": 0.15,
+          "0.5": 0.15,
+          "0.75": 0.31,
+          "0.95": 6.0,
+          "0.99": 492.3999999999796,
+          "1.0": 26105.59
+        }
+      },
+      "counts_is_censored": {
+        "0": 2837
+      },
+      "counts_detected": {
+        "1.0": 2837
+      },
+      "counts_target_quality_flag": {
+        "valid": 2813,
+        "extreme_review_gt_1000": 24
+      },
+      "counts_matrix": {
+        "water": 2837
+      },
+      "counts_method": {
+        "mixed monitoring methods": 2393,
+        "mixed literature methods": 342,
+        "LC-MS/MS; reconstructed extracellular+intracellular": 102
+      },
+      "counts_training_tier": {
+        "field_monitoring": 2829,
+        "remote_dynamic": 5,
+        "hybrid_dynamic": 3
+      },
+      "unique_dataset_id": 3,
+      "top_dataset_id": {
+        "Uruguay_Rio_de_la_Plata": 2393,
+        "EMLS": 342,
+        "Buffalo_Pound_2018_2019": 102
+      },
+      "unique_site_id": 401,
+      "unique_waterbody_name": 392,
+      "unique_country": 29,
+      "top_country": {
+        "Uruguay": 2393,
+        "Canada": 102,
+        "Poland": 61,
+        "Turkey": 51,
+        "Spain": 34,
+        "Germany": 29,
+        "Switzerland": 15,
+        "Lithouania": 15,
+        "Croatia": 13,
+        "Netherlands": 13,
+        "Sweden": 12,
+        "Czech Republic": 11,
+        "Norway": 10,
+        "Portugal": 10,
+        "Estonia": 9,
+        "Denmark": 8,
+        "UK": 8,
+        "Finland": 7,
+        "Italy": 7,
+        "Cyprus": 5,
+        "Ireland": 4,
+        "Slovenia": 4,
+        "Slovakia": 4,
+        "Greece": 3,
+        "Macedonia": 3
+      },
+      "dated_rows": 2837,
+      "date_min": "2008-12-17",
+      "date_max": "2019-10-03",
+      "dynamic_model_eligible": 2837,
+      "static_baseline_eligible": 2837,
+      "feature_coverage": {
+        "water_temp_c_best": {
+          "non_null": 2465,
+          "fraction": 0.868876
+        },
+        "water_temp_c": {
+          "non_null": 2344,
+          "fraction": 0.826225
+        },
+        "do_mg_l": {
+          "non_null": 194,
+          "fraction": 0.068382
+        },
+        "ph": {
+          "non_null": 646,
+          "fraction": 0.227705
+        },
+        "turbidity_ntu": {
+          "non_null": 2282,
+          "fraction": 0.804371
+        },
+        "conductivity_us_cm": {
+          "non_null": 2209,
+          "fraction": 0.778639
+        },
+        "tn_mg_l": {
+          "non_null": 1445,
+          "fraction": 0.509341
+        },
+        "tp_mg_l": {
+          "non_null": 1442,
+          "fraction": 0.508283
+        },
+        "ammonia_n_mg_l": {
+          "non_null": 269,
+          "fraction": 0.094818
+        },
+        "nitrate_n_mg_l": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "nitrate_nitrite_n_mg_l": {
+          "non_null": 230,
+          "fraction": 0.081072
+        },
+        "doc_mg_l": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "toc_mg_l": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "tss_mg_l": {
+          "non_null": 606,
+          "fraction": 0.213606
+        },
+        "chlorophyll_a_ug_l": {
+          "non_null": 2205,
+          "fraction": 0.777229
+        },
+        "secchi_m": {
+          "non_null": 545,
+          "fraction": 0.192104
+        },
+        "silica_mg_l": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "cyanobacteria_cells_ml": {
+          "non_null": 603,
+          "fraction": 0.212548
+        },
+        "lswt_current_c": {
+          "non_null": 121,
+          "fraction": 0.042651
+        },
+        "lake_area_km2": {
+          "non_null": 342,
+          "fraction": 0.12055
+        },
+        "lake_mean_depth_m": {
+          "non_null": 342,
+          "fraction": 0.12055
+        },
+        "chelsa_annual_mean_air_temp_c": {
+          "non_null": 2735,
+          "fraction": 0.964047
+        },
+        "hydrobasins_id": {
+          "non_null": 2677,
+          "fraction": 0.943602
+        },
+        "worldcover_5km_cropland_fraction": {
+          "non_null": 0,
+          "fraction": 0.0
+        }
+      }
+    },
+    "mc_lr_enriched_static_baseline_ready.csv": {
+      "file": "model_redo/data/data_processed/model_tables/mc_lr_enriched_static_baseline_ready.csv",
+      "rows": 6409,
+      "columns": 138,
+      "memory_mb": 9.762,
+      "target_model": {
+        "non_null": 6409,
+        "zero_or_less": 326,
+        "positive": 6083,
+        "quantiles_ug_l": {
+          "0.0": 0.0,
+          "0.01": 0.0,
+          "0.05": 0.0,
+          "0.25": 0.005,
+          "0.5": 0.007,
+          "0.75": 0.15,
+          "0.95": 1.78,
+          "0.99": 21.840000000000146,
+          "1.0": 26105.59
+        }
+      },
+      "target_observed": {
+        "non_null": 6409,
+        "zero_or_less": 326,
+        "positive": 6083,
+        "quantiles_ug_l": {
+          "0.0": 0.0,
+          "0.01": 0.0,
+          "0.05": 0.0,
+          "0.25": 0.01,
+          "0.5": 0.01,
+          "0.75": 0.15,
+          "0.95": 1.78,
+          "0.99": 21.840000000000146,
+          "1.0": 26105.59
+        }
+      },
+      "counts_is_censored": {
+        "1": 3417,
+        "0": 2992
+      },
+      "counts_detected": {
+        "0.0": 3417,
+        "1.0": 2992
+      },
+      "counts_target_quality_flag": {
+        "censored_substitution": 3417,
+        "valid": 2968,
+        "extreme_review_gt_1000": 24
+      },
+      "counts_matrix": {
+        "water": 6409
+      },
+      "counts_method": {
+        "LCMSMS": 3551,
+        "mixed monitoring methods": 2404,
+        "mixed literature methods": 352,
+        "LC-MS/MS; reconstructed extracellular+intracellular": 102
+      },
+      "counts_training_tier": {
+        "static_context_only": 3572,
+        "field_monitoring": 2829,
+        "remote_dynamic": 5,
+        "hybrid_dynamic": 3
+      },
+      "unique_dataset_id": 4,
+      "top_dataset_id": {
+        "USGS_Sacramento_Delta": 3551,
+        "Uruguay_Rio_de_la_Plata": 2404,
+        "EMLS": 352,
+        "Buffalo_Pound_2018_2019": 102
+      },
+      "unique_site_id": 483,
+      "unique_waterbody_name": 473,
+      "unique_country": 30,
+      "top_country": {
+        "United States": 3551,
+        "Uruguay": 2404,
+        "Canada": 102,
+        "Poland": 62,
+        "Turkey": 51,
+        "Spain": 35,
+        "Germany": 32,
+        "Netherlands": 16,
+        "Switzerland": 15,
+        "Lithouania": 15,
+        "Croatia": 13,
+        "Sweden": 12,
+        "Czech Republic": 11,
+        "Norway": 10,
+        "Portugal": 10,
+        "Estonia": 9,
+        "Denmark": 8,
+        "UK": 8,
+        "Finland": 7,
+        "Italy": 7,
+        "Cyprus": 5,
+        "Ireland": 4,
+        "Slovenia": 4,
+        "Slovakia": 4,
+        "Greece": 3
+      },
+      "dated_rows": 6409,
+      "date_min": "2008-12-17",
+      "date_max": "2024-12-17",
+      "dynamic_model_eligible": 2837,
+      "static_baseline_eligible": 6409,
+      "feature_coverage": {
+        "water_temp_c_best": {
+          "non_null": 2465,
+          "fraction": 0.384615
+        },
+        "water_temp_c": {
+          "non_null": 2344,
+          "fraction": 0.365736
+        },
+        "do_mg_l": {
+          "non_null": 194,
+          "fraction": 0.03027
+        },
+        "ph": {
+          "non_null": 646,
+          "fraction": 0.100796
+        },
+        "turbidity_ntu": {
+          "non_null": 2282,
+          "fraction": 0.356062
+        },
+        "conductivity_us_cm": {
+          "non_null": 2209,
+          "fraction": 0.344672
+        },
+        "tn_mg_l": {
+          "non_null": 1446,
+          "fraction": 0.22562
+        },
+        "tp_mg_l": {
+          "non_null": 1447,
+          "fraction": 0.225776
+        },
+        "ammonia_n_mg_l": {
+          "non_null": 270,
+          "fraction": 0.042128
+        },
+        "nitrate_n_mg_l": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "nitrate_nitrite_n_mg_l": {
+          "non_null": 231,
+          "fraction": 0.036043
+        },
+        "doc_mg_l": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "toc_mg_l": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "tss_mg_l": {
+          "non_null": 607,
+          "fraction": 0.094711
+        },
+        "chlorophyll_a_ug_l": {
+          "non_null": 2205,
+          "fraction": 0.344047
+        },
+        "secchi_m": {
+          "non_null": 546,
+          "fraction": 0.085193
+        },
+        "silica_mg_l": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "cyanobacteria_cells_ml": {
+          "non_null": 612,
+          "fraction": 0.095491
+        },
+        "lswt_current_c": {
+          "non_null": 121,
+          "fraction": 0.01888
+        },
+        "lake_area_km2": {
+          "non_null": 352,
+          "fraction": 0.054923
+        },
+        "lake_mean_depth_m": {
+          "non_null": 352,
+          "fraction": 0.054923
+        },
+        "chelsa_annual_mean_air_temp_c": {
+          "non_null": 6307,
+          "fraction": 0.984085
+        },
+        "hydrobasins_id": {
+          "non_null": 6202,
+          "fraction": 0.967702
+        },
+        "worldcover_5km_cropland_fraction": {
+          "non_null": 0,
+          "fraction": 0.0
+        }
+      }
+    },
+    "microcystin_detection_classification.csv": {
+      "file": "model_redo/data/data_processed/model_tables/microcystin_detection_classification.csv",
+      "rows": 19301,
+      "columns": 60,
+      "memory_mb": 12.833,
+      "target_model": {
+        "non_null": 19301,
+        "zero_or_less": 811,
+        "positive": 18490,
+        "quantiles_ug_l": {
+          "0.0": 0.0,
+          "0.01": 0.0,
+          "0.05": 0.005,
+          "0.25": 0.05,
+          "0.5": 0.05,
+          "0.75": 0.11,
+          "0.95": 0.694,
+          "0.99": 4.32918,
+          "1.0": 355.0
+        }
+      },
+      "target_observed": {
+        "non_null": 10864,
+        "zero_or_less": 811,
+        "positive": 10053,
+        "quantiles_ug_l": {
+          "0.0": 0.0,
+          "0.01": 0.0,
+          "0.05": 0.0,
+          "0.25": 0.01,
+          "0.5": 0.1,
+          "0.75": 0.18082,
+          "0.95": 1.611,
+          "0.99": 8.9,
+          "1.0": 355.0
+        }
+      },
+      "counts_is_censored": {
+        "1": 12477,
+        "0": 6824
+      },
+      "counts_detected": {
+        "0.0": 12477,
+        "1.0": 6824
+      },
+      "counts_matrix": {
+        "water": 9856,
+        "WATER": 9421,
+        "Saline Water": 24
+      },
+      "counts_method": {
+        "ELISA": 13591,
+        "LCMSMS": 3551,
+        "IMNT2": 717,
+        "LC-MS/MS": 592,
+        "PPIA": 477,
+        "mixed literature methods": 352,
+        "ESS ENV TOX METHOD 2100": 13,
+        "18_01_13": 8
+      },
+      "unique_dataset_id": 15,
+      "top_dataset_id": {
+        "USGS_Sacramento_Delta": 3628,
+        "NRSA2013_14": 2261,
+        "NRSA2023_24": 2133,
+        "NRSA2018_19": 2111,
+        "NCCA2020": 1326,
+        "HABsDrivers_NLA": 1241,
+        "NLA2012": 1230,
+        "NLA2022": 1225,
+        "NLA2017": 1186,
+        "NWCA2016": 738,
+        "NWCA2021": 726,
+        "NCCA2015_GreatLakes": 592,
+        "San_Francisco_Estuary": 477,
+        "EMLS": 352,
+        "USGS_SE_Wadeable_Streams": 75
+      },
+      "unique_site_id": 13160,
+      "unique_waterbody_name": 3823,
+      "unique_country": 28,
+      "top_country": {
+        "United States": 18949,
+        "Poland": 62,
+        "Turkey": 51,
+        "Spain": 35,
+        "Germany": 32,
+        "Netherlands": 16,
+        "Switzerland": 15,
+        "Lithouania": 15,
+        "Croatia": 13,
+        "Sweden": 12,
+        "Czech Republic": 11,
+        "Norway": 10,
+        "Portugal": 10,
+        "Estonia": 9,
+        "Denmark": 8,
+        "UK": 8,
+        "Finland": 7,
+        "Italy": 7,
+        "Cyprus": 5,
+        "Ireland": 4,
+        "Slovenia": 4,
+        "Slovakia": 4,
+        "Greece": 3,
+        "Macedonia": 3,
+        "Russia": 3
+      },
+      "dated_rows": 18157,
+      "date_min": "2007-06-04",
+      "date_max": "2024-12-17",
+      "feature_coverage": {
+        "water_temp_c": {
+          "non_null": 1232,
+          "fraction": 0.063831
+        },
+        "do_mg_l": {
+          "non_null": 1228,
+          "fraction": 0.063624
+        },
+        "ph": {
+          "non_null": 14022,
+          "fraction": 0.726491
+        },
+        "turbidity_ntu": {
+          "non_null": 12726,
+          "fraction": 0.659344
+        },
+        "conductivity_us_cm": {
+          "non_null": 12808,
+          "fraction": 0.663593
+        },
+        "tn_mg_l": {
+          "non_null": 14477,
+          "fraction": 0.750065
+        },
+        "tp_mg_l": {
+          "non_null": 14432,
+          "fraction": 0.747733
+        },
+        "ammonia_n_mg_l": {
+          "non_null": 13867,
+          "fraction": 0.71846
+        },
+        "nitrate_n_mg_l": {
+          "non_null": 10881,
+          "fraction": 0.563753
+        },
+        "nitrate_nitrite_n_mg_l": {
+          "non_null": 3501,
+          "fraction": 0.18139
+        },
+        "doc_mg_l": {
+          "non_null": 12809,
+          "fraction": 0.663644
+        },
+        "toc_mg_l": {
+          "non_null": 52,
+          "fraction": 0.002694
+        },
+        "tss_mg_l": {
+          "non_null": 6500,
+          "fraction": 0.33677
+        },
+        "chlorophyll_a_ug_l": {
+          "non_null": 10517,
+          "fraction": 0.544894
+        },
+        "secchi_m": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "silica_mg_l": {
+          "non_null": 10122,
+          "fraction": 0.524429
+        },
+        "cyanobacteria_cells_ml": {
+          "non_null": 1240,
+          "fraction": 0.064245
+        }
+      }
+    },
+    "china_covariates.csv": {
+      "file": "model_redo/data/data_processed/model_tables/china_covariates.csv",
+      "rows": 425530,
+      "columns": 42,
+      "memory_mb": 220.807,
+      "unique_dataset_id": 3,
+      "top_dataset_id": {
+        "China_Yangtze_LakeReservoir": 317190,
+        "China_Lake_TSI_1984_2023": 107720,
+        "Dianchi_Multimedia": 620
+      },
+      "unique_site_id": 3093,
+      "unique_waterbody_name": 2561,
+      "unique_country": 1,
+      "top_country": {
+        "China": 425530
+      },
+      "dated_rows": 317458,
+      "date_min": "2021-06-17",
+      "date_max": "2025-02-13",
+      "feature_coverage": {
+        "water_temp_c": {
+          "non_null": 312744,
+          "fraction": 0.734952
+        },
+        "do_mg_l": {
+          "non_null": 312179,
+          "fraction": 0.733624
+        },
+        "ph": {
+          "non_null": 312437,
+          "fraction": 0.73423
+        },
+        "turbidity_ntu": {
+          "non_null": 312396,
+          "fraction": 0.734134
+        },
+        "conductivity_us_cm": {
+          "non_null": 312713,
+          "fraction": 0.734879
+        },
+        "tn_mg_l": {
+          "non_null": 309310,
+          "fraction": 0.726882
+        },
+        "tp_mg_l": {
+          "non_null": 311045,
+          "fraction": 0.730959
+        },
+        "ammonia_n_mg_l": {
+          "non_null": 309747,
+          "fraction": 0.727909
+        },
+        "nitrate_n_mg_l": {
+          "non_null": 620,
+          "fraction": 0.001457
+        },
+        "nitrate_nitrite_n_mg_l": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "doc_mg_l": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "toc_mg_l": {
+          "non_null": 617,
+          "fraction": 0.00145
+        },
+        "tss_mg_l": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "chlorophyll_a_ug_l": {
+          "non_null": 304417,
+          "fraction": 0.715383
+        },
+        "secchi_m": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "silica_mg_l": {
+          "non_null": 0,
+          "fraction": 0.0
+        },
+        "cyanobacteria_cells_ml": {
+          "non_null": 302607,
+          "fraction": 0.71113
+        }
+      }
+    },
+    "taihu_multimodal_covariates.csv": {
+      "file": "model_redo/data/data_processed/model_tables/taihu_multimodal_covariates.csv",
+      "rows": 576,
+      "columns": 36,
+      "memory_mb": 0.264,
+      "unique_country": 1,
+      "top_country": {
+        "China": 576
+      },
+      "feature_coverage": {
+        "do_mg_l": {
+          "non_null": 576,
+          "fraction": 1.0
+        },
+        "ph": {
+          "non_null": 576,
+          "fraction": 1.0
+        },
+        "tn_mg_l": {
+          "non_null": 576,
+          "fraction": 1.0
+        },
+        "tp_mg_l": {
+          "non_null": 576,
+          "fraction": 1.0
+        }
+      }
+    },
+    "taihu_quarterly_multimodal_covariates.csv": {
+      "file": "model_redo/data/data_processed/model_tables/taihu_quarterly_multimodal_covariates.csv",
+      "rows": 1116,
+      "columns": 32,
+      "memory_mb": 0.468,
+      "unique_country": 1,
+      "top_country": {
+        "China": 1116
+      },
+      "feature_coverage": {
+        "tn_mg_l": {
+          "non_null": 1116,
+          "fraction": 1.0
+        },
+        "tp_mg_l": {
+          "non_null": 1116,
+          "fraction": 1.0
+        }
+      }
+    }
+  },
+  "validation_summary": {
+    "checks": 28,
+    "passed": 28,
+    "failed": 0,
+    "error_failures": [],
+    "tables": {
+      "observations": {
+        "rows": 42837,
+        "columns": 62
+      },
+      "total_all": {
+        "rows": 22009,
+        "columns": 62
+      },
+      "total_ready": {
+        "rows": 20851,
+        "columns": 62
+      },
+      "mclr_all": {
+        "rows": 20828,
+        "columns": 62
+      },
+      "mclr_ready": {
+        "rows": 2810,
+        "columns": 62
+      },
+      "china": {
+        "rows": 425530,
+        "columns": 42
+      },
+      "sites": {
+        "rows": 24644,
+        "columns": 9
+      },
+      "total_enriched": {
+        "rows": 22009,
+        "columns": 138
+      },
+      "total_dynamic": {
+        "rows": 20852,
+        "columns": 138
+      },
+      "mclr_enriched": {
+        "rows": 20828,
+        "columns": 138
+      },
+      "mclr_dynamic": {
+        "rows": 2837,
+        "columns": 138
+      },
+      "broad_aux": {
+        "rows": 225,
+        "columns": 62
+      },
+      "taihu": {
+        "rows": 576,
+        "columns": 36
+      }
+    }
+  },
+  "processing_summary": {
+    "source_csv_audited": 4133,
+    "datasets_catalogued": 118,
+    "toxin_observations": 41639,
+    "total_mc_observations": 20947,
+    "total_mc_model_ready": 19884,
+    "mc_lr_observations": 20692,
+    "mc_lr_model_ready": 2708,
+    "classification_iowa_rows": 707,
+    "china_covariate_rows": 425530,
+    "site_registry_rows": 24427,
+    "duplicate_file_rows": 445,
+    "source_tables": 19,
+    "invariants": {
+      "source_files_deleted": 0,
+      "total_mc_and_mc_lr_separated": true,
+      "raw_target_preserved": true,
+      "censored_target_preserved": true,
+      "coordinates_invented": false
+    }
+  }
+}

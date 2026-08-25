@@ -1,0 +1,27 @@
+{
+  "target": "mc_lr",
+  "panel": "static_context",
+  "minimum_feature_count": 2,
+  "split_protocol": "source_ood",
+  "n_folds": 4,
+  "test_fold": 1,
+  "validation_fold": 3,
+  "models": ["xgb_aft", "catboost_quantile", "tabm_censored"],
+  "risk_thresholds_ug_l": [],
+  "xgb_aft": {
+    "tree_method": "hist",
+    "device": "cuda"
+  },
+  "catboost_quantile": {
+    "task_type": "GPU",
+    "devices": "0",
+    "gpu_ram_part": 0.65,
+    "thread_count": 16
+  },
+  "tabm_censored": {
+    "device": "cuda",
+    "batch_size": 2048,
+    "ensemble_size": 24,
+    "amp": true
+  }
+}

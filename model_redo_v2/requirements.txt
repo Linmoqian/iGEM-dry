@@ -1,0 +1,4 @@
+-e .
+
+# Optional frontier model used only when explicitly requested:
+# pip install -e ".[foundation]"  # TabICL 2.1.x API
