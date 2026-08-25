@@ -1,191 +1,198 @@
+import { useEffect, useRef, useState } from 'react';
 import {
-  AlertTriangle,
   Bell,
   CalendarDays,
   ChevronDown,
-  Clock3,
   Download,
-  FlaskConical,
-  MapPin,
-  Plus,
   RefreshCw,
   Search,
   UserRound,
-  Wifi,
-  Wind,
-  XCircle,
 } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { demoReadings } from '../data/demoReadings';
 import { materials } from '../data/materials';
+import { monitoringService } from '../services/monitoringService';
 
-function HeaderPill({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <div className={`glass-button flex shrink-0 items-center gap-2.5 whitespace-nowrap px-4 text-[16px] text-[#14213b] ${className}`}>{children}</div>;
+function Pill({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  return <div className={`header-pill ${className}`}>{children}</div>;
 }
 
-function SearchBox({ placeholder }: { placeholder: string }) {
+function RouteSearch({ placeholder }: { placeholder: string }) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [value, setValue] = useState(searchParams.get('q') || '');
+
+  useEffect(() => setValue(searchParams.get('q') || ''), [searchParams]);
+
+  const submit = () => {
+    const next = new URLSearchParams(searchParams);
+    if (value.trim()) next.set('q', value.trim());
+    else next.delete('q');
+    setSearchParams(next, { replace: true });
+  };
+
   return (
-    <div className="glass-button flex w-[195px] shrink-0 items-center gap-3 px-4 text-[15px] text-[#7b8aa3]">
-      <Search size={21} />
-      <span className="flex-1">{placeholder}</span>
+    <label className="header-search" aria-label={placeholder}>
+      <Search size={19} />
+      <input
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+        onKeyDown={(event) => event.key === 'Enter' && submit()}
+        onBlur={submit}
+        placeholder={placeholder}
+      />
+    </label>
+  );
+}
+
+function NoticeMenu() {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const close = (event: MouseEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, []);
+
+  return (
+    <div className="header-menu-root" ref={rootRef}>
+      <button className="header-icon-button" type="button" aria-label="查看通知" onClick={() => setOpen((value) => !value)}>
+        <Bell size={24} />
+        <span className="notice-dot" />
+      </button>
+      {open ? (
+        <div className="header-popover notice-popover">
+          <b>最新通知</b>
+          <p><span className="dot danger" />藻华预警浮标-06 超过高风险阈值</p>
+          <p><span className="dot warning" />3 台设备需要检查电量或信号</p>
+          <button type="button" onClick={() => setOpen(false)}>标记为已读</button>
+        </div>
+      ) : null}
     </div>
   );
 }
 
-function NoticeButton({ icon, count }: { icon: React.ReactNode; count?: number }) {
-  return (
-    <button className="icon-button" type="button">
-      {icon}
-      {count ? <span className="badge-dot">{count}</span> : null}
-    </button>
-  );
-}
-
 function UserMenu() {
+  const [open, setOpen] = useState(false);
   return (
-    <HeaderPill className="h-[48px] w-[128px] gap-2 px-3 text-[14px]">
-      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#dff2ff] text-[#0874ed]">
-        <UserRound size={21} />
-      </span>
-      <span>iGEM Team</span>
-      <ChevronDown size={18} />
-    </HeaderPill>
+    <div className="header-menu-root">
+      <button className="user-pill" type="button" onClick={() => setOpen((value) => !value)}>
+        <span className="avatar"><UserRound size={18} /></span>
+        <span>iGEM Team</span>
+        <ChevronDown size={16} />
+      </button>
+      {open ? (
+        <div className="header-popover user-popover">
+          <b>演示工作区</b>
+          <span>当前为 Mock 数据模式</span>
+          <button type="button" onClick={() => setOpen(false)}>关闭菜单</button>
+        </div>
+      ) : null}
+    </div>
   );
 }
 
-function PageActions() {
-  const { pathname } = useLocation();
-
-  if (pathname === '/map') {
-    return (
-      <>
-        <HeaderPill className="w-[160px]">
-          <MapPin size={26} className="text-[#168ce4]" />
-          <span>东湖监测区域</span>
-          <ChevronDown size={18} />
-        </HeaderPill>
-        <HeaderPill className="w-[180px]">
-          <Clock3 size={25} className="text-[#0874ed]" />
-          <span>热力图更新</span>
-          <b className="font-semibold">09:42</b>
-        </HeaderPill>
-        <HeaderPill className="w-[160px]">
-          <Wind size={27} className="text-[#0874ed]" />
-          <span>风场</span>
-          <b className="font-semibold">2.1 m/s</b>
-        </HeaderPill>
-        <SearchBox placeholder="搜索设备 / 坐标" />
-        <div className="flex-1" />
-        <NoticeButton icon={<Bell size={26} />} count={3} />
-        <NoticeButton icon={<AlertTriangle size={29} className="text-[#ef1919]" />} count={2} />
-        <UserMenu />
-      </>
-    );
-  }
-
-  if (pathname === '/data') {
-    return (
-      <>
-        <div className="flex w-[300px] shrink-0 flex-col gap-1">
-          <span className="text-[16px] font-semibold">时间范围</span>
-          <HeaderPill className="h-[50px]">
-            <span>2025-05-20 ~ 2025-05-27</span>
-            <CalendarDays size={20} />
-          </HeaderPill>
-        </div>
-        <div className="flex w-[185px] shrink-0 flex-col gap-1">
-          <span className="text-[16px] font-semibold">设备筛选</span>
-          <HeaderPill className="h-[50px] justify-between">
-            <span>全部设备</span>
-            <ChevronDown size={18} />
-          </HeaderPill>
-        </div>
-        <div className="flex w-[230px] shrink-0 flex-col gap-1">
-          <span className="text-[16px] font-semibold">传感器</span>
-          <HeaderPill className="h-[50px] justify-between">
-            <span>藻毒素 + 水温 + pH</span>
-            <ChevronDown size={18} />
-          </HeaderPill>
-        </div>
-        <div className="flex-1" />
-        <button className="glass-button flex h-[50px] shrink-0 items-center gap-2 px-4 text-[15px] font-semibold" type="button">
-          <Download size={21} />
-          导出数据
-        </button>
-        <NoticeButton icon={<Bell size={26} />} count={3} />
-        <UserMenu />
-      </>
-    );
-  }
-
-  if (pathname === '/device') {
-    return (
-      <>
-        <HeaderPill className="w-[118px] text-[#068b4f]">
-          <Wifi size={26} />
-          <b>在线</b>
-          <b>9</b>
-        </HeaderPill>
-        <HeaderPill className="w-[118px] bg-[#fff4ec] text-[#f97316]">
-          <Clock3 size={25} />
-          <b>待机</b>
-          <b>2</b>
-        </HeaderPill>
-        <HeaderPill className="w-[118px] bg-[#f5f7fb] text-[#4b5563]">
-          <XCircle size={25} />
-          <b>离线</b>
-          <b>3</b>
-        </HeaderPill>
-        <SearchBox placeholder="搜索设备编号" />
-        <button className="flex h-[54px] shrink-0 items-center gap-2 rounded-[10px] bg-[#0874ed] px-5 text-[17px] font-semibold text-white" type="button">
-          <Plus size={27} />
-          添加设备
-        </button>
-        <HeaderPill className="w-[138px]">
-          <span>批量操作</span>
-          <ChevronDown size={18} />
-        </HeaderPill>
-        <div className="flex-1" />
-        <NoticeButton icon={<Bell size={26} />} count={1} />
-        <UserMenu />
-      </>
-    );
-  }
+function DataActions() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const setParam = (key: string, value: string) => {
+    const next = new URLSearchParams(searchParams);
+    if (value) next.set(key, value);
+    else next.delete(key);
+    setSearchParams(next, { replace: true });
+  };
 
   return (
     <>
-      <HeaderPill className="w-[160px]">
-        <MapPin size={26} />
-        <span>东湖监测区域</span>
-      </HeaderPill>
-      <HeaderPill className="w-[190px]">
-        <RefreshCw size={25} />
-        <span>实时同步</span>
-        <b className="font-semibold">09:42</b>
-      </HeaderPill>
-      <HeaderPill className="w-[170px]">
-        <FlaskConical size={26} />
-        <span>今日采样</span>
-        <b className="font-semibold">14 / 14</b>
-      </HeaderPill>
-      <SearchBox placeholder="搜索设备 / 告警" />
-      <div className="flex-1" />
-      <NoticeButton icon={<Bell size={26} />} count={3} />
-      <NoticeButton icon={<Bell size={26} />} count={12} />
-      <UserMenu />
+      <label className="filter-stack date-filter">
+        <span>时间范围</span>
+        <Pill>
+          <span>2025-05-20&nbsp; ~ &nbsp;2025-05-27</span>
+          <CalendarDays size={18} />
+        </Pill>
+      </label>
+      <label className="filter-stack">
+        <span>设备筛选</span>
+        <select value={searchParams.get('device') || ''} onChange={(event) => setParam('device', event.target.value)}>
+          <option value="">全部设备</option>
+          {demoReadings.slice(0, 6).map((device) => <option key={device.id} value={device.id}>{device.name}</option>)}
+        </select>
+      </label>
+      <label className="filter-stack sensor-filter">
+        <span>传感器筛选</span>
+        <select value={searchParams.get('sensors') || 'all'} onChange={(event) => setParam('sensors', event.target.value)}>
+          <option value="all">藻毒素 + 水温 + pH</option>
+          <option value="toxin">仅藻毒素</option>
+          <option value="water">藻毒素 + 水温</option>
+          <option value="ph">藻毒素 + pH</option>
+        </select>
+      </label>
+      <div className="header-spacer" />
+      <button className="header-action-button secondary" type="button" onClick={() => window.dispatchEvent(new CustomEvent('igem:export-data'))}>
+        <Download size={19} />导出数据
+      </button>
     </>
   );
 }
 
 export default function AppHeader() {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const [summaryText, setSummaryText] = useState('9 / 14 台');
+  const [syncTime, setSyncTime] = useState('09:42');
+  const [refreshing, setRefreshing] = useState(false);
+
+  useEffect(() => {
+    monitoringService.getDashboardSummary().then((summary) => setSummaryText(`${summary.onlineDevices} / ${summary.totalDevices} 台`));
+  }, [pathname]);
+
+  const refresh = async () => {
+    setRefreshing(true);
+    window.dispatchEvent(new CustomEvent('igem:refresh'));
+    await monitoringService.getDashboardSummary();
+    setSyncTime(new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false }));
+    setRefreshing(false);
+  };
+
   return (
-    <header className="flex h-[110px] shrink-0 items-center gap-5 border-b border-[#b8dcfb] bg-white/82 px-7">
-      <div className="flex min-w-[410px] shrink-0 items-center gap-4">
-        <img className="h-[68px] w-[68px] object-contain" src={materials.logo} alt="SCAU" />
-        <div className="flex items-center gap-2 whitespace-nowrap text-[28px] font-black tracking-[0.05em] text-[#004236]">
-          <span>水体藻毒素监测平台</span>
-        </div>
+    <header className="app-header">
+      <button className="brand" type="button" onClick={() => navigate('/')} aria-label="返回总览">
+        <img src={materials.logo} alt="OCEAN 项目标志" />
+        <strong>水体藻毒素监测平台</strong>
+      </button>
+
+      <div className="header-actions">
+        {pathname === '/data' ? <DataActions /> : null}
+        {pathname === '/' ? (
+          <>
+            <Pill className="live-pill"><span className="pulse-dot" />实时监测中</Pill>
+            <Pill>最后同步&nbsp; {syncTime}</Pill>
+            <RouteSearch placeholder="搜索设备、位置或告警" />
+            <button className="square-button" type="button" aria-label="刷新数据" onClick={refreshing ? undefined : refresh}>
+              <RefreshCw size={20} className={refreshing ? 'spin' : ''} />
+            </button>
+          </>
+        ) : null}
+        {pathname === '/map' ? (
+          <>
+            <Pill className="region-pill">东湖监测区</Pill>
+            <Pill className="live-pill"><span className="pulse-dot" />热力图实时更新</Pill>
+            <RouteSearch placeholder="搜索设备或地图位置" />
+            <button className="square-button" type="button" aria-label="刷新地图" onClick={refresh}><RefreshCw size={20} className={refreshing ? 'spin' : ''} /></button>
+          </>
+        ) : null}
+        {pathname === '/device' ? (
+          <>
+            <Pill className="live-pill"><span className="pulse-dot" />网关在线</Pill>
+            <Pill>已连接&nbsp; {summaryText}</Pill>
+            <RouteSearch placeholder="搜索设备名称或编号" />
+          </>
+        ) : null}
+        <div className="header-spacer" />
+        <NoticeMenu />
+        <UserMenu />
       </div>
-      <PageActions />
     </header>
   );
 }

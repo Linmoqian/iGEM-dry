@@ -4,11 +4,11 @@ import SidebarNav from './SidebarNav';
 
 export default function AppShell() {
   return (
-    <div className="app-frame flex flex-col">
+    <div className="app-frame">
       <AppHeader />
-      <div className="flex min-h-0 flex-1">
+      <div className="app-body">
         <SidebarNav />
-        <main className="min-w-0 flex-1 overflow-hidden px-6 py-5">
+        <main className="main-content">
           <Outlet />
         </main>
       </div>
