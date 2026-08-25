@@ -1,0 +1,10 @@
+{
+  "model_names": [
+    "catboost_quantile"
+  ],
+  "weights": {
+    "catboost_quantile": 1.0
+  },
+  "censored_weight": 0.25,
+  "fit_target": "interval_midpoint_with_censored_downweighting"
+}

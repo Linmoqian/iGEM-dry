@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      color: #1f2f46;
+      font-family: "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    }
+    .bar {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 14px;
+      padding: 0 12px;
+      background: #fff;
+    }
+    .pill, .search, .user {
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #d7e7f4;
+      border-radius: 14px;
+      background: #fbfdff;
+      box-shadow: 0 2px 8px rgba(41, 116, 173, 0.05);
+      white-space: nowrap;
+    }
+    .pill { gap: 9px; padding: 0 15px; font-size: 16px; font-weight: 600; }
+    .pill.soft { color: #3f5876; font-weight: 500; }
+    .live { color: #14845d; background: #f1fbf7; border-color: #cdeee0; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #17a673; box-shadow: 0 0 0 5px rgba(23,166,115,.11); }
+    .search {
+      width: 240px;
+      gap: 10px;
+      padding: 0 14px;
+      color: #7b8ba1;
+      font-size: 15px;
+    }
+    .search svg, .icon svg { width: 19px; height: 19px; stroke: #52708f; }
+    .icon {
+      width: 42px; height: 42px; border-radius: 13px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 1px solid #d7e7f4; background: #fbfdff;
+    }
+    .mode { color: #1676d2; background: #eef7ff; border-color: #cce6fa; }
+    .device .bar { gap: 12px; }
+    .device .search { width: 255px; }
+    .user { gap: 9px; padding: 0 14px 0 10px; font-size: 15px; color: #27384e; }
+    .avatar { width: 27px; height: 27px; border-radius: 50%; display: grid; place-items: center; background: #e8f4ff; color: #1775c8; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <main class="bar" id="bar"></main>
+  <script>
+    const searchIcon = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>';
+    const refreshIcon = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 11a8 8 0 1 0-2.3 5.7"></path><path d="M20 4v7h-7"></path></svg>';
+    const bellIcon = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg>';
+    const mode = new URLSearchParams(location.search).get('mode') || 'overview';
+    const bar = document.getElementById('bar');
+    document.body.classList.add(mode);
+    const parts = {
+      overview: `
+        <div class="pill live"><span class="dot"></span>实时监测中</div>
+        <div class="pill soft">最后同步&nbsp; 09:42</div>
+        <div class="search">${searchIcon}<span>搜索设备、位置或告警</span></div>
+        <div class="icon">${refreshIcon}</div>`,
+      map: `
+        <div class="pill mode">东湖监测区</div>
+        <div class="pill live"><span class="dot"></span>热力图实时更新</div>
+        <div class="search">${searchIcon}<span>搜索设备或地图位置</span></div>
+        <div class="icon">${refreshIcon}</div>`,
+      device: `
+        <div class="pill live"><span class="dot"></span>网关在线</div>
+        <div class="pill soft">已连接&nbsp; 9 / 14 台</div>
+        <div class="search">${searchIcon}<span>搜索设备名称或编号</span></div>
+        <div class="icon">${bellIcon}</div>
+        <div class="user"><span class="avatar">I</span><span>IGEM Team</span></div>`
+    };
+    bar.innerHTML = parts[mode] || parts.overview;
+  </script>
+</body>
+</html>

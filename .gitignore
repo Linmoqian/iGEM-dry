@@ -10,6 +10,7 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 *.egg
+*.whl
 dist/
 build/
 
@@ -45,6 +46,74 @@ manifest.json
 # 原始数据（不入库）
 model/data/raw/
 
+# 研究数据（原始数据、处理中间数据和外部数据集不入库；数据说明与清单除外）
+**/data/**
+**/dataset/**
+**/datasets/**
+**/raw/
+**/external_raw/
+**/data_*/
+**/*_data/
+
+# 应用/模型源码中的数据模块不是外部数据集
+!web/src/data/
+!web/src/data/**
+!**/src/datasets/
+!**/src/datasets/**
+!**/data/*.md
+!**/data/**/*.md
+!**/data/*manifest*.json
+!**/data/**/*manifest*.json
+
+# 研究数据文件（不入库）
+*.csv
+*.tsv
+*.parquet
+*.feather
+*.pkl
+*.pickle
+*.joblib
+*.h5
+*.hdf5
+*.npy
+*.npz
+*.mat
+*.xlsx
+*.xls
+*.ods
+*.sqlite
+*.sqlite3
+*.db
+*.sav
+*.dta
+*.rds
+*.arff
+*.geojson
+*.gpkg
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+*.tif
+*.tiff
+*.nc
+*.nc4
+
+# 参考文献、外部论文及其本地索引（不入库）
+**/references/
+**/reference/
+**/papers/
+**/literature/
+**/citations/
+*.bib
+*.bibtex
+
+# 根目录临时资料与建模临时目录
+/*.pdf
+**/tmp/
+**/_work/
+
 # model_redo 数据与产物（不入库）
 model_redo/data/raw/
 model_redo/data/external_raw/
@@ -74,6 +143,8 @@ model_redo/**/*.xls
 *.tar
 *.gz
 *.7z
+*.rar
 
-# Browser automation artifacts
+# Browser automation artifacts and local Chrome profiles
 .playwright-mcp/
+design-assets/page-objectives-redesign/patches/generated/chrome-profile-*/

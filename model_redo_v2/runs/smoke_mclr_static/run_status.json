@@ -1,0 +1,51 @@
+{
+  "status": "complete",
+  "started_at_utc": "2026-08-10T12:43:56.113448+00:00",
+  "git_commit": "f3c2224de0c70651885e7bda8dd6c0b2622a695e",
+  "python": "3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:26:47) [MSC v.1942 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "hostname": "OVO",
+  "packages": {
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "scipy": "1.18.0",
+    "scikit-learn": "1.9.0",
+    "pyarrow": "25.0.0",
+    "xgboost": "3.4.0",
+    "lightgbm": "4.7.0",
+    "catboost": "1.2.10",
+    "torch": "2.13.0+cpu",
+    "tabicl": null
+  },
+  "completed_at_utc": "2026-08-10T12:43:56.885684+00:00",
+  "models": [
+    "xgb_aft"
+  ],
+  "split_summary": {
+    "protocol": "source_ood",
+    "roles": {
+      "validation": {
+        "rows": 352,
+        "sources": 1,
+        "waterbodies": 351,
+        "date_min": "2015-06-09",
+        "date_max": "2015-10-05"
+      },
+      "train": {
+        "rows": 2506,
+        "sources": 2,
+        "waterbodies": 50,
+        "date_min": "2008-12-17",
+        "date_max": "2019-10-03"
+      },
+      "test": {
+        "rows": 3551,
+        "sources": 1,
+        "waterbodies": 72,
+        "date_min": "2020-07-27",
+        "date_max": "2024-12-17"
+      }
+    }
+  },
+  "data_sha256": "4dcb2fef30ea39c45cc4ab443b6d1ab60a388d3eb5280990a21525eaa8729084"
+}
