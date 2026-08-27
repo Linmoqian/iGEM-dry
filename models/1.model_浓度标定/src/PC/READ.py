@@ -7,7 +7,7 @@ import serial
 from protocol import BAUD_RATE, parse_sensor_value
 
 COM_PORT = "COM7"
-CSV_PATH = Path("light_sensor.csv")
+CSV_PATH = Path("../../data/1.data_电子采集/light_sensor.csv")
 is_Read = False
 
 
