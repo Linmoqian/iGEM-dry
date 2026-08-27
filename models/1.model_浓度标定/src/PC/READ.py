@@ -1,5 +1,4 @@
 import csv
-import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -7,16 +6,16 @@ import serial
 
 from protocol import BAUD_RATE, parse_sensor_value
 
-DEFAULT_CSV_PATH = Path("light_sensor.csv")
+COM_PORT = "COM7"
+CSV_PATH = Path("light_sensor.csv")
+is_Read = False
 
 
-def main() -> None:
+def main(port: str, csv_path: str | Path) -> None:
     """持续读取串口并将 ADC 原始值追加到 CSV。"""
-    if len(sys.argv) < 2:
-        raise SystemExit("用法: python READ.py <串口> [CSV 文件]")
+    global is_Read
 
-    port = sys.argv[1]
-    csv_path = Path(sys.argv[2]) if len(sys.argv) > 2 else DEFAULT_CSV_PATH
+    csv_path = Path(csv_path)
     needs_header = not csv_path.exists() or csv_path.stat().st_size == 0
 
     try:
@@ -24,11 +23,12 @@ def main() -> None:
             serial.Serial(port, BAUD_RATE, timeout=1) as device,
             csv_path.open("a", newline="", encoding="utf-8") as csv_file,
         ):
+            is_Read = True
             writer = csv.writer(csv_file)
             if needs_header:
                 writer.writerow(["timestamp", "adc_raw"])
 
-            while True:
+            while is_Read:
                 try:
                     value = parse_sensor_value(device.readline())
                 except (UnicodeDecodeError, ValueError):
@@ -43,8 +43,12 @@ def main() -> None:
                 csv_file.flush()
                 print(f"{timestamp},{value}")
     except KeyboardInterrupt:
-        print("\n[信息] 已停止读取。")
+        print("\n[info] 已停止读取。")
+    except serial.SerialException:
+        print("[error] 未连接设备")
+    finally:
+        is_Read = False
 
 
 if __name__ == "__main__":
-    main()
+    main(COM_PORT, CSV_PATH)
